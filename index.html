@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kabgayi · Music School</title>
+    <title>Kabgayi Music Academy · Welcome</title>
     <!-- Poppins font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,7 +20,7 @@
         body {
             font-family: 'Poppins', sans-serif;
             background: #ffffff;
-            color: #1a1a1a;
+            color: #1e1e1e;
             height: 100vh;
             width: 100vw;
             overflow: hidden;
@@ -30,216 +30,243 @@
             position: relative;
         }
 
-        /* Minimal animated background */
-        .bg-glow {
+        /* Very subtle background – just a hint of sky */
+        .bg-subtle {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            background: radial-gradient(circle at 10% 20%, #f0f9ff 0%, #ffffff 60%);
             z-index: 0;
         }
 
-        .glow {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(120px);
-            opacity: 0.4;
-        }
-
-        .glow-1 {
-            width: 400px;
-            height: 400px;
-            background: #fff1cc;
-            top: -150px;
-            right: -100px;
-            animation: move 25s infinite alternate ease-in-out;
-        }
-
-        .glow-2 {
-            width: 350px;
-            height: 350px;
-            background: #d9ecff;
-            bottom: -100px;
-            left: -50px;
-            animation: move 20s infinite alternate-reverse ease-in-out;
-        }
-
-        @keyframes move {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(50px, 50px) scale(1.1); }
-        }
-
-        /* Main container - centered */
+        /* Main container */
         .welcome {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 900px;
+            max-width: 1000px;
             padding: 2rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            animation: appear 0.8s ease-out;
+            animation: fadeIn 0.6s ease;
         }
 
-        @keyframes appear {
-            from { opacity: 0; transform: translateY(15px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Small badge */
-        .mini-badge {
+        /* Minimal badge */
+        .badge-minimal {
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(8px);
+            background: #f8fafc;
             padding: 0.4rem 1.2rem 0.4rem 0.8rem;
             border-radius: 40px;
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
             font-size: 0.75rem;
+            color: #2c3e50;
+            letter-spacing: 0.3px;
         }
 
-        .badge-dot {
-            width: 20px;
-            height: 20px;
-            background: #e8f0fe;
+        .badge-icon {
+            width: 22px;
+            height: 22px;
+            background: #e6f0fa;
             border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #4f7ea0;
+            color: #2c7da0;
             font-size: 0.7rem;
         }
 
-        .badge-text {
-            color: #4a4a4a;
-            font-weight: 400;
-        }
-
-        .badge-text span {
-            color: #4f7ea0;
-            font-weight: 500;
-        }
-
-        /* Title - smaller and refined */
-        .title-block {
+        /* Title */
+        .title {
             text-align: center;
-            margin-bottom: 2.5rem;
+            margin-bottom: 2rem;
         }
 
-        .title-main {
-            font-size: clamp(1.8rem, 5vw, 2.8rem);
+        .title h1 {
+            font-size: clamp(2rem, 6vw, 3rem);
             font-weight: 600;
             line-height: 1.2;
-            letter-spacing: -0.02em;
+            color: #1e1e1e;
         }
 
-        .title-main span {
-            color: #4f7ea0;
+        .title h1 span {
+            color: #2c7da0;
+            font-weight: 600;
         }
 
-        .title-sub {
+        .title p {
             font-size: 0.9rem;
-            color: #6a6a6a;
+            color: #5e6f7d;
             font-weight: 300;
-            margin-top: 0.3rem;
+            margin-top: 0.2rem;
         }
 
-        /* Small cards grid */
-        .info-mini-grid {
+        /* Horizontal scroll cards - minimal */
+        .cards-wrapper {
+            width: 100%;
+            max-width: 650px;
+            margin: 1rem auto 1.2rem;
+            position: relative;
+        }
+
+        .cards-scroll {
             display: flex;
             gap: 1rem;
-            justify-content: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 0.5rem 0.2rem 1rem;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            cursor: grab;
         }
 
-        .mini-card {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 18px;
-            padding: 1rem 1.5rem;
-            min-width: 140px;
-            box-shadow: 0 8px 20px -10px rgba(0, 0, 0, 0.05);
+        .cards-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        .cards-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .cards-scroll:active {
+            cursor: grabbing;
+        }
+
+        .card-minimal {
+            flex: 0 0 180px;
+            scroll-snap-align: center;
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02), 0 2px 4px rgba(0, 0, 0, 0.02);
             transition: all 0.2s ease;
+            border: none;
         }
 
-        .mini-card:hover {
-            background: white;
-            box-shadow: 0 12px 25px -12px rgba(0, 0, 0, 0.1);
+        .card-minimal:hover {
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
             transform: translateY(-2px);
         }
 
-        .mini-icon {
-            color: #4f7ea0;
-            font-size: 1rem;
-            margin-bottom: 0.6rem;
-            opacity: 0.8;
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: #f0f9ff;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            color: #2c7da0;
+            font-size: 1.1rem;
         }
 
-        .mini-label {
+        .card-label {
             font-size: 0.6rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            color: #8a8a8a;
+            color: #8a9aa8;
             margin-bottom: 0.2rem;
         }
 
-        .mini-value {
-            font-size: 1rem;
+        .card-value {
+            font-size: 1.2rem;
             font-weight: 600;
-            color: #1a1a1a;
+            color: #1e1e1e;
+            margin-bottom: 0.2rem;
         }
 
-        .mini-desc {
+        .card-desc {
             font-size: 0.65rem;
-            color: #8a8a8a;
+            color: #8a9aa8;
         }
 
-        /* Requirements - small and clean */
-        .req-strip {
+        /* Dots */
+        .dot-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.6rem;
+            margin: 0.5rem 0 1.2rem;
+        }
+
+        .dot-minimal {
+            width: 6px;
+            height: 6px;
+            border-radius: 10px;
+            background: #d0dde8;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .dot-minimal.active {
+            width: 18px;
+            background: #2c7da0;
+        }
+
+        /* Auto-scroll indicator */
+        .auto-indicator {
+            font-size: 0.6rem;
+            color: #8a9aa8;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .auto-indicator i {
+            color: #2c7da0;
+            margin: 0 0.3rem;
+            opacity: 0.7;
+        }
+
+        /* Requirements line - minimal */
+        .requirements {
             display: flex;
             gap: 2rem;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(8px);
+            background: #f8fafc;
             border-radius: 40px;
-            padding: 0.6rem 1.8rem;
-            border: 1px solid rgba(0, 0, 0, 0.02);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
-            margin-bottom: 2rem;
+            padding: 0.6rem 2rem;
+            margin: 1rem 0 1.5rem;
+            font-size: 0.8rem;
         }
 
-        .req-piece {
+        .req-item {
             display: flex;
             align-items: center;
             gap: 0.6rem;
+            color: #2c3e50;
+        }
+
+        .req-item i {
+            color: #2c7da0;
+            width: 16px;
             font-size: 0.8rem;
         }
 
-        .req-piece i {
-            color: #ffdb9e;
-            font-size: 0.8rem;
+        .req-item strong {
+            font-weight: 600;
+            color: #1e1e1e;
         }
 
-        .req-piece strong {
-            color: #4f7ea0;
-            font-weight: 500;
-        }
-
-        /* Buttons - small and modern */
-        .action-mini {
+        /* Buttons - minimal, no borders */
+        .actions {
             display: flex;
-            gap: 0.8rem;
-            margin-bottom: 2rem;
+            gap: 1rem;
+            margin-bottom: 1.8rem;
         }
 
-        .btn-mini {
-            padding: 0.6rem 1.4rem;
-            border-radius: 10px;
+        .btn {
+            padding: 0.6rem 1.8rem;
+            border-radius: 30px;
             font-size: 0.8rem;
             font-weight: 500;
             display: inline-flex;
@@ -247,234 +274,312 @@
             gap: 0.6rem;
             cursor: pointer;
             transition: all 0.15s ease;
+            text-decoration: none;
             border: none;
             font-family: 'Poppins', sans-serif;
-            text-decoration: none;
         }
 
         .btn-primary {
-            background: #1a1a1a;
+            background: #1e1e1e;
             color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .btn-primary i {
-            color: #ffdb9e;
-            font-size: 0.75rem;
+            color: #ffd966;
+            font-size: 0.7rem;
         }
 
         .btn-primary:hover {
             background: #2a2a2a;
             transform: translateY(-1px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
         }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(0, 0, 0, 0.03);
-            color: #2a2a2a;
+            background: #f0f4f8;
+            color: #1e1e1e;
         }
 
         .btn-secondary:hover {
-            background: white;
+            background: #e4ecf5;
             transform: translateY(-1px);
-            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.05);
         }
 
-        /* Contact row - minimal */
-        .contact-mini {
+        /* Contact strip - minimal */
+        .contact-strip {
             display: flex;
-            gap: 1.5rem;
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 30px;
-            padding: 0.5rem 1.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            gap: 2rem;
+            background: #f8fafc;
+            border-radius: 40px;
+            padding: 0.5rem 2rem;
+            font-size: 0.7rem;
         }
 
-        .contact-mini-item {
+        .contact-item {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 0.7rem;
-            color: #5a5a5a;
+            color: #3e5a6b;
             text-decoration: none;
         }
 
-        .contact-mini-item i {
-            color: #4f7ea0;
-            font-size: 0.7rem;
+        .contact-item i {
+            color: #2c7da0;
+            width: 14px;
         }
 
-        .contact-mini-item:hover {
-            color: #1a1a1a;
-        }
-
-        .dot-divider {
+        .dot-sep {
             width: 3px;
             height: 3px;
-            background: #c0c0c0;
+            background: #b0c4d9;
             border-radius: 50%;
             align-self: center;
         }
 
         /* Footer */
-        .footer-small {
+        .footer {
             position: absolute;
             bottom: 1rem;
             left: 0;
             width: 100%;
             text-align: center;
             font-size: 0.6rem;
-            color: #a0a0a0;
+            color: #9aabb8;
             z-index: 20;
         }
 
-        /* Mobile adjustments */
+        /* Mobile */
         @media (max-width: 600px) {
-            .info-mini-grid {
+            .cards-wrapper {
+                max-width: 100%;
+            }
+            .card-minimal {
+                flex: 0 0 150px;
+                padding: 1.2rem 0.8rem;
+            }
+            .requirements {
+                flex-direction: column;
+                gap: 0.5rem;
+                padding: 0.8rem 1.5rem;
+                border-radius: 30px;
+            }
+            .actions {
                 flex-direction: column;
                 width: 100%;
                 max-width: 240px;
             }
-            
-            .req-strip {
+            .contact-strip {
                 flex-direction: column;
-                gap: 0.8rem;
-                border-radius: 24px;
-                padding: 1rem 1.5rem;
+                gap: 0.5rem;
+                padding: 0.8rem 1.5rem;
+                border-radius: 30px;
             }
-            
-            .action-mini {
-                flex-direction: column;
-                width: 100%;
-                max-width: 240px;
-            }
-            
-            .contact-mini {
-                flex-direction: column;
-                gap: 0.8rem;
-                border-radius: 24px;
-                padding: 1rem 1.5rem;
-            }
-            
-            .dot-divider {
+            .dot-sep {
                 display: none;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Minimal background glow -->
-    <div class="bg-glow">
-        <div class="glow glow-1"></div>
-        <div class="glow glow-2"></div>
-    </div>
+    <div class="bg-subtle"></div>
 
-    <!-- Main content - small and refined -->
     <div class="welcome">
-        <!-- Small badge -->
-        <div class="mini-badge">
-            <div class="badge-dot">
-                <i class="fas fa-music"></i>
+        <!-- Badge -->
+        <div class="badge-minimal">
+            <div class="badge-icon"><i class="fas fa-music"></i></div>
+            <span>DIOCESE KABGAYI · Académie de Musique Sacrée</span>
+        </div>
+
+        <!-- Title -->
+        <div class="title">
+            <h1>Children's <span>Music School</span></h1>
+            <p>Sacred music education for young talents</p>
+        </div>
+
+        <!-- Horizontal scroll cards (auto-scroll) -->
+        <div class="cards-wrapper">
+            <div class="cards-scroll" id="cardsScroll">
+                <div class="card-minimal">
+                    <div class="card-icon"><i class="far fa-calendar-alt"></i></div>
+                    <div class="card-label">Registration</div>
+                    <div class="card-value">01.03 – 15.03</div>
+                    <div class="card-desc">March 2026</div>
+                </div>
+                <div class="card-minimal">
+                    <div class="card-icon"><i class="fas fa-church"></i></div>
+                    <div class="card-label">Office</div>
+                    <div class="card-value">Gitarama</div>
+                    <div class="card-desc">Parish office</div>
+                </div>
+                <div class="card-minimal">
+                    <div class="card-icon"><i class="fas fa-church"></i></div>
+                    <div class="card-label">Office</div>
+                    <div class="card-value">Kabgayi</div>
+                    <div class="card-desc">Parish office</div>
+                </div>
+                <div class="card-minimal">
+                    <div class="card-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <div class="card-label">Classes</div>
+                    <div class="card-value">P2 – P5</div>
+                    <div class="card-desc">Primary</div>
+                </div>
+                <div class="card-minimal">
+                    <div class="card-icon"><i class="fas fa-star"></i></div>
+                    <div class="card-label">Minimum</div>
+                    <div class="card-value">70%</div>
+                    <div class="card-desc">First term</div>
+                </div>
+                <div class="card-minimal">
+                    <div class="card-icon"><i class="fab fa-whatsapp"></i></div>
+                    <div class="card-label">Contact</div>
+                    <div class="card-value">Fr. Pater</div>
+                    <div class="card-desc">0789 209 371</div>
+                </div>
             </div>
-            <div class="badge-text">
-                <span>DIOCESE KABGAYI</span> · Music School
+            <div class="dot-container" id="dotContainer"></div>
+            <div class="auto-indicator">
+                <i class="fas fa-circle"></i> auto-scroll every 3s <i class="fas fa-circle"></i>
             </div>
         </div>
 
-        <!-- Title - smaller -->
-        <div class="title-block">
-            <div class="title-main">
-                Children's <span>Music</span>
-            </div>
-            <div class="title-main">
-                <span>Academy</span>
-            </div>
-            <div class="title-sub">
-                Sacred music education
-            </div>
+        <!-- Requirements -->
+        <div class="requirements">
+            <div class="req-item"><i class="fas fa-graduation-cap"></i> Primary <strong>2, 3, 4, 5</strong></div>
+            <div class="req-item"><i class="fas fa-star"></i> ≥ <strong>70%</strong> first term</div>
         </div>
 
-        <!-- Mini info cards -->
-        <div class="info-mini-grid">
-            <div class="mini-card">
-                <div class="mini-icon"><i class="far fa-calendar"></i></div>
-                <div class="mini-label">Registration</div>
-                <div class="mini-value">01/03 - 15/03/2026</div>
-                <div class="mini-desc">two weeks</div>
-            </div>
-            <div class="mini-card">
-                <div class="mini-icon"><i class="far fa-building"></i></div>
-                <div class="mini-label">Offices</div>
-                <div class="mini-value">Gitarama</div>
-                <div class="mini-desc">+ Kabgayi</div>
-            </div>
-            <div class="mini-card">
-                <div class="mini-icon"><i class="fas fa-child"></i></div>
-                <div class="mini-label">Requirements</div>
-                <div class="mini-value">P2 - P5</div>
-                <div class="mini-desc">70%+ first term</div>
-            </div>
+        <!-- Buttons -->
+        <div class="actions">
+            <a href="register.html" class="btn btn-primary"><i class="fas fa-pen"></i> Apply now</a>
+            <a href="https://wa.me/250789209371" class="btn btn-secondary" target="_blank"><i class="fab fa-whatsapp"></i> Father Pater</a>
         </div>
 
-        <!-- Requirements strip -->
-        <div class="req-strip">
-            <div class="req-piece">
-                <i class="fas fa-graduation-cap"></i>
-                <span>Primary <strong>2,3,4,5</strong></span>
-            </div>
-            <div class="req-piece">
-                <i class="fas fa-star"></i>
-                <span>≥ <strong>70%</strong> first term</span>
-            </div>
-        </div>
-
-        <!-- Action buttons - small -->
-        <div class="action-mini">
-            <a href="register.html" class="btn-mini btn-primary">
-                <i class="fas fa-pen"></i>
-                Apply now
-            </a>
-            <a href="https://wa.me/250789209371" class="btn-mini btn-secondary" target="_blank">
-                <i class="fab fa-whatsapp"></i>
-                Father Pater
-            </a>
-        </div>
-
-        <!-- Contact row - minimal -->
-        <div class="contact-mini">
-            <a href="https://wa.me/250789209371" class="contact-mini-item" target="_blank">
-                <i class="fab fa-whatsapp"></i>
-                0789 209 371
-            </a>
-            <span class="dot-divider"></span>
-            <div class="contact-mini-item">
-                <i class="fas fa-church"></i>
-                Gitarama
-            </div>
-            <span class="dot-divider"></span>
-            <div class="contact-mini-item">
-                <i class="fas fa-church"></i>
-                Kabgayi
-            </div>
+        <!-- Contact strip -->
+        <div class="contact-strip">
+            <a href="https://wa.me/250789209371" class="contact-item" target="_blank"><i class="fab fa-whatsapp"></i> 0789 209 371</a>
+            <span class="dot-sep"></span>
+            <span class="contact-item"><i class="fas fa-map-pin"></i> Gitarama</span>
+            <span class="dot-sep"></span>
+            <span class="contact-item"><i class="fas fa-map-pin"></i> Kabgayi</span>
         </div>
     </div>
 
-    <!-- Tiny footer -->
-    <div class="footer-small">
-        Diocese Kabgayi · Académie de Musique Sacrée
+    <div class="footer">
+        Diocese Kabgayi · Académie de Musique Sacrée · Children's Music School
     </div>
 
     <script>
-        // Tiny hover effects
-        document.querySelectorAll('.btn-mini').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                this.style.transform = 'scale(0.97)';
-                setTimeout(() => this.style.transform = '', 100);
+        (function() {
+            const scrollContainer = document.getElementById('cardsScroll');
+            const cards = document.querySelectorAll('.card-minimal');
+            const cardCount = cards.length;
+            const dotContainer = document.getElementById('dotContainer');
+
+            // Create dots
+            for (let i = 0; i < cardCount; i++) {
+                const dot = document.createElement('span');
+                dot.classList.add('dot-minimal');
+                dot.dataset.index = i;
+                dot.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    scrollToCard(index);
+                    resetAutoScroll();
+                });
+                dotContainer.appendChild(dot);
+            }
+
+            const dots = document.querySelectorAll('.dot-minimal');
+
+            function scrollToCard(index) {
+                if (index >= 0 && index < cardCount) {
+                    const card = cards[index];
+                    const containerRect = scrollContainer.getBoundingClientRect();
+                    const cardRect = card.getBoundingClientRect();
+                    const scrollLeft = card.offsetLeft - (containerRect.width / 2) + (cardRect.width / 2);
+                    scrollContainer.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+                }
+            }
+
+            function updateActiveDot() {
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const containerCenter = containerRect.left + containerRect.width / 2;
+                let activeIndex = 0;
+                let minDistance = Infinity;
+                cards.forEach((card, idx) => {
+                    const cardRect = card.getBoundingClientRect();
+                    const cardCenter = cardRect.left + cardRect.width / 2;
+                    const distance = Math.abs(cardCenter - containerCenter);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        activeIndex = idx;
+                    }
+                });
+                dots.forEach((dot, idx) => {
+                    if (idx === activeIndex) dot.classList.add('active');
+                    else dot.classList.remove('active');
+                });
+                return activeIndex;
+            }
+
+            // Auto-scroll
+            let autoScrollInterval;
+            let currentIndex = 0;
+
+            function startAutoScroll() {
+                if (autoScrollInterval) clearInterval(autoScrollInterval);
+                autoScrollInterval = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % cardCount;
+                    scrollToCard(currentIndex);
+                }, 3000);
+            }
+
+            function resetAutoScroll() {
+                if (autoScrollInterval) {
+                    clearInterval(autoScrollInterval);
+                    startAutoScroll();
+                }
+            }
+
+            scrollContainer.addEventListener('scroll', () => {
+                currentIndex = updateActiveDot();
             });
-        });
+
+            scrollContainer.addEventListener('mouseenter', () => clearInterval(autoScrollInterval));
+            scrollContainer.addEventListener('mouseleave', startAutoScroll);
+            scrollContainer.addEventListener('touchstart', () => clearInterval(autoScrollInterval));
+            scrollContainer.addEventListener('touchend', startAutoScroll);
+
+            // Grab to scroll
+            let isDown = false;
+            let startX, scrollLeft;
+
+            scrollContainer.addEventListener('mousedown', (e) => {
+                isDown = true;
+                scrollContainer.style.cursor = 'grabbing';
+                startX = e.pageX - scrollContainer.offsetLeft;
+                scrollLeft = scrollContainer.scrollLeft;
+            });
+            scrollContainer.addEventListener('mouseleave', () => {
+                isDown = false;
+                scrollContainer.style.cursor = 'grab';
+            });
+            scrollContainer.addEventListener('mouseup', () => {
+                isDown = false;
+                scrollContainer.style.cursor = 'grab';
+            });
+            scrollContainer.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - scrollContainer.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                scrollContainer.scrollLeft = scrollLeft - walk;
+            });
+
+            // Initialize
+            updateActiveDot();
+            startAutoScroll();
+        })();
     </script>
 </body>
 </html>
