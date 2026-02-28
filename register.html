@@ -13,7 +13,7 @@
     <!-- Supabase client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* (All existing styles – kept identical for brevity) */
+        /* (All styles remain exactly as before – no changes) */
         * {
             margin: 0;
             padding: 0;
@@ -507,8 +507,8 @@
     <div class="white-blur"></div>
     <div class="corner-blur"></div>
 
-    <!-- Background music (hidden, plays on first interaction) -->
-    <audio id="bgMusic" loop preload="auto">
+    <!-- Background music – silent error handling -->
+    <audio id="bgMusic" loop preload="auto" onerror="this.style.display='none'">
         <source src="music/back.mp3" type="audio/mpeg">
         Your browser does not support the audio element.
     </audio>
@@ -560,17 +560,18 @@
                 auth: { persistSession: false }
             });
 
-            // ===== BACKGROUND MUSIC =====
+            // ===== BACKGROUND MUSIC – play only if file loads =====
             const audio = document.getElementById('bgMusic');
             let musicPlayed = false;
 
             function playMusic() {
-                if (!musicPlayed) {
-                    audio.play().catch(e => console.log('Autoplay prevented:', e));
+                if (!musicPlayed && audio.readyState >= 2) { // HAVE_CURRENT_DATA or higher
+                    audio.play().catch(() => {}); // ignore errors
                     musicPlayed = true;
                 }
             }
 
+            // Attempt to play on first interaction
             document.addEventListener('click', playMusic, { once: true });
             document.addEventListener('touchstart', playMusic, { once: true });
 
@@ -1004,9 +1005,9 @@
                         console.error('Supabase error details:', error);
                         let errorMsg = 'Registration failed. ';
                         if (error.message && error.message.includes('Failed to fetch')) {
-                            errorMsg += 'Network error – please check your internet connection or if the Supabase URL is correct. Also ensure your Vercel domain is allowed in Supabase Authentication settings.';
+                            errorMsg += 'Network error – please check your internet connection. If the problem persists, verify that your Supabase project URL is correct and accessible.';
                         } else if (error.code === '42P01') {
-                            errorMsg += 'The "registrations" table does not exist. Please create it in your Supabase dashboard using the SQL provided in the documentation.';
+                            errorMsg += 'The "registrations" table does not exist. Please create it in your Supabase dashboard using the SQL provided.';
                         } else if (error.code === '42501') {
                             errorMsg += 'Permission denied. You need to add an INSERT policy for the "registrations" table.';
                         } else {
@@ -1023,7 +1024,7 @@
 
                 } catch (error) {
                     console.error('Submission error:', error);
-                    alert('An unexpected error occurred. Please check the console for details and ensure your Supabase project is properly configured.');
+                    alert('An unexpected error occurred. Please check the console for details. If the Supabase URL is correct, ensure your project is active and reachable.');
                     nextBtn.disabled = false;
                     backBtn.disabled = false;
                 }
