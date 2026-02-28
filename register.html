@@ -13,7 +13,7 @@
     <!-- Supabase client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ... (keep all existing styles from previous answer) ... */
+        /* (All existing styles – kept identical for brevity) */
         * {
             margin: 0;
             padding: 0;
@@ -556,7 +556,9 @@
             // ===== SUPABASE INIT =====
             const supabaseUrl = 'https://amnkoumnuwyjzqcxword.supabase.co';
             const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
-            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+                auth: { persistSession: false }
+            });
 
             // ===== BACKGROUND MUSIC =====
             const audio = document.getElementById('bgMusic');
@@ -595,7 +597,8 @@
                 reportImage: null
             };
 
-            const IMGBB_API_KEY = '99c6aa298645e8a4742979117fc73be6'; // Replace with your actual key
+            // ===== YOUR IMGBB API KEY =====
+            const IMGBB_API_KEY = '99c6aa298645e8a4742979117fc73be6';
 
             // DOM elements
             const formArea = document.getElementById('formArea');
@@ -998,8 +1001,18 @@
                         ]);
 
                     if (error) {
-                        console.error('Supabase error:', error);
-                        alert('Registration failed. Please try again.');
+                        console.error('Supabase error details:', error);
+                        let errorMsg = 'Registration failed. ';
+                        if (error.message && error.message.includes('Failed to fetch')) {
+                            errorMsg += 'Network error – please check your internet connection or if the Supabase URL is correct. Also ensure your Vercel domain is allowed in Supabase Authentication settings.';
+                        } else if (error.code === '42P01') {
+                            errorMsg += 'The "registrations" table does not exist. Please create it in your Supabase dashboard using the SQL provided in the documentation.';
+                        } else if (error.code === '42501') {
+                            errorMsg += 'Permission denied. You need to add an INSERT policy for the "registrations" table.';
+                        } else {
+                            errorMsg += error.message;
+                        }
+                        alert(errorMsg);
                         nextBtn.disabled = false;
                         backBtn.disabled = false;
                         return;
@@ -1010,7 +1023,7 @@
 
                 } catch (error) {
                     console.error('Submission error:', error);
-                    alert('An error occurred. Please try again.');
+                    alert('An unexpected error occurred. Please check the console for details and ensure your Supabase project is properly configured.');
                     nextBtn.disabled = false;
                     backBtn.disabled = false;
                 }
