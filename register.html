@@ -13,7 +13,7 @@
     <!-- Supabase client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* (All styles remain exactly as before – no changes) */
+        /* (Keep all existing styles – they remain the same) */
         * {
             margin: 0;
             padding: 0;
@@ -554,7 +554,8 @@
     <script>
         (function() {
             // ===== SUPABASE INIT =====
-            const supabaseUrl = 'https://amnkoumnuwyjzqcxword.supabase.co';
+            // ✅ Corrected project URL
+            const supabaseUrl = 'https://amnkoumnvwyjzqcwxord.supabase.co';
             const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
             const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
                 auth: { persistSession: false }
@@ -565,13 +566,12 @@
             let musicPlayed = false;
 
             function playMusic() {
-                if (!musicPlayed && audio.readyState >= 2) { // HAVE_CURRENT_DATA or higher
-                    audio.play().catch(() => {}); // ignore errors
+                if (!musicPlayed && audio.readyState >= 2) {
+                    audio.play().catch(() => {});
                     musicPlayed = true;
                 }
             }
 
-            // Attempt to play on first interaction
             document.addEventListener('click', playMusic, { once: true });
             document.addEventListener('touchstart', playMusic, { once: true });
 
@@ -598,10 +598,8 @@
                 reportImage: null
             };
 
-            // ===== YOUR IMGBB API KEY =====
             const IMGBB_API_KEY = '99c6aa298645e8a4742979117fc73be6';
 
-            // DOM elements
             const formArea = document.getElementById('formArea');
             const stepIndicators = document.getElementById('stepIndicators');
             const backBtn = document.getElementById('backBtn');
