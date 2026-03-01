@@ -13,7 +13,6 @@
     <!-- Supabase client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* (Keep all existing styles – they remain the same) */
         * {
             margin: 0;
             padding: 0;
@@ -31,6 +30,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            font-size: 14px; /* base = 14px */
         }
 
         .white-blur {
@@ -95,14 +95,53 @@
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border-radius: 32px;
-            padding: 2rem;
+            padding: 1.5rem;
             width: 100%;
             box-shadow: 0 20px 40px rgba(0,0,0,0.05);
             transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        /* Header with logo and cancel */
+        .form-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .logo-link {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #1e3a4a;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .cancel-btn:hover {
+            background: rgba(0,0,0,0.05);
         }
 
         .progress-container {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .step-indicators {
@@ -116,7 +155,7 @@
         .step-indicators::before {
             content: '';
             position: absolute;
-            top: 25px;
+            top: 20px;
             left: 0;
             right: 0;
             height: 3px;
@@ -144,7 +183,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 500;
             color: #4a5a68;
             transition: all 0.2s ease;
@@ -164,7 +203,8 @@
         }
 
         .step-label {
-            font-size: 0.6rem;
+            font-size: 0.8rem; /* ~11.2px, but we need min 14px? Actually we want >=14px, so increase */
+            font-size: 0.9rem;  /* 14.4px */
             text-align: center;
             color: #2c3e50;
             max-width: 70px;
@@ -179,23 +219,23 @@
         }
 
         .question-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* ~18.2px */
             font-weight: 500;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
             color: #1e1e1e;
             text-shadow: 0 2px 4px rgba(255,255,255,0.3);
         }
 
         .form-group {
-            margin-bottom: 1.2rem;
+            margin-bottom: 1rem;
         }
 
         .form-label {
             display: block;
-            font-size: 0.75rem;
+            font-size: 0.9rem; /* 14.4px */
             font-weight: 500;
             color: #1e3a4a;
-            margin-bottom: 0.3rem;
+            margin-bottom: 0.2rem;
             text-shadow: 0 1px 2px rgba(255,255,255,0.3);
         }
 
@@ -203,7 +243,7 @@
             width: 100%;
             padding: 0.8rem 1rem;
             font-family: 'Poppins', sans-serif;
-            font-size: 0.9rem;
+            font-size: 1rem; /* 14px */
             border: 1px solid rgba(255,255,255,0.5);
             border-radius: 16px;
             background: rgba(255,255,255,0.6);
@@ -225,7 +265,8 @@
         }
 
         .error-message {
-            font-size: 0.7rem;
+            font-size: 0.8rem; /* 11.2px but we want min 14? Actually error messages can be smaller, but we'll make 0.9rem */
+            font-size: 0.9rem; /* 14.4px */
             color: #e74c3c;
             margin-top: 0.2rem;
             padding-left: 0.5rem;
@@ -237,23 +278,19 @@
             gap: 1rem;
         }
 
-        .radio-group {
-            display: flex;
-            gap: 2rem;
-            margin: 1rem 0;
-        }
-
-        .radio-option {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        /* Instruction text in report step */
+        .instruction-text {
+            background: rgba(255,255,255,0.5);
+            padding: 0.8rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
             color: #1e3a4a;
+            border-left: 4px solid #2c7da0;
         }
 
-        .radio-option input[type="radio"] {
-            accent-color: #2c7da0;
-            width: 16px;
-            height: 16px;
+        .instruction-text p {
+            margin: 0.2rem 0;
         }
 
         .file-input {
@@ -279,7 +316,7 @@
         }
 
         .file-input p {
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             color: #1e3a4a;
         }
 
@@ -299,13 +336,13 @@
         .button-group {
             display: flex;
             justify-content: space-between;
-            margin-top: 2rem;
+            margin-top: 1.5rem;
         }
 
         .btn {
             padding: 0.7rem 2rem;
             border-radius: 30px;
-            font-size: 0.8rem;
+            font-size: 0.9rem; /* 14.4px */
             font-weight: 500;
             display: inline-flex;
             align-items: center;
@@ -373,7 +410,7 @@
             text-orientation: mixed;
             padding: 1.5rem 0.4rem;
             border-radius: 0 12px 12px 0;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 500;
             letter-spacing: 1px;
             cursor: pointer;
@@ -420,7 +457,7 @@
         }
 
         .popup-question {
-            font-size: 0.95rem;
+            font-size: 1rem; /* 14px */
             font-weight: 500;
             color: #1e1e1e;
         }
@@ -434,7 +471,7 @@
         .popup-btn {
             padding: 0.5rem 1.2rem;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             font-weight: 500;
             border: none;
             cursor: pointer;
@@ -461,7 +498,7 @@
         }
 
         .popup-message {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             color: #2c7da0;
             text-align: center;
             padding: 0.5rem;
@@ -473,7 +510,7 @@
             left: 0;
             width: 100%;
             text-align: center;
-            font-size: 0.6rem;
+            font-size: 0.9rem; /* 14.4px */
             color: #2c3e50;
             z-index: 20;
             text-shadow: 0 1px 2px rgba(255,255,255,0.3);
@@ -481,7 +518,7 @@
 
         @media (max-width: 600px) {
             .form-card {
-                padding: 1.5rem;
+                padding: 1rem;
             }
             .popup-box {
                 left: 10px;
@@ -492,12 +529,18 @@
                 width: auto;
             }
             .step-label {
-                font-size: 0.5rem;
+                font-size: 0.8rem; /* 11.2px but on mobile it's okay, but we want min 14? */
+                font-size: 0.9rem; /* 14.4px */
+                max-width: 60px;
             }
             .step-circle {
-                width: 28px;
-                height: 28px;
-                font-size: 0.7rem;
+                width: 30px;
+                height: 30px;
+                font-size: 0.8rem;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
             }
         }
     </style>
@@ -531,6 +574,16 @@
 
     <div class="register-container">
         <div class="form-card">
+            <!-- Header with logo and cancel -->
+            <div class="form-header">
+                <a href="index2.html" class="logo-link">
+                    <img src="image/logo.png" alt="Kabgayi Logo" class="logo-img" onerror="this.style.display='none'">
+                </a>
+                <button class="cancel-btn" id="cancelBtn" title="Cancel registration">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
             <!-- Modern progress bar (clickable) -->
             <div class="progress-container">
                 <div class="step-indicators" id="stepIndicators"></div>
@@ -554,12 +607,14 @@
     <script>
         (function() {
             // ===== SUPABASE INIT =====
-            // ✅ Corrected project URL
             const supabaseUrl = 'https://amnkoumnvwyjzqcwxord.supabase.co';
             const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
             const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
                 auth: { persistSession: false }
             });
+
+            // ===== CONVERT API (replace with your actual key) =====
+            const CONVERT_API_SECRET = 'YOUR_CONVERTAPI_SECRET'; // <-- Replace with your key
 
             // ===== BACKGROUND MUSIC – play only if file loads =====
             const audio = document.getElementById('bgMusic');
@@ -576,12 +631,12 @@
             document.addEventListener('touchstart', playMusic, { once: true });
 
             // ===== MULTI-STEP FORM STATE =====
+            // Removed 'study' step, added 'parish' in address
             const steps = [
                 { type: 'name', title: 'What is your name?', short: 'Name' },
                 { type: 'contact', title: 'Your contact number?', short: 'Contact' },
                 { type: 'email', title: 'Your email address?', short: 'Email' },
                 { type: 'address', title: 'Your address?', short: 'Address' },
-                { type: 'study', title: 'Can you take courses Monday to Friday?', short: 'Study' },
                 { type: 'report', title: 'Upload a report image (school document)', short: 'Report' }
             ];
 
@@ -594,7 +649,7 @@
                 province: '',
                 district: '',
                 sector: '',
-                study: null,
+                parish: '',          // new parish field
                 reportImage: null
             };
 
@@ -604,6 +659,12 @@
             const stepIndicators = document.getElementById('stepIndicators');
             const backBtn = document.getElementById('backBtn');
             const nextBtn = document.getElementById('nextBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+
+            // Cancel button: redirect to index2.html
+            cancelBtn.addEventListener('click', function() {
+                window.location.href = 'index2.html';
+            });
 
             // Build progress bar
             function buildProgressBar() {
@@ -670,6 +731,19 @@
                         field.parentNode.appendChild(errorDiv);
                     }
                     errorDiv.textContent = message;
+                } else {
+                    // For radio groups or file input
+                    const container = document.querySelector('.radio-group') || document.getElementById('fileInput');
+                    if (container) {
+                        container.classList.add('error');
+                        let errorDiv = container.parentNode.querySelector('.error-message');
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'error-message';
+                            container.parentNode.appendChild(errorDiv);
+                        }
+                        errorDiv.textContent = message;
+                    }
                 }
             }
 
@@ -713,6 +787,7 @@
                         const province = document.getElementById('province')?.value || '';
                         const district = document.getElementById('district')?.value.trim() || '';
                         const sector = document.getElementById('sector')?.value.trim() || '';
+                        const parish = document.getElementById('parish')?.value.trim() || '';
                         if (!province) {
                             showError('province', 'Please select a province');
                             isValid = false;
@@ -725,36 +800,14 @@
                             showError('sector', 'Sector is required');
                             isValid = false;
                         }
-                        break;
-                    case 'study':
-                        const radios = document.getElementsByName('study');
-                        let checked = false;
-                        for (let radio of radios) {
-                            if (radio.checked) checked = true;
-                        }
-                        if (!checked) {
-                            const radioGroup = document.querySelector('.radio-group');
-                            let errorDiv = radioGroup.parentNode.querySelector('.error-message');
-                            if (!errorDiv) {
-                                errorDiv = document.createElement('div');
-                                errorDiv.className = 'error-message';
-                                radioGroup.parentNode.appendChild(errorDiv);
-                            }
-                            errorDiv.textContent = 'Please select an option';
+                        if (!parish) {
+                            showError('parish', 'Parish is required');
                             isValid = false;
                         }
                         break;
                     case 'report':
                         if (!(formData.reportImage instanceof File)) {
-                            const fileInputDiv = document.getElementById('fileInput');
-                            fileInputDiv.classList.add('error');
-                            let errorDiv = fileInputDiv.parentNode.querySelector('.error-message');
-                            if (!errorDiv) {
-                                errorDiv = document.createElement('div');
-                                errorDiv.className = 'error-message';
-                                fileInputDiv.parentNode.appendChild(errorDiv);
-                            }
-                            errorDiv.textContent = 'Please upload an image';
+                            showError('fileInput', 'Please upload an image (or a document that can be converted to PNG)');
                             isValid = false;
                         }
                         break;
@@ -819,28 +872,26 @@
                                 <label class="form-label">Sector</label>
                                 <input type="text" class="form-control" id="sector" value="${formData.sector}" placeholder="e.g., Kabgayi">
                             </div>
-                        `;
-                        break;
-                    case 'study':
-                        html += `
-                            <div class="radio-group">
-                                <label class="radio-option">
-                                    <input type="radio" name="study" value="yes" ${formData.study === true ? 'checked' : ''}> Yes
-                                </label>
-                                <label class="radio-option">
-                                    <input type="radio" name="study" value="no" ${formData.study === false ? 'checked' : ''}> No
-                                </label>
+                            <div class="form-group">
+                                <label class="form-label">Parish</label>
+                                <input type="text" class="form-control" id="parish" value="${formData.parish}" placeholder="e.g., Kabgayi Parish">
                             </div>
                         `;
                         break;
                     case 'report':
                         html += `
+                            <div class="instruction-text">
+                                <p><i class="fas fa-info-circle"></i> Requirements:</p>
+                                <p>1. The student must have at least 70% marks in the first term.</p>
+                                <p>2. Only image files (PNG, JPG, etc.) are accepted. If you upload a different format, we will try to convert it to PNG.</p>
+                            </div>
                             <div class="file-input" id="fileInput">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Click to upload an image (school report)</p>
-                                <input type="file" id="imageFile" accept="image/*" style="display: none;">
+                                <p>Click to upload a document (image preferred)</p>
+                                <input type="file" id="imageFile" accept="*/*" style="display: none;">
                             </div>
                             <div id="preview" style="margin-top: 1rem; text-align: center;"></div>
+                            <div id="conversionStatus" style="font-size:0.9rem; color:#2c7da0; margin-top:0.5rem;"></div>
                         `;
                         break;
                 }
@@ -853,6 +904,7 @@
                     fileInputDiv.addEventListener('click', () => fileInput.click());
                     fileInput.addEventListener('change', handleFileSelect);
                     if (formData.reportImage instanceof File) {
+                        // Show preview if already a file
                         const reader = new FileReader();
                         reader.onload = (e) => {
                             document.getElementById('preview').innerHTML = `<img src="${e.target.result}" class="preview-image">`;
@@ -862,20 +914,110 @@
                 }
             }
 
-            // Handle file select
-            function handleFileSelect(e) {
+            // Handle file select – validate type and attempt conversion if needed
+            async function handleFileSelect(e) {
                 const file = e.target.files[0];
-                if (file) {
+                if (!file) return;
+
+                const statusDiv = document.getElementById('conversionStatus');
+                statusDiv.innerHTML = 'Processing file...';
+
+                // Check if it's an image by MIME type or extension
+                const isImage = file.type.startsWith('image/');
+                if (isImage) {
+                    // It's an image, accept directly
+                    formData.reportImage = file;
+                    showFilePreview(file);
+                    document.getElementById('fileInput').classList.remove('error');
+                    const errorDiv = document.getElementById('fileInput').parentNode.querySelector('.error-message');
+                    if (errorDiv) errorDiv.remove();
+                    statusDiv.innerHTML = 'Image accepted.';
+                } else {
+                    // Not an image – attempt conversion via ConvertAPI
+                    statusDiv.innerHTML = 'Not an image. Attempting conversion to PNG...';
+                    try {
+                        const convertedFile = await convertToPng(file);
+                        if (convertedFile) {
+                            formData.reportImage = convertedFile;
+                            showFilePreview(convertedFile);
+                            document.getElementById('fileInput').classList.remove('error');
+                            const errorDiv = document.getElementById('fileInput').parentNode.querySelector('.error-message');
+                            if (errorDiv) errorDiv.remove();
+                            statusDiv.innerHTML = 'Conversion successful! PNG file ready.';
+                        } else {
+                            throw new Error('Conversion returned no file');
+                        }
+                    } catch (convError) {
+                        console.error('Conversion failed:', convError);
+                        statusDiv.innerHTML = 'Conversion failed. Please upload a valid image (PNG, JPG, etc.).';
+                        formData.reportImage = null;
+                        document.getElementById('fileInput').classList.add('error');
+                        // Show error message
+                        let errorDiv = document.getElementById('fileInput').parentNode.querySelector('.error-message');
+                        if (!errorDiv) {
+                            errorDiv = document.createElement('div');
+                            errorDiv.className = 'error-message';
+                            document.getElementById('fileInput').parentNode.appendChild(errorDiv);
+                        }
+                        errorDiv.textContent = 'Unsupported file. Please upload an image.';
+                        // Clear preview
+                        document.getElementById('preview').innerHTML = '';
+                    }
+                }
+            }
+
+            // Convert any file to PNG using ConvertAPI
+            async function convertToPng(file) {
+                if (!CONVERT_API_SECRET || CONVERT_API_SECRET === 'YOUR_CONVERTAPI_SECRET') {
+                    throw new Error('ConvertAPI key not set. Please obtain a key from convertapi.com');
+                }
+
+                // Get file extension
+                const ext = file.name.split('.').pop().toLowerCase();
+                if (!ext) throw new Error('Could not determine file extension');
+
+                const url = `https://v2.convertapi.com/convert/${ext}/to/png?Secret=${CONVERT_API_SECRET}&StoreFile=true`;
+
+                const formData = new FormData();
+                formData.append('File', file);
+
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`ConvertAPI error: ${response.status} ${errorText}`);
+                }
+
+                const result = await response.json();
+                // ConvertAPI returns an object with Files array containing Url
+                if (result.Files && result.Files.length > 0 && result.Files[0].Url) {
+                    const fileUrl = result.Files[0].Url;
+                    // Download the converted file
+                    const fileResponse = await fetch(fileUrl);
+                    if (!fileResponse.ok) throw new Error('Failed to download converted file');
+                    const blob = await fileResponse.blob();
+                    // Create a new File object
+                    const convertedFileName = file.name.replace(/\.[^/.]+$/, '') + '.png';
+                    return new File([blob], convertedFileName, { type: 'image/png' });
+                } else {
+                    throw new Error('Unexpected ConvertAPI response');
+                }
+            }
+
+            // Show preview of file (if image)
+            function showFilePreview(file) {
+                if (file.type.startsWith('image/')) {
                     const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const preview = document.getElementById('preview');
-                        preview.innerHTML = `<img src="${event.target.result}" class="preview-image">`;
-                        formData.reportImage = file;
-                        document.getElementById('fileInput').classList.remove('error');
-                        const errorDiv = document.getElementById('fileInput').parentNode.querySelector('.error-message');
-                        if (errorDiv) errorDiv.remove();
+                    reader.onload = (e) => {
+                        document.getElementById('preview').innerHTML = `<img src="${e.target.result}" class="preview-image">`;
                     };
                     reader.readAsDataURL(file);
+                } else {
+                    // If converted, it should be PNG, but just in case
+                    document.getElementById('preview').innerHTML = `<p class="form-label">File ready: ${file.name}</p>`;
                 }
             }
 
@@ -897,15 +1039,7 @@
                         formData.province = document.getElementById('province')?.value || '';
                         formData.district = document.getElementById('district')?.value || '';
                         formData.sector = document.getElementById('sector')?.value || '';
-                        break;
-                    case 'study':
-                        const radios = document.getElementsByName('study');
-                        for (let radio of radios) {
-                            if (radio.checked) {
-                                formData.study = radio.value === 'yes';
-                                break;
-                            }
-                        }
+                        formData.parish = document.getElementById('parish')?.value || '';
                         break;
                     case 'report':
                         // already stored
@@ -918,8 +1052,7 @@
                 if (!formData.firstName.trim() || !formData.lastName.trim()) return false;
                 if (!formData.contact.trim()) return false;
                 if (!formData.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) return false;
-                if (!formData.province || !formData.district.trim() || !formData.sector.trim()) return false;
-                if (formData.study === null) return false;
+                if (!formData.province || !formData.district.trim() || !formData.sector.trim() || !formData.parish.trim()) return false;
                 if (!(formData.reportImage instanceof File)) return false;
                 return true;
             }
@@ -982,7 +1115,7 @@
                         }
                     }
 
-                    // 2. Insert data into Supabase
+                    // 2. Insert data into Supabase (study removed, parish added)
                     const { error } = await supabase
                         .from('registrations')
                         .insert([
@@ -994,7 +1127,7 @@
                                 province: formData.province,
                                 district: formData.district,
                                 sector: formData.sector,
-                                study: formData.study,
+                                parish: formData.parish,          // new field
                                 report_image_url: imageUrl
                             }
                         ]);
@@ -1003,9 +1136,9 @@
                         console.error('Supabase error details:', error);
                         let errorMsg = 'Registration failed. ';
                         if (error.message && error.message.includes('Failed to fetch')) {
-                            errorMsg += 'Network error – please check your internet connection. If the problem persists, verify that your Supabase project URL is correct and accessible.';
+                            errorMsg += 'Network error – please check your internet connection.';
                         } else if (error.code === '42P01') {
-                            errorMsg += 'The "registrations" table does not exist. Please create it in your Supabase dashboard using the SQL provided.';
+                            errorMsg += 'The "registrations" table does not exist. Please create it in your Supabase dashboard.';
                         } else if (error.code === '42501') {
                             errorMsg += 'Permission denied. You need to add an INSERT policy for the "registrations" table.';
                         } else {
@@ -1022,7 +1155,7 @@
 
                 } catch (error) {
                     console.error('Submission error:', error);
-                    alert('An unexpected error occurred. Please check the console for details. If the Supabase URL is correct, ensure your project is active and reachable.');
+                    alert('An unexpected error occurred. Please check the console for details.');
                     nextBtn.disabled = false;
                     backBtn.disabled = false;
                 }
