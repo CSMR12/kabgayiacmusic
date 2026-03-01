@@ -109,7 +109,7 @@
             100% { transform: translate(40px, -30px) scale(1.02); }
         }
 
-        /* SPLASH OVERLAY: only image, big & free */
+        /* SPLASH OVERLAY: image + welcome message */
         .splash-overlay {
             position: fixed;
             top: 0;
@@ -119,6 +119,7 @@
             background: #d4eaff;
             z-index: 2000;
             display: flex;
+            flex-direction: column;   /* stack image and text */
             align-items: center;
             justify-content: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
@@ -132,6 +133,15 @@
             max-width: 500px;
             height: auto;
             animation: gentlePulse 2s infinite alternate ease-in-out;
+        }
+
+        .splash-welcome {
+            margin-top: 1.5rem;
+            font-size: 2.2rem;
+            font-weight: 500;
+            color: #1e5f7a;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            letter-spacing: 2px;
         }
 
         @keyframes gentlePulse {
@@ -200,6 +210,18 @@
             color: #2c4e66;
             font-weight: 300;
             margin-top: 0.4rem;
+            margin-bottom: 1.5rem;  /* space before kids image */
+        }
+
+        /* kids image - plain, no hover effects */
+        .kids-image {
+            display: block;
+            max-width: 280px;
+            width: 90%;
+            height: auto;
+            margin: 0 auto;
+            border-radius: 24px;   /* subtle rounding, but no hover */
+            box-shadow: none;
         }
 
         /* Horizontal scroll cards */
@@ -539,6 +561,7 @@
             .card-value { font-size: 1.4rem; }
             .contact-strip { gap: 1.2rem; }
             .side-logo { width: 50px; }
+            .splash-welcome { font-size: 1.8rem; }
         }
     </style>
 </head>
@@ -561,9 +584,10 @@
         <div class="blur-orb orb5"></div>
     </div>
 
-    <!-- SPLASH OVERLAY: only image (big, free) -->
+    <!-- SPLASH OVERLAY: image + welcome message -->
     <div class="splash-overlay" id="splashOverlay">
         <img src="image/hero.png" alt="splash" draggable="false">
+        <div class="splash-welcome">WELCOME!</div>
     </div>
 
     <!-- Logo on left side (appears after splash fades) -->
@@ -590,6 +614,8 @@
         <div class="title">
             <h1>Children's <span>Music School</span></h1>
             <p>Sacred music education for young talents</p>
+            <!-- kids image added below the tagline, plain and simple -->
+            <img src="image/kids.png" alt="kids" class="kids-image">
         </div>
 
         <!-- cards -->
