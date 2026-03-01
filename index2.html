@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kabgayi Music School · mobile</title>
+    <!-- Poppins font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #d4eaff;
+            color: #1e1e1e;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            font-size: 18px;
+        }
+
+        /* Moving blur background - sky blue enhanced */
+        .moving-blur {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .blur-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: moveBlur 20s infinite alternate ease-in-out;
+        }
+
+        .orb1 {
+            width: 600px;
+            height: 600px;
+            background: #9ac9ff;
+            top: -250px;
+            left: -150px;
+            animation-duration: 27s;
+        }
+
+        .orb2 {
+            width: 500px;
+            height: 500px;
+            background: #b3d9ff;
+            bottom: -200px;
+            right: -100px;
+            animation-duration: 24s;
+            animation-delay: -5s;
+        }
+
+        .orb3 {
+            width: 450px;
+            height: 450px;
+            background: #c5e0ff;
+            top: 30%;
+            right: 15%;
+            animation-duration: 30s;
+            animation-delay: -12s;
+        }
+
+        .orb4 {
+            width: 400px;
+            height: 400px;
+            background: #a8ceff;
+            bottom: 10%;
+            left: 20%;
+            animation-duration: 22s;
+            animation-delay: -8s;
+        }
+
+        .orb5 {
+            width: 550px;
+            height: 550px;
+            background: #d0e6ff;
+            top: 50%;
+            left: 40%;
+            animation-duration: 28s;
+            animation-delay: -3s;
+        }
+
+        @keyframes moveBlur {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(70px, -50px) scale(1.05); }
+            66% { transform: translate(-50px, 60px) scale(0.98); }
+            100% { transform: translate(40px, -30px) scale(1.02); }
+        }
+
+        /* Main container */
+        .welcome {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 1000px;
+            padding: 2rem 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Title with hero image */
+        .title {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .hero-image {
+            max-width: 180px;
+            height: auto;
+            margin-bottom: 1.2rem;
+            border-radius: 24px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .title h1 {
+            font-size: clamp(2.8rem, 8vw, 4rem);
+            font-weight: 600;
+            line-height: 1.2;
+            color: #1e1e1e;
+        }
+
+        .title h1 span {
+            color: #1e5f7a;
+            font-weight: 600;
+        }
+
+        .title p {
+            font-size: 1.2rem;
+            color: #2c4e66;
+            font-weight: 300;
+            margin-top: 0.4rem;
+        }
+
+        /* Horizontal scroll cards */
+        .cards-wrapper {
+            width: 100%;
+            max-width: 700px;
+            margin: 1.2rem auto 1.5rem;
+            position: relative;
+        }
+
+        .cards-scroll {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            padding: 0.5rem 0.2rem 1.2rem;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            cursor: grab;
+        }
+
+        .cards-scroll::-webkit-scrollbar {
+            display: none;
+        }
+        .cards-scroll {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .card-minimal {
+            flex: 0 0 200px;
+            scroll-snap-align: center;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(10px);
+            border-radius: 28px;
+            padding: 1.8rem 1.2rem;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .card-minimal:hover {
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(210, 235, 255, 0.9);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.2rem;
+            color: #1e5f7a;
+            font-size: 1.4rem;
+        }
+
+        .card-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #4a6375;
+            margin-bottom: 0.3rem;
+        }
+
+        .card-value {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #1e1e1e;
+            margin-bottom: 0.3rem;
+            line-height: 1.2;
+        }
+
+        .card-desc {
+            font-size: 0.9rem;
+            color: #5b7485;
+        }
+
+        /* Dots */
+        .dot-container {
+            display: flex;
+            justify-content: center;
+            gap: 0.7rem;
+            margin: 0.5rem 0 1.5rem;
+        }
+
+        .dot-minimal {
+            width: 8px;
+            height: 8px;
+            border-radius: 12px;
+            background: #a0bbd0;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .dot-minimal.active {
+            width: 24px;
+            background: #1e5f7a;
+        }
+
+        /* Buttons */
+        .actions {
+            display: flex;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 0.8rem 2.2rem;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            text-decoration: none;
+            border: none;
+            font-family: 'Poppins', sans-serif;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            color: #1e1e1e;
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        .btn-primary {
+            background: #1e3b4c;
+            color: white;
+            border: none;
+        }
+
+        .btn-primary i {
+            color: #ffd966;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary:hover {
+            background: #15303e;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.95);
+            transform: translateY(-1px);
+        }
+
+        /* Contact strip */
+        .contact-strip {
+            display: flex;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 60px;
+            padding: 0.8rem 2.2rem;
+            font-size: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            color: #1d445b;
+            text-decoration: none;
+            font-size: 1rem;
+        }
+
+        .contact-item i {
+            color: #1e5f7a;
+            width: 18px;
+            font-size: 1.2rem;
+        }
+
+        .dot-sep {
+            width: 4px;
+            height: 4px;
+            background: #8faec7;
+            border-radius: 50%;
+            align-self: center;
+        }
+
+        /* Fixed left vertical button */
+        .need-website-btn {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(30, 95, 122, 0.9);
+            backdrop-filter: blur(5px);
+            color: white;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            padding: 1.8rem 0.6rem;
+            border-radius: 0 16px 16px 0;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            cursor: pointer;
+            z-index: 100;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        .need-website-btn:hover {
+            background: #124c63;
+            padding: 2rem 0.7rem;
+        }
+
+        /* Popup box */
+        .popup-box {
+            position: fixed;
+            left: 80px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(20px);
+            border-radius: 28px;
+            padding: 1.8rem;
+            box-shadow: 0 25px 45px rgba(0,0,0,0.15);
+            z-index: 200;
+            min-width: 290px;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            display: none;
+        }
+
+        .popup-box.show {
+            display: block;
+        }
+
+        .popup-content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .popup-question {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #1e1e1e;
+        }
+
+        .popup-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .popup-btn {
+            padding: 0.7rem 1.8rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.1s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .popup-btn-yes {
+            background: #1e5f7a;
+            color: white;
+        }
+
+        .popup-btn-yes:hover { background: #134257; }
+        .popup-btn-no {
+            background: #e3ecf2;
+            color: #1e1e1e;
+        }
+        .popup-btn-no:hover { background: #d0dee8; }
+
+        .popup-message {
+            font-size: 1rem;
+            color: #1e5f7a;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        /* Footer */
+        .footer {
+            position: absolute;
+            bottom: 0.8rem;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #2f566b;
+            z-index: 20;
+        }
+
+        /* music control */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 300;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(8px);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: #1e5f7a;
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,0.8);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: 0.2s;
+        }
+        .music-control.playing {
+            color: #124c63;
+            background: rgba(210, 235, 255, 0.9);
+        }
+
+        /* mobile first adjustments */
+        @media (max-width: 600px) {
+            .popup-box {
+                left: 10px;
+                right: 10px;
+                top: auto;
+                bottom: 90px;
+                transform: none;
+                width: auto;
+            }
+            .card-minimal {
+                flex: 0 0 170px;
+                padding: 1.4rem 1rem;
+            }
+            .card-value { font-size: 1.4rem; }
+            .contact-strip { gap: 1rem; }
+            .hero-image { max-width: 150px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- redirect to index.html if large screen detected -->
+    <script>
+        (function() {
+            if (window.innerWidth > 1024) {
+                window.location.replace('index.html');
+            }
+        })();
+    </script>
+
+    <!-- moving sky blur -->
+    <div class="moving-blur">
+        <div class="blur-orb orb1"></div>
+        <div class="blur-orb orb2"></div>
+        <div class="blur-orb orb3"></div>
+        <div class="blur-orb orb4"></div>
+        <div class="blur-orb orb5"></div>
+    </div>
+
+    <!-- left vertical button -->
+    <div class="need-website-btn" id="needWebsiteBtn">
+        NEED A<br>WEBSITE?
+    </div>
+
+    <!-- popup box -->
+    <div class="popup-box" id="popupBox">
+        <div class="popup-content" id="popupContent">
+            <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
+            <div class="popup-buttons">
+                <button class="popup-btn popup-btn-yes" id="popupYes">YES</button>
+                <button class="popup-btn popup-btn-no" id="popupNo">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- main content -->
+    <div class="welcome">
+        <div class="title">
+            <!-- Hero image added above the heading -->
+            <img src="image/hero.png" alt="Children's Music School Hero" class="hero-image">
+            <h1>Children's <span>Music School</span></h1>
+            <p>Sacred music education for young talents</p>
+        </div>
+
+        <!-- cards -->
+        <div class="cards-wrapper">
+            <div class="cards-scroll" id="cardsScroll">
+                <div class="card-minimal"><div class="card-icon"><i class="far fa-calendar-alt"></i></div><div class="card-label">Registration</div><div class="card-value">01/03 – 15/03</div><div class="card-desc">March 2026</div></div>
+                <div class="card-minimal"><div class="card-icon"><i class="fas fa-church"></i></div><div class="card-label">Office</div><div class="card-value">Gitarama</div><div class="card-desc">Parish office</div></div>
+                <div class="card-minimal"><div class="card-icon"><i class="fas fa-church"></i></div><div class="card-label">Office</div><div class="card-value">Kabgayi</div><div class="card-desc">Parish office</div></div>
+                <div class="card-minimal"><div class="card-icon"><i class="fas fa-graduation-cap"></i></div><div class="card-label">Classes</div><div class="card-value">P2 – P5</div><div class="card-desc">Primary</div></div>
+                <div class="card-minimal"><div class="card-icon"><i class="fas fa-star"></i></div><div class="card-label">Minimum</div><div class="card-value">70%</div><div class="card-desc">First term</div></div>
+                <div class="card-minimal"><div class="card-icon"><i class="fab fa-whatsapp"></i></div><div class="card-label">Contact</div><div class="card-value">Fr. Pater</div><div class="card-desc">0789 209 371</div></div>
+            </div>
+            <div class="dot-container" id="dotContainer"></div>
+        </div>
+
+        <!-- buttons -->
+        <div class="actions">
+            <a href="register.html" class="btn btn-primary"><i class="fas fa-pen"></i> Apply now</a>
+            <a href="https://wa.me/250789209371" class="btn btn-secondary" target="_blank"><i class="fab fa-whatsapp"></i> Father Pater</a>
+        </div>
+
+        <!-- contact strip -->
+        <div class="contact-strip">
+            <a href="https://wa.me/250789209371" class="contact-item" target="_blank"><i class="fab fa-whatsapp"></i> 0789 209 371</a>
+            <span class="dot-sep"></span>
+            <span class="contact-item"><i class="fas fa-map-pin"></i> Gitarama</span>
+            <span class="dot-sep"></span>
+            <span class="contact-item"><i class="fas fa-map-pin"></i> Kabgayi</span>
+        </div>
+    </div>
+
+    <div class="footer">
+        Diocese Kabgayi · Children's Music School
+    </div>
+
+    <!-- music player -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="music/back.mp3" type="audio/mpeg">
+    </audio>
+    <div class="music-control" id="musicToggle" title="background music"><i class="fas fa-music"></i></div>
+
+    <script>
+        (function() {
+            // Cards auto-scroll
+            const scrollContainer = document.getElementById('cardsScroll');
+            const cards = document.querySelectorAll('.card-minimal');
+            const cardCount = cards.length;
+            const dotContainer = document.getElementById('dotContainer');
+
+            for (let i = 0; i < cardCount; i++) {
+                const dot = document.createElement('span');
+                dot.classList.add('dot-minimal');
+                dot.dataset.index = i;
+                dot.addEventListener('click', function() {
+                    const index = parseInt(this.dataset.index);
+                    scrollToCard(index);
+                    resetAutoScroll();
+                });
+                dotContainer.appendChild(dot);
+            }
+
+            const dots = document.querySelectorAll('.dot-minimal');
+
+            function scrollToCard(index) {
+                if (index >= 0 && index < cardCount) {
+                    const card = cards[index];
+                    const containerRect = scrollContainer.getBoundingClientRect();
+                    const cardRect = card.getBoundingClientRect();
+                    const scrollLeft = card.offsetLeft - (containerRect.width / 2) + (cardRect.width / 2);
+                    scrollContainer.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+                }
+            }
+
+            function updateActiveDot() {
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const containerCenter = containerRect.left + containerRect.width / 2;
+                let activeIndex = 0;
+                let minDistance = Infinity;
+                cards.forEach((card, idx) => {
+                    const cardRect = card.getBoundingClientRect();
+                    const cardCenter = cardRect.left + cardRect.width / 2;
+                    const distance = Math.abs(cardCenter - containerCenter);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        activeIndex = idx;
+                    }
+                });
+                dots.forEach((dot, idx) => {
+                    if (idx === activeIndex) dot.classList.add('active');
+                    else dot.classList.remove('active');
+                });
+                return activeIndex;
+            }
+
+            let autoScrollInterval;
+            let currentIndex = 0;
+
+            function startAutoScroll() {
+                if (autoScrollInterval) clearInterval(autoScrollInterval);
+                autoScrollInterval = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % cardCount;
+                    scrollToCard(currentIndex);
+                }, 3000);
+            }
+
+            function resetAutoScroll() {
+                if (autoScrollInterval) {
+                    clearInterval(autoScrollInterval);
+                    startAutoScroll();
+                }
+            }
+
+            scrollContainer.addEventListener('scroll', () => {
+                currentIndex = updateActiveDot();
+            });
+            scrollContainer.addEventListener('mouseenter', () => clearInterval(autoScrollInterval));
+            scrollContainer.addEventListener('mouseleave', startAutoScroll);
+            scrollContainer.addEventListener('touchstart', () => clearInterval(autoScrollInterval));
+            scrollContainer.addEventListener('touchend', startAutoScroll);
+
+            let isDown = false, startX, scrollLeft;
+            scrollContainer.addEventListener('mousedown', (e) => {
+                isDown = true;
+                scrollContainer.style.cursor = 'grabbing';
+                startX = e.pageX - scrollContainer.offsetLeft;
+                scrollLeft = scrollContainer.scrollLeft;
+            });
+            scrollContainer.addEventListener('mouseleave', () => { isDown = false; scrollContainer.style.cursor = 'grab'; });
+            scrollContainer.addEventListener('mouseup', () => { isDown = false; scrollContainer.style.cursor = 'grab'; });
+            scrollContainer.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - scrollContainer.offsetLeft;
+                const walk = (x - startX) * 1.5;
+                scrollContainer.scrollLeft = scrollLeft - walk;
+            });
+
+            updateActiveDot();
+            startAutoScroll();
+
+            // Website popup logic
+            const needBtn = document.getElementById('needWebsiteBtn');
+            const popup = document.getElementById('popupBox');
+            const popupContent = document.getElementById('popupContent');
+
+            function closePopup() { popup.classList.remove('show'); }
+
+            function openPopup() {
+                popupContent.innerHTML = `
+                    <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
+                    <div class="popup-buttons">
+                        <button class="popup-btn popup-btn-yes" id="popupYes">YES</button>
+                        <button class="popup-btn popup-btn-no" id="popupNo">NO</button>
+                    </div>
+                `;
+                document.getElementById('popupYes').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    window.open('https://mkbertrand.vercel.app/#contact', '_blank');
+                    closePopup();
+                });
+                document.getElementById('popupNo').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    popupContent.innerHTML = `<div class="popup-message">Text 0795 065 789 if you change your mind</div>`;
+                    setTimeout(closePopup, 3000);
+                });
+                popup.classList.add('show');
+            }
+
+            needBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (popup.classList.contains('show')) closePopup();
+                else openPopup();
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!popup.contains(e.target) && !needBtn.contains(e.target)) closePopup();
+            });
+            popup.addEventListener('click', e => e.stopPropagation());
+
+            // Audio autoplay with fallback
+            const audio = document.getElementById('bgMusic');
+            const toggleBtn = document.getElementById('musicToggle');
+            let audioPlaying = false;
+
+            function attemptPlay() {
+                audio.play().then(() => {
+                    audioPlaying = true;
+                    toggleBtn.classList.add('playing');
+                }).catch(() => {
+                    audioPlaying = false;
+                    toggleBtn.classList.remove('playing');
+                });
+            }
+
+            attemptPlay();
+
+            const firstInteraction = () => {
+                if (!audioPlaying) {
+                    audio.play().then(() => {
+                        audioPlaying = true;
+                        toggleBtn.classList.add('playing');
+                    }).catch(() => {});
+                }
+                document.removeEventListener('touchstart', firstInteraction);
+                document.removeEventListener('click', firstInteraction);
+            };
+            document.addEventListener('touchstart', firstInteraction);
+            document.addEventListener('click', firstInteraction);
+
+            toggleBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        toggleBtn.classList.add('playing');
+                        audioPlaying = true;
+                    }).catch(() => {});
+                } else {
+                    audio.pause();
+                    toggleBtn.classList.remove('playing');
+                    audioPlaying = false;
+                }
+            });
+
+            // Resize redirect
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 1024) {
+                    window.location.replace('index.html');
+                }
+            });
+        })();
+    </script>
+</body>
+</html>
