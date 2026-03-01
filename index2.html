@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kabgayi Music School · mobile</title>
+    <title>Kabgayi Music School · splash</title>
     <!-- Poppins font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,25 +21,28 @@
             font-family: 'Poppins', sans-serif;
             background: #d4eaff;
             color: #1e1e1e;
-            height: 100vh;
+            min-height: 100vh;
             width: 100vw;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;        /* allow scrolling for splash fade */
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: flex-start;
             position: relative;
             font-size: 18px;
         }
 
         /* Moving blur background - sky blue enhanced */
         .moving-blur {
-            position: absolute;
+            position: fixed;          /* cover whole viewport */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 0;
             overflow: hidden;
+            pointer-events: none;
         }
 
         .blur-orb {
@@ -106,18 +109,57 @@
             100% { transform: translate(40px, -30px) scale(1.02); }
         }
 
+        /* SPLASH OVERLAY: only image, fullscreen */
+        .splash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #d4eaff;   /* match sky background */
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;    /* blocks interaction until hidden */
+        }
+
+        .splash-overlay img {
+            width: 70%;
+            max-width: 320px;
+            height: auto;
+            border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            animation: gentlePulse 2s infinite alternate ease-in-out;
+        }
+
+        @keyframes gentlePulse {
+            0% { transform: scale(1); opacity: 0.9; }
+            100% { transform: scale(1.02); opacity: 1; }
+        }
+
+        .splash-overlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
         /* Main container */
         .welcome {
             position: relative;
             z-index: 10;
             width: 100%;
             max-width: 1000px;
-            padding: 2rem 1rem;
+            padding: 2rem 1rem 4rem;   /* extra bottom for scroll */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             animation: fadeIn 0.6s ease;
+            margin-top: 0;
         }
 
         @keyframes fadeIn {
@@ -365,7 +407,7 @@
             font-weight: 500;
             letter-spacing: 1px;
             cursor: pointer;
-            z-index: 100;
+            z-index: 2100;        /* above splash */
             border: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
@@ -389,7 +431,7 @@
             border-radius: 28px;
             padding: 1.8rem;
             box-shadow: 0 25px 45px rgba(0,0,0,0.15);
-            z-index: 200;
+            z-index: 2200;
             min-width: 290px;
             border: 1px solid rgba(255, 255, 255, 0.7);
             display: none;
@@ -449,14 +491,12 @@
 
         /* Footer */
         .footer {
-            position: absolute;
-            bottom: 0.8rem;
-            left: 0;
             width: 100%;
             text-align: center;
             font-size: 0.85rem;
             color: #2f566b;
             z-index: 20;
+            padding: 1rem 0 0.5rem;
         }
 
         /* music control */
@@ -464,7 +504,7 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            z-index: 300;
+            z-index: 2300;
             background: rgba(255,255,255,0.7);
             backdrop-filter: blur(8px);
             width: 48px;
@@ -515,7 +555,7 @@
         })();
     </script>
 
-    <!-- moving sky blur -->
+    <!-- moving sky blur (fixed) -->
     <div class="moving-blur">
         <div class="blur-orb orb1"></div>
         <div class="blur-orb orb2"></div>
@@ -524,7 +564,12 @@
         <div class="blur-orb orb5"></div>
     </div>
 
-    <!-- left vertical button -->
+    <!-- SPLASH OVERLAY: only image (hero.png) -->
+    <div class="splash-overlay" id="splashOverlay">
+        <img src="image/hero.png" alt="splash" draggable="false">
+    </div>
+
+    <!-- left vertical button (higher z-index) -->
     <div class="need-website-btn" id="needWebsiteBtn">
         NEED A<br>WEBSITE?
     </div>
@@ -543,7 +588,7 @@
     <!-- main content -->
     <div class="welcome">
         <div class="title">
-            <!-- Hero image added above the heading -->
+            <!-- Hero image again inside main content (visible after splash) -->
             <img src="image/hero.png" alt="Children's Music School Hero" class="hero-image">
             <h1>Children's <span>Music School</span></h1>
             <p>Sacred music education for young talents</p>
@@ -590,7 +635,34 @@
 
     <script>
         (function() {
-            // Cards auto-scroll
+            // ---------- SPLASH FADE ON SCROLL ----------
+            const splash = document.getElementById('splashOverlay');
+            let splashHidden = false;
+
+            function hideSplash() {
+                if (!splashHidden) {
+                    splash.classList.add('hidden');
+                    splashHidden = true;
+                    // remove listener after hiding
+                    window.removeEventListener('scroll', scrollHandler);
+                    window.removeEventListener('touchmove', scrollHandler);
+                }
+            }
+
+            function scrollHandler() {
+                if (window.scrollY > 5) {  // any tiny scroll
+                    hideSplash();
+                }
+            }
+
+            // Attach both scroll and touchmove to catch finger drag
+            window.addEventListener('scroll', scrollHandler);
+            window.addEventListener('touchmove', scrollHandler);
+
+            // Also if user tries to click the splash itself, we hide it (optional)
+            splash.addEventListener('click', hideSplash);
+
+            // ---------- CARDS SCROLL (unchanged) ----------
             const scrollContainer = document.getElementById('cardsScroll');
             const cards = document.querySelectorAll('.card-minimal');
             const cardCount = cards.length;
@@ -687,7 +759,7 @@
             updateActiveDot();
             startAutoScroll();
 
-            // Website popup logic
+            // ---------- WEBSITE POPUP ----------
             const needBtn = document.getElementById('needWebsiteBtn');
             const popup = document.getElementById('popupBox');
             const popupContent = document.getElementById('popupContent');
@@ -726,7 +798,7 @@
             });
             popup.addEventListener('click', e => e.stopPropagation());
 
-            // Audio autoplay with fallback
+            // ---------- AUDIO ----------
             const audio = document.getElementById('bgMusic');
             const toggleBtn = document.getElementById('musicToggle');
             let audioPlaying = false;
@@ -770,7 +842,7 @@
                 }
             });
 
-            // Resize redirect
+            // resize redirect
             window.addEventListener('resize', function() {
                 if (window.innerWidth > 1024) {
                     window.location.replace('index.html');
