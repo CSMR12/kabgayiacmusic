@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kabgayi · Admin Panel</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Poppins font (optional, for consistency) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Supabase client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #b8e1ff;
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+        /* Same moving blur background as before */
+        .moving-blur {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .blur-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: moveBlur 20s infinite alternate ease-in-out;
+        }
+        .orb1 { width: 600px; height: 600px; background: #b8e1ff; top: -250px; left: -150px; animation-duration: 27s; }
+        .orb2 { width: 500px; height: 500px; background: #ffecb3; bottom: -200px; right: -100px; animation-duration: 24s; animation-delay: -5s; }
+        .orb3 { width: 450px; height: 450px; background: #a0d0ff; top: 30%; right: 15%; animation-duration: 30s; animation-delay: -12s; }
+        .orb4 { width: 400px; height: 400px; background: #ffe0a0; bottom: 10%; left: 20%; animation-duration: 22s; animation-delay: -8s; }
+        .orb5 { width: 550px; height: 550px; background: #cce5ff; top: 50%; left: 40%; animation-duration: 28s; animation-delay: -3s; }
+        @keyframes moveBlur {
+            0% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(70px, -50px) scale(1.05); }
+            66% { transform: translate(-50px, 60px) scale(0.98); }
+            100% { transform: translate(40px, -30px) scale(1.02); }
+        }
+        /* White blur effects */
+        .white-blur {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;
+        }
+        .white-blur::before {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 40%;
+            background: radial-gradient(ellipse at bottom, rgba(255,255,255,0.7) 0%, transparent 70%);
+            filter: blur(30px);
+        }
+        .white-blur::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 30%; height: 30%;
+            background: radial-gradient(circle at top right, rgba(255,255,255,0.8) 0%, transparent 70%);
+            filter: blur(40px);
+        }
+        .corner-blur {
+            position: fixed; bottom: 0; right: 0; width: 30%; height: 30%;
+            background: radial-gradient(circle at bottom right, rgba(255,255,255,0.8) 0%, transparent 70%);
+            filter: blur(50px); pointer-events: none; z-index: 0;
+        }
+        /* Main card */
+        .admin-card {
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(12px);
+            border-radius: 32px;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+            position: relative;
+            z-index: 10;
+        }
+        /* Password overlay */
+        #passwordOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .password-box {
+            background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        /* Left button (same as before) */
+        .need-website-btn {
+            position: fixed; left: 0; top: 50%; transform: translateY(-50%);
+            background: rgba(44,125,160,0.9); backdrop-filter: blur(5px); color: white;
+            writing-mode: vertical-rl; text-orientation: mixed;
+            padding: 1.5rem 0.4rem; border-radius: 0 12px 12px 0;
+            font-size: 0.8rem; font-weight: 500; letter-spacing: 1px; cursor: pointer;
+            z-index: 100; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.2s ease; line-height: 1.4;
+        }
+        .need-website-btn:hover { background: #1e5f7a; padding: 1.8rem 0.5rem; }
+        /* Popup */
+        .popup-box {
+            position: fixed; left: 70px; top: 50%; transform: translateY(-50%);
+            background: rgba(255,255,255,0.95); backdrop-filter: blur(15px);
+            border-radius: 20px; padding: 1.5rem; box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            z-index: 200; min-width: 260px; border: 1px solid rgba(255,255,255,0.5);
+            display: none;
+        }
+        .popup-box.show { display: block; }
+        .popup-content { display: flex; flex-direction: column; gap: 1rem; }
+        .popup-question { font-size: 0.95rem; font-weight: 500; color: #1e1e1e; }
+        .popup-buttons { display: flex; gap: 0.8rem; justify-content: center; }
+        .popup-btn { padding: 0.5rem 1.2rem; border-radius: 20px; font-size: 0.8rem; font-weight: 500; border: none; cursor: pointer; }
+        .popup-btn-yes { background: #2c7da0; color: white; }
+        .popup-btn-yes:hover { background: #1e5f7a; }
+        .popup-btn-no { background: #f0f0f0; color: #1e1e1e; }
+        .popup-btn-no:hover { background: #e0e0e0; }
+        .popup-message { font-size: 0.9rem; color: #2c7da0; text-align: center; }
+        .footer {
+            position: fixed; bottom: 1rem; left: 0; width: 100%; text-align: center;
+            font-size: 0.6rem; color: #2c3e50; z-index: 20;
+        }
+        /* Table responsive */
+        .table-responsive {
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .table {
+            background: rgba(255,255,255,0.6);
+            backdrop-filter: blur(4px);
+            margin-bottom: 0;
+        }
+        .table thead th {
+            background: rgba(44,125,160,0.2);
+            color: #1e3a4a;
+            font-weight: 500;
+            font-size: 0.8rem;
+        }
+        .table td, .table th {
+            padding: 0.75rem;
+            vertical-align: middle;
+            font-size: 0.8rem;
+        }
+        .badge-yes {
+            background: #2c7da0;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+        .badge-no {
+            background: #e74c3c;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+        }
+        .search-box {
+            max-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Background effects -->
+    <div class="moving-blur">
+        <div class="blur-orb orb1"></div>
+        <div class="blur-orb orb2"></div>
+        <div class="blur-orb orb3"></div>
+        <div class="blur-orb orb4"></div>
+        <div class="blur-orb orb5"></div>
+    </div>
+    <div class="white-blur"></div>
+    <div class="corner-blur"></div>
+
+    <!-- Left button -->
+    <div class="need-website-btn" id="needWebsiteBtn">
+        NEED A<br>WEBSITE?
+    </div>
+    <!-- Popup -->
+    <div class="popup-box" id="popupBox">
+        <div class="popup-content" id="popupContent">
+            <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
+            <div class="popup-buttons">
+                <button class="popup-btn popup-btn-yes" id="popupYes">YES</button>
+                <button class="popup-btn popup-btn-no" id="popupNo">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Password overlay -->
+    <div id="passwordOverlay">
+        <div class="password-box">
+            <h4 class="mb-3">Admin Access</h4>
+            <p class="small text-secondary">Enter password to view registrations</p>
+            <input type="password" class="form-control mb-3" id="passwordInput" placeholder="Password">
+            <button class="btn btn-primary w-100" id="submitPassword">Access Panel</button>
+            <div class="text-danger small mt-2" id="passwordError" style="display: none;">Incorrect password</div>
+        </div>
+    </div>
+
+    <!-- Main admin panel (initially hidden) -->
+    <div class="container" id="adminPanel" style="display: none;">
+        <div class="admin-card">
+            <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
+                <h3 class="mb-2 mb-sm-0">📋 Registrations</h3>
+                <div class="d-flex gap-2">
+                    <div class="search-box">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search by name or email...">
+                    </div>
+                    <button class="btn btn-outline-primary" id="refreshBtn"><i class="fas fa-sync-alt"></i></button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Contact</th>
+                            <th>Email</th>
+                            <th>Province</th>
+                            <th>District</th>
+                            <th>Sector</th>
+                            <th>Study</th>
+                            <th>Report</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr><td colspan="11" class="text-center py-4">Loading...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-2 small text-secondary">
+                Total: <span id="totalCount">0</span> entries
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        Diocese Kabgayi · Académie de Musique Sacrée · Children's Music School
+    </div>
+
+    <!-- Bootstrap JS (optional for some components) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        (function() {
+            // ===== SUPABASE INIT (same as register) =====
+            const supabaseUrl = 'https://amnkoumnvwyjzqcwxord.supabase.co';
+            const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+                auth: { persistSession: false }
+            });
+
+            // ===== PASSWORD PROTECTION =====
+            const overlay = document.getElementById('passwordOverlay');
+            const adminPanel = document.getElementById('adminPanel');
+            const passwordInput = document.getElementById('passwordInput');
+            const submitBtn = document.getElementById('submitPassword');
+            const passwordError = document.getElementById('passwordError');
+            const correctPassword = 'admin123';
+
+            submitBtn.addEventListener('click', checkPassword);
+            passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
+
+            function checkPassword() {
+                if (passwordInput.value === correctPassword) {
+                    overlay.style.display = 'none';
+                    adminPanel.style.display = 'block';
+                    loadRegistrations(); // load data after successful login
+                } else {
+                    passwordError.style.display = 'block';
+                }
+            }
+
+            // ===== LOAD AND DISPLAY REGISTRATIONS =====
+            const tableBody = document.getElementById('tableBody');
+            const searchInput = document.getElementById('searchInput');
+            const refreshBtn = document.getElementById('refreshBtn');
+            const totalSpan = document.getElementById('totalCount');
+
+            let allRegistrations = [];
+
+            async function loadRegistrations() {
+                tableBody.innerHTML = '<tr><td colspan="11" class="text-center py-4">Loading...</td></tr>';
+                try {
+                    const { data, error } = await supabase
+                        .from('registrations')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+
+                    if (error) throw error;
+                    allRegistrations = data || [];
+                    filterAndRender();
+                } catch (err) {
+                    console.error(err);
+                    tableBody.innerHTML = '<tr><td colspan="11" class="text-center py-4 text-danger">Error loading data</td></tr>';
+                }
+            }
+
+            function filterAndRender() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const filtered = allRegistrations.filter(item => {
+                    return (
+                        item.first_name?.toLowerCase().includes(searchTerm) ||
+                        item.last_name?.toLowerCase().includes(searchTerm) ||
+                        item.email?.toLowerCase().includes(searchTerm) ||
+                        item.contact?.includes(searchTerm)
+                    );
+                });
+                renderTable(filtered);
+                totalSpan.textContent = filtered.length;
+            }
+
+            function renderTable(data) {
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="11" class="text-center py-4">No registrations found</td></tr>';
+                    return;
+                }
+
+                let html = '';
+                data.forEach(item => {
+                    const studyBadge = item.study ? '<span class="badge-yes">Yes</span>' : '<span class="badge-no">No</span>';
+                    const reportLink = item.report_image_url ? 
+                        `<a href="${item.report_image_url}" target="_blank" class="text-primary"><i class="fas fa-image"></i> View</a>` : 
+                        '—';
+                    const created = item.created_at ? new Date(item.created_at).toLocaleDateString() : '—';
+                    html += `
+                        <tr>
+                            <td>${item.id || '—'}</td>
+                            <td>${item.first_name || ''}</td>
+                            <td>${item.last_name || ''}</td>
+                            <td>${item.contact || ''}</td>
+                            <td>${item.email || ''}</td>
+                            <td>${item.province || ''}</td>
+                            <td>${item.district || ''}</td>
+                            <td>${item.sector || ''}</td>
+                            <td>${studyBadge}</td>
+                            <td>${reportLink}</td>
+                            <td>${created}</td>
+                        </tr>
+                    `;
+                });
+                tableBody.innerHTML = html;
+            }
+
+            // Event listeners for search and refresh
+            searchInput.addEventListener('input', filterAndRender);
+            refreshBtn.addEventListener('click', loadRegistrations);
+
+            // ===== NEED WEBSITE POPUP (same as before) =====
+            const needBtn = document.getElementById('needWebsiteBtn');
+            const popup = document.getElementById('popupBox');
+            const popupContent = document.getElementById('popupContent');
+
+            function closePopup() { popup.classList.remove('show'); }
+            function openPopup() {
+                popupContent.innerHTML = `
+                    <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
+                    <div class="popup-buttons">
+                        <button class="popup-btn popup-btn-yes" id="popupYes">YES</button>
+                        <button class="popup-btn popup-btn-no" id="popupNo">NO</button>
+                    </div>
+                `;
+                document.getElementById('popupYes').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    window.open('https://mkbertrand.vercel.app/#contact', '_blank');
+                    closePopup();
+                });
+                document.getElementById('popupNo').addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    popupContent.innerHTML = `<div class="popup-message">Text 0795 065 789 if you change your mind</div>`;
+                    setTimeout(closePopup, 3000);
+                });
+                popup.classList.add('show');
+            }
+            needBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (popup.classList.contains('show')) closePopup(); else openPopup();
+            });
+            document.addEventListener('click', function(e) {
+                if (!popup.contains(e.target) && !needBtn.contains(e.target)) closePopup();
+            });
+            popup.addEventListener('click', (e) => e.stopPropagation());
+
+            // Note: We don't auto‑play music on admin page (optional)
+        })();
+    </script>
+</body>
+</html>
