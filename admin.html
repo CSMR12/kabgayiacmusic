@@ -142,15 +142,15 @@
             background: rgba(255,255,255,0.6);
             transform: translateY(-2px);
         }
-        .badge-unread {
+        .badge-submission {
             background: #2c7da0;
             color: white;
             border-radius: 20px;
             padding: 0.3rem 0.8rem;
             font-size: 0.7rem;
         }
-        .badge-seen {
-            background: #6c757d;
+        .badge-done {
+            background: #28a745;
             color: white;
             border-radius: 20px;
             padding: 0.3rem 0.8rem;
@@ -184,11 +184,6 @@
         }
         .search-box {
             max-width: 300px;
-        }
-        /* Action buttons */
-        .action-btn {
-            padding: 0.2rem 0.6rem;
-            font-size: 0.8rem;
         }
         /* Mobile adjustments */
         @media (max-width: 576px) {
@@ -253,26 +248,26 @@
             <!-- Tabs -->
             <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-submissions-tab" data-bs-toggle="pill" data-bs-target="#pills-submissions" type="button" role="tab">Submissions <span class="badge bg-light text-dark ms-1" id="unreadCount">0</span></button>
+                    <button class="nav-link active" id="pills-submissions-tab" data-bs-toggle="pill" data-bs-target="#pills-submissions" type="button" role="tab">Submissions <span class="badge bg-light text-dark ms-1" id="submissionsCount">0</span></button>
                 </li>
                 <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-seen-tab" data-bs-toggle="pill" data-bs-target="#pills-seen" type="button" role="tab">Seen <span class="badge bg-light text-dark ms-1" id="seenCount">0</span></button>
+                    <button class="nav-link" id="pills-done-tab" data-bs-toggle="pill" data-bs-target="#pills-done" type="button" role="tab">Done <span class="badge bg-light text-dark ms-1" id="doneCount">0</span></button>
                 </li>
             </ul>
 
             <!-- Tab content -->
             <div class="tab-content" id="pills-tabContent">
-                <!-- Submissions tab (unread) -->
+                <!-- Submissions tab (not done) -->
                 <div class="tab-pane fade show active" id="pills-submissions" role="tabpanel">
                     <div class="list-group" id="submissionsList"></div>
                 </div>
-                <!-- Seen tab -->
-                <div class="tab-pane fade" id="pills-seen" role="tabpanel">
-                    <div class="list-group" id="seenList"></div>
+                <!-- Done tab -->
+                <div class="tab-pane fade" id="pills-done" role="tabpanel">
+                    <div class="list-group" id="doneList"></div>
                 </div>
             </div>
 
-            <!-- Error and total (optional) -->
+            <!-- Error and total -->
             <div class="d-flex justify-content-between align-items-center mt-2">
                 <span class="small text-secondary" id="totalDisplay"></span>
                 <span class="small" id="errorMsg" style="color: #e74c3c;"></span>
@@ -292,9 +287,8 @@
                 <div class="modal-body">
                     <div id="modalContent"></div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="modalDeleteBtn">Delete</button>
+                <div class="modal-footer" id="modalFooter">
+                    <!-- Buttons will be inserted dynamically -->
                 </div>
             </div>
         </div>
@@ -357,30 +351,30 @@
 
             // ===== STATE =====
             let allRegistrations = [];
-            let currentItem = null; // for modal delete
+            let currentItem = null; // for modal
             let deleteId = null;
 
             // DOM elements
             const submissionsList = document.getElementById('submissionsList');
-            const seenList = document.getElementById('seenList');
+            const doneList = document.getElementById('doneList');
             const searchInput = document.getElementById('searchInput');
             const refreshBtn = document.getElementById('refreshBtn');
             const exportBtn = document.getElementById('exportBtn');
             const errorMsg = document.getElementById('errorMsg');
             const errorDetails = document.getElementById('errorDetails');
-            const unreadCount = document.getElementById('unreadCount');
-            const seenCount = document.getElementById('seenCount');
+            const submissionsCount = document.getElementById('submissionsCount');
+            const doneCount = document.getElementById('doneCount');
             const totalDisplay = document.getElementById('totalDisplay');
             const modalContent = document.getElementById('modalContent');
+            const modalFooter = document.getElementById('modalFooter');
             const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
             const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-            const modalDeleteBtn = document.getElementById('modalDeleteBtn');
 
             // ===== LOAD DATA =====
             async function loadRegistrations() {
                 submissionsList.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div> Loading...</div>';
-                seenList.innerHTML = '';
+                doneList.innerHTML = '';
                 errorMsg.textContent = '';
                 errorDetails.style.display = 'none';
                 errorDetails.textContent = '';
@@ -394,10 +388,10 @@
                     if (error) throw error;
 
                     allRegistrations = data || [];
-                    // Ensure each has a 'seen' field (default false if missing)
+                    // Ensure each has a 'done' field (default false if missing)
                     allRegistrations = allRegistrations.map(item => ({
                         ...item,
-                        seen: item.seen === undefined ? false : item.seen
+                        done: item.done === undefined ? false : item.done
                     }));
                     filterAndRender();
                 } catch (err) {
@@ -426,18 +420,18 @@
                     );
                 });
 
-                const unread = filtered.filter(item => !item.seen);
-                const seen = filtered.filter(item => item.seen);
+                const notDone = filtered.filter(item => !item.done);
+                const done = filtered.filter(item => item.done);
 
-                unreadCount.textContent = unread.length;
-                seenCount.textContent = seen.length;
+                submissionsCount.textContent = notDone.length;
+                doneCount.textContent = done.length;
                 totalDisplay.textContent = `Total: ${filtered.length} entries`;
 
-                renderList(unread, submissionsList, false);
-                renderList(seen, seenList, true);
+                renderList(notDone, submissionsList, false);
+                renderList(done, doneList, true);
             }
 
-            function renderList(items, container, isSeen) {
+            function renderList(items, container, isDone) {
                 if (items.length === 0) {
                     container.innerHTML = '<div class="text-center py-4 text-secondary">No registrations found</div>';
                     return;
@@ -454,7 +448,7 @@
                                     <strong>${escapeHtml(fullName)}</strong><br>
                                     <small class="text-secondary">${escapeHtml(item.email || '')} · ${date}</small>
                                 </div>
-                                <span class="badge ${isSeen ? 'badge-seen' : 'badge-unread'}">${isSeen ? 'Seen' : 'New'}</span>
+                                <span class="badge ${isDone ? 'badge-done' : 'badge-submission'}">${isDone ? 'Done' : 'New'}</span>
                             </div>
                         </div>
                     `;
@@ -478,9 +472,8 @@
             }
 
             // ===== SHOW DETAIL MODAL =====
-            async function showDetail(item) {
+            function showDetail(item) {
                 currentItem = item;
-                // Build modal content
                 const studyText = item.study ? 'Yes' : 'No';
                 const date = item.created_at ? new Date(item.created_at).toLocaleString() : '—';
                 const imageHtml = item.report_image_url 
@@ -496,44 +489,54 @@
                     <div class="info-row"><span class="info-label">Sector:</span><span class="info-value">${escapeHtml(item.sector || '')}</span></div>
                     <div class="info-row"><span class="info-label">Study:</span><span class="info-value">${studyText}</span></div>
                     <div class="info-row"><span class="info-label">Submitted:</span><span class="info-value">${date}</span></div>
-                    <div class="info-row"><span class="info-label">Status:</span><span class="info-value">${item.seen ? 'Seen' : 'New'}</span></div>
+                    <div class="info-row"><span class="info-label">Status:</span><span class="info-value">${item.done ? 'Done' : 'New'}</span></div>
                     <hr>
                     <div class="text-center">${imageHtml}</div>
                 `;
 
-                // If item is not seen, mark as seen
-                if (!item.seen) {
-                    await markAsSeen(item.id);
+                // Set footer buttons based on done status
+                if (item.done) {
+                    modalFooter.innerHTML = `
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="modalDeleteBtn">Delete</button>
+                    `;
+                    document.getElementById('modalDeleteBtn').addEventListener('click', () => {
+                        deleteId = item.id;
+                        deleteModal.show();
+                    });
+                } else {
+                    modalFooter.innerHTML = `
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-success" id="modalDoneBtn">Mark as Done</button>
+                    `;
+                    document.getElementById('modalDoneBtn').addEventListener('click', () => {
+                        markAsDone(item.id);
+                    });
                 }
 
                 detailModal.show();
             }
 
-            // ===== MARK AS SEEN =====
-            async function markAsSeen(id) {
+            // ===== MARK AS DONE =====
+            async function markAsDone(id) {
                 try {
                     const { error } = await supabase
                         .from('registrations')
-                        .update({ seen: true })
+                        .update({ done: true })
                         .eq('id', id);
                     if (error) throw error;
                     // Update local state
                     const index = allRegistrations.findIndex(r => r.id == id);
-                    if (index !== -1) allRegistrations[index].seen = true;
-                    filterAndRender(); // refresh lists
+                    if (index !== -1) allRegistrations[index].done = true;
+                    filterAndRender();
+                    detailModal.hide();
                 } catch (err) {
-                    console.error('Error marking as seen:', err);
+                    console.error('Error marking as done:', err);
+                    alert('Failed to mark as done: ' + err.message);
                 }
             }
 
             // ===== DELETE =====
-            modalDeleteBtn.addEventListener('click', () => {
-                if (currentItem) {
-                    deleteId = currentItem.id;
-                    deleteModal.show();
-                }
-            });
-
             confirmDeleteBtn.addEventListener('click', async () => {
                 if (!deleteId) return;
                 confirmDeleteBtn.disabled = true;
@@ -567,7 +570,7 @@
                     alert('No data to export');
                     return;
                 }
-                const headers = ['ID','First Name','Last Name','Contact','Email','Province','District','Sector','Study','Report URL','Created At','Seen'];
+                const headers = ['ID','First Name','Last Name','Contact','Email','Province','District','Sector','Study','Report URL','Created At','Done'];
                 const rows = allRegistrations.map(item => [
                     item.id,
                     item.first_name,
@@ -580,7 +583,7 @@
                     item.study ? 'Yes' : 'No',
                     item.report_image_url || '',
                     item.created_at,
-                    item.seen ? 'Seen' : 'New'
+                    item.done ? 'Done' : 'New'
                 ]);
                 let csv = headers.join(',') + '\n' + rows.map(row => 
                     row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
