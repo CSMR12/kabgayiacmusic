@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Maintenance Control · Kabgayi</title>
-    <!-- Poppins font -->
+    <!-- Inter font (Google Fonts) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
@@ -29,7 +29,6 @@
             padding: 24px;
         }
 
-        /* Main card - Google Material Design style */
         .control-card {
             background: white;
             border-radius: 28px;
@@ -52,7 +51,6 @@
             }
         }
 
-        /* Header */
         .header {
             margin-bottom: 2rem;
             text-align: center;
@@ -88,7 +86,6 @@
             line-height: 1.5;
         }
 
-        /* Toggle Section */
         .toggle-section {
             background: #f8f9fa;
             border-radius: 20px;
@@ -121,7 +118,6 @@
             color: #5f6368;
         }
 
-        /* Custom Toggle Switch - Google Style */
         .switch {
             position: relative;
             display: inline-block;
@@ -199,7 +195,6 @@
             color: #34a853;
         }
 
-        /* Info Cards */
         .info-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -235,7 +230,6 @@
             color: #5f6368;
         }
 
-        /* Button */
         .refresh-btn {
             width: 100%;
             padding: 0.85rem;
@@ -259,7 +253,6 @@
             border-color: #1a73e8;
         }
 
-        /* Password Overlay */
         .password-overlay {
             position: fixed;
             top: 0;
@@ -362,7 +355,6 @@
             display: none;
         }
 
-        /* Loading */
         .loading {
             text-align: center;
             padding: 3rem;
@@ -388,7 +380,6 @@
             font-size: 0.85rem;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             margin-top: 1.5rem;
@@ -398,7 +389,6 @@
             color: #5f6368;
         }
 
-        /* Responsive */
         @media (max-width: 480px) {
             .control-card {
                 padding: 1.5rem;
@@ -427,7 +417,7 @@
             const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
             
             // Create supabase client
-            const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
                 auth: { persistSession: false }
             });
 
@@ -495,23 +485,32 @@
                     `;
 
                     try {
-                        // Ensure table exists and get data
-                        await this.ensureTableExists();
-                        
-                        const { data, error } = await supabaseClient
+                        // First, try to get the current status
+                        const { data, error } = await supabase
                             .from('maintenance_settings')
                             .select('*')
                             .eq('id', 1)
-                            .single();
+                            .maybeSingle();
 
-                        if (error && error.code !== 'PGRST116') throw error;
+                        if (error) {
+                            // If table doesn't exist, try to create it
+                            if (error.code === '42P01') {
+                                await this.createTable();
+                                // After creating, try again
+                                return this.loadMaintenanceStatus();
+                            }
+                            throw error;
+                        }
 
                         currentStatus = data ? data.is_active : false;
                         
                         if (!data) {
-                            await supabaseClient
+                            // Create initial record
+                            const { error: insertError } = await supabase
                                 .from('maintenance_settings')
                                 .insert([{ id: 1, is_active: false }]);
+                            
+                            if (insertError) throw insertError;
                             currentStatus = false;
                         }
 
@@ -535,25 +534,30 @@
                                 <button class="refresh-btn" onclick="location.reload()">
                                     <i class="fas fa-sync-alt"></i> Try Again
                                 </button>
+                                <div style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 12px; font-size: 0.75rem;">
+                                    <strong>Setup Required:</strong><br>
+                                    Run this SQL in Supabase SQL editor:<br>
+                                    <code style="font-size: 0.65rem; display: block; margin-top: 0.5rem; word-break: break-all;">
+                                    CREATE TABLE maintenance_settings (<br>
+                                        id INTEGER PRIMARY KEY DEFAULT 1,<br>
+                                        is_active BOOLEAN DEFAULT false,<br>
+                                        updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()<br>
+                                    );<br>
+                                    INSERT INTO maintenance_settings (id, is_active) VALUES (1, false);<br>
+                                    ALTER TABLE maintenance_settings ENABLE ROW LEVEL SECURITY;<br>
+                                    CREATE POLICY "Allow all" ON maintenance_settings USING (true);
+                                    </code>
+                                </div>
                             </div>
                         `;
                     }
                 }
 
-                async ensureTableExists() {
-                    try {
-                        const { error } = await supabaseClient
-                            .from('maintenance_settings')
-                            .select('count')
-                            .limit(1);
-                        
-                        if (error && error.code === '42P01') {
-                            console.warn('Table does not exist. Please run SQL setup.');
-                            throw new Error('Maintenance table not found. Please check console for setup instructions.');
-                        }
-                    } catch (err) {
-                        throw err;
-                    }
+                async createTable() {
+                    // Note: This will only work if you have proper permissions
+                    // Usually you need to create tables manually in Supabase
+                    console.log('Table creation needed. Please run SQL manually.');
+                    throw new Error('Table "maintenance_settings" does not exist. Please create it in Supabase SQL editor.');
                 }
 
                 renderControlPanel() {
@@ -645,21 +649,21 @@
 
                 async updateMaintenanceStatus(isActive) {
                     try {
-                        const { error } = await supabaseClient
+                        // Update using upsert
+                        const { error } = await supabase
                             .from('maintenance_settings')
                             .upsert({ 
                                 id: 1, 
                                 is_active: isActive,
                                 updated_at: new Date().toISOString()
-                            });
+                            }, { onConflict: 'id' });
 
                         if (error) throw error;
 
                         currentStatus = isActive;
                         this.renderControlPanel();
                         
-                        // Show feedback
-                        this.showNotification(isActive ? 'Maintenance mode activated' : 'Website is now live');
+                        this.showNotification(isActive ? 'Maintenance mode activated ✓' : 'Website is now live ✓');
                     } catch (err) {
                         console.error('Error updating status:', err);
                         this.showNotification('Failed to update: ' + err.message, 'error');
@@ -669,11 +673,11 @@
 
                 async updateTimestamp() {
                     try {
-                        const { data } = await supabaseClient
+                        const { data } = await supabase
                             .from('maintenance_settings')
                             .select('updated_at')
                             .eq('id', 1)
-                            .single();
+                            .maybeSingle();
                         
                         const lastUpdatedSpan = document.getElementById('lastUpdated');
                         if (lastUpdatedSpan && data && data.updated_at) {
@@ -688,7 +692,6 @@
                 }
 
                 showNotification(message, type = 'success') {
-                    // Create temporary notification
                     const notification = document.createElement('div');
                     notification.style.cssText = `
                         position: fixed;
@@ -705,6 +708,7 @@
                         box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                         animation: slideUp 0.3s ease;
                         pointer-events: none;
+                        font-family: 'Inter', sans-serif;
                     `;
                     notification.textContent = message;
                     document.body.appendChild(notification);
