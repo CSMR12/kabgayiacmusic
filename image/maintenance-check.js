@@ -1,6 +1,4 @@
-// maintenance-check.js
-// This file should be included in all HTML pages (index.html, index2.html, admin.html)
-
+// maintenance-check.js - Include this in all pages
 (function() {
     const supabaseUrl = 'https://amnkoumnvwyjzqcwxord.supabase.co';
     const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
@@ -32,15 +30,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
         .maintenance-box {
             text-align: center;
             padding: 3rem;
             background: white;
-            border-radius: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            border-radius: 28px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.08);
             max-width: 500px;
             margin: 20px;
             animation: fadeInUp 0.6s ease;
@@ -68,18 +66,19 @@
             font-weight: 600;
             color: #1e1e1e;
             margin-bottom: 1rem;
+            letter-spacing: -0.3px;
         }
         
         .maintenance-message {
             font-size: 1rem;
-            color: #666;
+            color: #5f6368;
             margin-bottom: 1.5rem;
             line-height: 1.6;
         }
         
         .learn-more-link {
             display: inline-block;
-            color: #0070f3;
+            color: #1a73e8;
             text-decoration: none;
             font-weight: 500;
             margin-top: 1rem;
@@ -87,14 +86,14 @@
         }
         
         .learn-more-link:hover {
-            color: #0050b3;
+            color: #1557b0;
             text-decoration: underline;
         }
         
         .separator {
             width: 50px;
             height: 2px;
-            background: #eaeaea;
+            background: #e8eaed;
             margin: 1rem auto;
         }
     `;
@@ -115,11 +114,11 @@
                 </svg>
                 <h1 class="maintenance-title">Website Needs Maintenance</h1>
                 <p class="maintenance-message">
-                    The website is currently under scheduled maintenance.<br>
+                    The website is currently undergoing scheduled maintenance.<br>
                     We'll be back online shortly.
                 </p>
                 <div class="separator"></div>
-                <p class="maintenance-message" style="font-size: 0.9rem; color: #888;">
+                <p class="maintenance-message" style="font-size: 0.9rem; color: #5f6368;">
                     Contact the creator for more information.
                 </p>
                 <a href="https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configuring-dependabot-security-updates" 
@@ -130,13 +129,10 @@
         `;
         
         document.body.appendChild(maintenanceOverlay);
-        
-        // Prevent scrolling
         document.body.style.overflow = 'hidden';
         
         // Hide all other content
-        const allChildren = document.body.children;
-        for (let child of allChildren) {
+        for (let child of document.body.children) {
             if (child !== maintenanceOverlay) {
                 child.style.display = 'none';
             }
@@ -150,8 +146,7 @@
         }
         
         // Restore all content
-        const allChildren = document.body.children;
-        for (let child of allChildren) {
+        for (let child of document.body.children) {
             child.style.display = '';
         }
         
@@ -164,7 +159,7 @@
                 .from('maintenance_settings')
                 .select('is_active')
                 .eq('id', 1)
-                .single();
+                .maybeSingle();
             
             if (error) {
                 console.error('Error checking maintenance status:', error);
@@ -186,7 +181,7 @@
     }
     
     // Initial check
-    checkMaintenanceStatus();
+    setTimeout(checkMaintenanceStatus, 1000);
     
     // Check every 10 seconds
     maintenanceCheckInterval = setInterval(checkMaintenanceStatus, 10000);
