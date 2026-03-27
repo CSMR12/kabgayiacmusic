@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kabgayi Music Academy </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kabgayi Music School </title>
     <!-- Poppins font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +19,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #d4eaff; /* sky base */
+            background: #d4eaff;
             color: #1e1e1e;
             min-height: 100vh;
             width: 100vw;
@@ -30,10 +30,10 @@
             align-items: center;
             justify-content: flex-start;
             position: relative;
-            font-size: 16px; /* base for desktop */
+            font-size: 18px;
         }
 
-        /* Moving blur background - sky blue enhanced (fixed) */
+        /* Moving blur background - sky blue enhanced */
         .moving-blur {
             position: fixed;
             top: 0;
@@ -109,7 +109,7 @@
             100% { transform: translate(40px, -30px) scale(1.02); }
         }
 
-        /* SPLASH OVERLAY: hero image + WELCOME! */
+        /* SPLASH OVERLAY: image + welcome message */
         .splash-overlay {
             position: fixed;
             top: 0;
@@ -119,7 +119,7 @@
             background: #d4eaff;
             z-index: 2000;
             display: flex;
-            flex-direction: column;
+            flex-direction: column;   /* stack image and text */
             align-items: center;
             justify-content: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
@@ -129,15 +129,15 @@
         }
 
         .splash-overlay img {
-            width: 60%;
-            max-width: 600px;
+            width: 80%;
+            max-width: 500px;
             height: auto;
             animation: gentlePulse 2s infinite alternate ease-in-out;
         }
 
         .splash-welcome {
             margin-top: 1.5rem;
-            font-size: 3rem;
+            font-size: 2.2rem;
             font-weight: 500;
             color: #1e5f7a;
             text-shadow: 0 2px 10px rgba(0,0,0,0.05);
@@ -160,13 +160,11 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            width: 70px;
+            width: 60px;
             height: auto;
             z-index: 1500;
             transition: opacity 0.5s ease;
-            pointer-events: none; /* doesn't block clicks */
-            border-radius: 16px;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+            pointer-events: none; /* so it doesn't block clicks */
         }
 
         /* Main container */
@@ -174,8 +172,8 @@
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 1200px; /* wider for desktop */
-            padding: 2rem 2rem 4rem;
+            max-width: 1000px;
+            padding: 2rem 1rem 4rem;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -189,14 +187,14 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Title */
+        /* Title (no extra hero image) */
         .title {
             text-align: center;
             margin-bottom: 2rem;
         }
 
         .title h1 {
-            font-size: clamp(2.8rem, 5vw, 4rem);
+            font-size: clamp(2.8rem, 8vw, 4rem);
             font-weight: 600;
             line-height: 1.2;
             color: #1e1e1e;
@@ -212,34 +210,33 @@
             color: #2c4e66;
             font-weight: 300;
             margin-top: 0.4rem;
-            margin-bottom: 2rem; /* space for kids image */
+            margin-bottom: 1.5rem;  /* space before kids image */
         }
 
-        /* kids image - plain */
+        /* kids image - plain, no hover effects */
         .kids-image {
             display: block;
             max-width: 500px;
             width: auto;
             height: auto;
-            margin: 0 auto 2rem;
-            border-radius: 24px;
+            margin: 0 auto;
             box-shadow: none;
         }
 
         /* Horizontal scroll cards */
         .cards-wrapper {
             width: 100%;
-            max-width: 900px;
-            margin: 1.5rem auto 2rem;
+            max-width: 700px;
+            margin: 1.2rem auto 1.5rem;
             position: relative;
         }
 
         .cards-scroll {
             display: flex;
-            gap: 1.2rem;
+            gap: 1rem;
             overflow-x: auto;
             scroll-snap-type: x mandatory;
-            padding: 0.5rem 0.2rem 1.5rem;
+            padding: 0.5rem 0.2rem 1.2rem;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
             cursor: grab;
@@ -254,7 +251,7 @@
         }
 
         .card-minimal {
-            flex: 0 0 220px;
+            flex: 0 0 200px;
             scroll-snap-align: center;
             background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(10px);
@@ -309,8 +306,8 @@
         .dot-container {
             display: flex;
             justify-content: center;
-            gap: 0.8rem;
-            margin: 1rem 0 2rem;
+            gap: 0.7rem;
+            margin: 0.5rem 0 1.5rem;
         }
 
         .dot-minimal {
@@ -323,21 +320,21 @@
         }
 
         .dot-minimal.active {
-            width: 26px;
+            width: 24px;
             background: #1e5f7a;
         }
 
         /* Buttons */
         .actions {
             display: flex;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
+            gap: 1.2rem;
+            margin-bottom: 2rem;
             flex-wrap: wrap;
             justify-content: center;
         }
 
         .btn {
-            padding: 0.9rem 2.5rem;
+            padding: 0.8rem 2.2rem;
             border-radius: 40px;
             font-size: 1.1rem;
             font-weight: 500;
@@ -363,32 +360,31 @@
 
         .btn-primary i {
             color: #ffd966;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .btn-primary:hover {
             background: #15303e;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
         }
 
         .btn-secondary:hover {
             background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
         }
 
-        /* Contact strip - slightly transparent to match sky theme */
+        /* Contact strip - completely free, no boxes, borders, backgrounds */
         .contact-strip {
             display: flex;
-            gap: 2.5rem;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(8px);
-            border-radius: 60px;
-            padding: 0.8rem 2.8rem;
+            gap: 2rem;
             font-size: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.5);
             flex-wrap: wrap;
             justify-content: center;
+            color: #1d445b;
+            background: transparent;
+            backdrop-filter: none;
+            border: none;
+            padding: 0.8rem 0;
         }
 
         .contact-item {
@@ -397,6 +393,8 @@
             gap: 0.6rem;
             color: #1d445b;
             text-decoration: none;
+            font-size: 1rem;
+            background: transparent;
         }
 
         .contact-item i {
@@ -405,12 +403,9 @@
             font-size: 1.2rem;
         }
 
+        /* dot separators removed — just inline */
         .dot-sep {
-            width: 4px;
-            height: 4px;
-            background: #8faec7;
-            border-radius: 50%;
-            align-self: center;
+            display: none;
         }
 
         /* Fixed left vertical button */
@@ -424,13 +419,13 @@
             color: white;
             writing-mode: vertical-rl;
             text-orientation: mixed;
-            padding: 2rem 0.6rem;
+            padding: 1.8rem 0.6rem;
             border-radius: 0 16px 16px 0;
             font-size: 1rem;
             font-weight: 500;
             letter-spacing: 1px;
             cursor: pointer;
-            z-index: 2100; /* above splash */
+            z-index: 2100;
             border: none;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
@@ -440,22 +435,22 @@
 
         .need-website-btn:hover {
             background: #124c63;
-            padding: 2.3rem 0.7rem;
+            padding: 2rem 0.7rem;
         }
 
         /* Popup box */
         .popup-box {
             position: fixed;
-            left: 90px;
+            left: 80px;
             top: 50%;
             transform: translateY(-50%);
             background: rgba(255, 255, 255, 0.96);
             backdrop-filter: blur(20px);
             border-radius: 28px;
-            padding: 2rem;
+            padding: 1.8rem;
             box-shadow: 0 25px 45px rgba(0,0,0,0.15);
             z-index: 2200;
-            min-width: 300px;
+            min-width: 290px;
             border: 1px solid rgba(255, 255, 255, 0.7);
             display: none;
         }
@@ -516,27 +511,27 @@
         .footer {
             width: 100%;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #2f566b;
             z-index: 20;
-            padding: 1.5rem 0 1rem;
+            padding: 1rem 0 0.5rem;
         }
 
-        /* music control (same as mobile but optional) */
+        /* music control */
         .music-control {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
+            bottom: 20px;
+            right: 20px;
             z-index: 2300;
             background: rgba(255,255,255,0.7);
             backdrop-filter: blur(8px);
-            width: 50px;
-            height: 50px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             color: #1e5f7a;
             cursor: pointer;
             border: 1px solid rgba(255,255,255,0.8);
@@ -548,24 +543,38 @@
             background: rgba(210, 235, 255, 0.9);
         }
 
-        /* small screens: handled by redirect, but we keep responsive */
-        @media (max-width: 768px) {
-            /* this won't be seen because redirect happens, but just in case */
-            .splash-welcome { font-size: 2.2rem; }
+        /* mobile first adjustments */
+        @media (max-width: 600px) {
+            .popup-box {
+                left: 10px;
+                right: 10px;
+                top: auto;
+                bottom: 90px;
+                transform: none;
+                width: auto;
+            }
+            .card-minimal {
+                flex: 0 0 170px;
+                padding: 1.4rem 1rem;
+            }
+            .card-value { font-size: 1.4rem; }
+            .contact-strip { gap: 1.2rem; }
+            .side-logo { width: 50px; }
+            .splash-welcome { font-size: 1.8rem; }
         }
     </style>
 </head>
 <body>
-    <!-- REDIRECT TO MOBILE VERSION IF SMALL SCREEN -->
+    <!-- redirect to index.html if large screen detected -->
     <script>
         (function() {
-            if (window.innerWidth <= 768) {
-                window.location.replace('index2.html');
+            if (window.innerWidth > 1024) {
+                window.location.replace('index.html');
             }
         })();
     </script>
 
-    <!-- moving sky blur (fixed) -->
+    <!-- moving sky blur -->
     <div class="moving-blur">
         <div class="blur-orb orb1"></div>
         <div class="blur-orb orb2"></div>
@@ -574,13 +583,13 @@
         <div class="blur-orb orb5"></div>
     </div>
 
-    <!-- SPLASH OVERLAY: hero.png + WELCOME! -->
+    <!-- SPLASH OVERLAY: image + welcome message -->
     <div class="splash-overlay" id="splashOverlay">
         <img src="image/hero.png" alt="splash" draggable="false">
         <div class="splash-welcome">IYANDIKISHE HANO!</div>
     </div>
 
-    <!-- Logo on left side (appears after splash) -->
+    <!-- Logo on left side (appears after splash fades) -->
     <img src="image/logo.png" alt="logo" class="side-logo" id="sideLogo">
 
     <!-- left vertical button -->
@@ -599,16 +608,16 @@
         </div>
     </div>
 
-    <!-- main content -->
+    <!-- main content (no duplicate hero image) -->
     <div class="welcome">
         <div class="title">
             <h1>Children's <span>Music School</span></h1>
             <p>Sacred music education for young talents</p>
-            <!-- kids image added below tagline -->
+            <!-- kids image added below the tagline, plain and simple -->
             <img src="image/kids.png" alt="kids" class="kids-image">
         </div>
 
-        <!-- Horizontal scroll cards -->
+        <!-- cards -->
         <div class="cards-wrapper">
             <div class="cards-scroll" id="cardsScroll">
                 <div class="card-minimal"><div class="card-icon"><i class="far fa-calendar-alt"></i></div><div class="card-label">Registration</div><div class="card-value">01/03 – 31/03</div><div class="card-desc">March 2026</div></div>
@@ -621,18 +630,16 @@
             <div class="dot-container" id="dotContainer"></div>
         </div>
 
-        <!-- Buttons -->
+        <!-- buttons -->
         <div class="actions">
             <a href="register.html" class="btn btn-primary"><i class="fas fa-pen"></i> Apply now</a>
             <a href="https://wa.me/250789209371" class="btn btn-secondary" target="_blank"><i class="fab fa-whatsapp"></i> Father Pater</a>
         </div>
 
-        <!-- Contact strip (semi‑transparent, sky‑style) -->
+        <!-- contact strip - free, borderless -->
         <div class="contact-strip">
-            <a href="https://wa.me/250789209371" class="contact-item" target="_blank"><i class="fab fa-whatsapp"></i> 0789 209 371</a>
-            <span class="dot-sep"></span>
+            <span class="contact-item"><i class="fab fa-whatsapp"></i> 0789 209 371</span>
             <span class="contact-item"><i class="fas fa-map-pin"></i> Gitarama</span>
-            <span class="dot-sep"></span>
             <span class="contact-item"><i class="fas fa-map-pin"></i> Kabgayi</span>
         </div>
     </div>
@@ -641,7 +648,7 @@
         Diocese Kabgayi · Children's Music School
     </div>
 
-    <!-- music player (optional, same as mobile) -->
+    <!-- music player -->
     <audio id="bgMusic" loop preload="auto">
         <source src="music/back.mp3" type="audio/mpeg">
     </audio>
@@ -651,6 +658,7 @@
         (function() {
             // ---------- SPLASH FADE ON SCROLL ----------
             const splash = document.getElementById('splashOverlay');
+            const sideLogo = document.getElementById('sideLogo'); // logo already there
             let splashHidden = false;
 
             function hideSplash() {
@@ -672,7 +680,7 @@
             window.addEventListener('touchmove', scrollHandler);
             splash.addEventListener('click', hideSplash);
 
-            // ---------- CARDS SCROLL (same logic) ----------
+            // ---------- CARDS SCROLL ----------
             const scrollContainer = document.getElementById('cardsScroll');
             const cards = document.querySelectorAll('.card-minimal');
             const cardCount = cards.length;
@@ -749,7 +757,6 @@
             scrollContainer.addEventListener('touchstart', () => clearInterval(autoScrollInterval));
             scrollContainer.addEventListener('touchend', startAutoScroll);
 
-            // grab to scroll
             let isDown = false, startX, scrollLeft;
             scrollContainer.addEventListener('mousedown', (e) => {
                 isDown = true;
@@ -809,7 +816,7 @@
             });
             popup.addEventListener('click', e => e.stopPropagation());
 
-            // ---------- AUDIO (optional) ----------
+            // ---------- AUDIO ----------
             const audio = document.getElementById('bgMusic');
             const toggleBtn = document.getElementById('musicToggle');
             let audioPlaying = false;
@@ -853,10 +860,10 @@
                 }
             });
 
-            // resize redirect (if window becomes small, e.g. tablet resized)
+            // resize redirect
             window.addEventListener('resize', function() {
-                if (window.innerWidth <= 768) {
-                    window.location.replace('index2.html');
+                if (window.innerWidth > 1024) {
+                    window.location.replace('index.html');
                 }
             });
         })();
