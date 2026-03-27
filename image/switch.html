@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Maintenance Control Panel</title>
+    <!-- Poppins font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Supabase client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Main card */
+        .control-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: fadeInUp 0.6s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: #1e1e1e;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Toggle Switch */
+        .toggle-container {
+            background: #f5f5f5;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 120px;
+            height: 60px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e74c3c;
+            transition: 0.4s;
+            border-radius: 60px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 48px;
+            width: 48px;
+            left: 6px;
+            bottom: 6px;
+            background-color: white;
+            transition: 0.4s;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        input:checked + .slider {
+            background-color: #27ae60;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(60px);
+        }
+
+        .toggle-status {
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+
+        .status-active {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .status-inactive {
+            background: #27ae60;
+            color: white;
+        }
+
+        /* Info Section */
+        .info-section {
+            background: #f8f9fa;
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 0.9rem;
+        }
+
+        .info-item:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .info-value {
+            color: #1e1e1e;
+            font-family: monospace;
+        }
+
+        /* Button */
+        .refresh-btn {
+            width: 100%;
+            padding: 0.9rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Password Overlay */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .password-box {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .password-box input {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            font-size: 1rem;
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <script>
+        // Supabase configuration
+        const supabaseUrl = 'https://amnkoumnvwyjzqcwxord.supabase.co';
+        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+            auth: { persistSession: false }
+        });
+
+        const ADMIN_PASSWORD = 'admin123';
+
+        class MaintenanceControl {
+            constructor() {
+                this.isAuthenticated = false;
+                this.maintenanceStatus = false;
+                this.init();
+            }
+
+            async init() {
+                this.showPasswordPrompt();
+            }
+
+            showPasswordPrompt() {
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <div class="password-overlay">
+                        <div class="password-box">
+                            <i class="fas fa-lock" style="font-size: 3rem; color: #667eea; margin-bottom: 1rem;"></i>
+                            <h3>Admin Access Required</h3>
+                            <p class="text-secondary" style="font-size: 0.85rem;">Enter password to control maintenance mode</p>
+                            <input type="password" id="adminPassword" placeholder="Password" autocomplete="off">
+                            <button id="submitPassword" class="refresh-btn" style="margin-top: 1rem;">Access Panel</button>
+                            <div class="error-msg" id="errorMsg">Incorrect password</div>
+                        </div>
+                    </div>
+                `;
+
+                const submitBtn = document.getElementById('submitPassword');
+                const passwordInput = document.getElementById('adminPassword');
+                const errorMsg = document.getElementById('errorMsg');
+
+                const checkPassword = () => {
+                    if (passwordInput.value === ADMIN_PASSWORD) {
+                        this.isAuthenticated = true;
+                        this.loadMaintenanceStatus();
+                    } else {
+                        errorMsg.style.display = 'block';
+                        setTimeout(() => {
+                            errorMsg.style.display = 'none';
+                        }, 2000);
+                    }
+                };
+
+                submitBtn.addEventListener('click', checkPassword);
+                passwordInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') checkPassword();
+                });
+            }
+
+            async loadMaintenanceStatus() {
+                const app = document.getElementById('app');
+                app.innerHTML = `
+                    <div class="control-card">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Loading maintenance status...</p>
+                        </div>
+                    </div>
+                `;
+
+                try {
+                    // Check if table exists, create if not
+                    await this.ensureTableExists();
+
+                    const { data, error } = await supabase
+                        .from('maintenance_settings')
+                        .select('*')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error && error.code !== 'PGRST116') throw error;
+
+                    this.maintenanceStatus = data ? data.is_active : false;
+                    
+                    // If no record, create one
+                    if (!data) {
+                        await supabase
+                            .from('maintenance_settings')
+                            .insert([{ id: 1, is_active: false }]);
+                        this.maintenanceStatus = false;
+                    }
+
+                    this.renderControlPanel();
+                } catch (err) {
+                    console.error('Error loading status:', err);
+                    app.innerHTML = `
+                        <div class="control-card">
+                            <div class="header">
+                                <i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i>
+                                <h1>Error</h1>
+                                <p>Failed to load maintenance status</p>
+                            </div>
+                            <div class="info-section">
+                                <p style="color: #e74c3c; font-size: 0.85rem;">${err.message}</p>
+                            </div>
+                            <button class="refresh-btn" onclick="location.reload()">
+                                <i class="fas fa-sync-alt"></i> Retry
+                            </button>
+                        </div>
+                    `;
+                }
+            }
+
+            async ensureTableExists() {
+                try {
+                    // Try to query the table
+                    const { error } = await supabase
+                        .from('maintenance_settings')
+                        .select('count')
+                        .limit(1);
+                    
+                    if (error && error.code === '42P01') {
+                        // Table doesn't exist, create it using SQL
+                        console.log('Table does not exist, please create it in Supabase SQL editor:');
+                        console.log(`
+                            CREATE TABLE maintenance_settings (
+                                id INTEGER PRIMARY KEY DEFAULT 1,
+                                is_active BOOLEAN DEFAULT false,
+                                updated_at TIMESTAMP DEFAULT NOW()
+                            );
+                            INSERT INTO maintenance_settings (id, is_active) VALUES (1, false);
+                        `);
+                        throw new Error('Maintenance table not found. Please create it in Supabase SQL editor.');
+                    }
+                } catch (err) {
+                    throw err;
+                }
+            }
+
+            renderControlPanel() {
+                const app = document.getElementById('app');
+                const isActive = this.maintenanceStatus;
+                
+                app.innerHTML = `
+                    <div class="control-card">
+                        <div class="header">
+                            <i class="fas fa-tools"></i>
+                            <h1>Maintenance Control</h1>
+                            <p>Toggle website maintenance mode</p>
+                        </div>
+
+                        <div class="toggle-container">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="maintenanceToggle" ${isActive ? 'checked' : ''}>
+                                <span class="slider"></span>
+                            </label>
+                            <div class="toggle-status">
+                                Current Status:
+                                <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+                                    ${isActive ? 'MAINTENANCE ACTIVE' : 'WEBSITE ONLINE'}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="info-section">
+                            <div class="info-item">
+                                <span class="info-label">Status:</span>
+                                <span class="info-value">${isActive ? '🔧 Maintenance Mode' : '✅ Live'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Last Updated:</span>
+                                <span class="info-value" id="lastUpdated">Loading...</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Affected Pages:</span>
+                                <span class="info-value">All pages (index, admin, index2)</span>
+                            </div>
+                        </div>
+
+                        <button class="refresh-btn" id="refreshBtn">
+                            <i class="fas fa-sync-alt"></i> Refresh Status
+                        </button>
+                    </div>
+                `;
+
+                const toggle = document.getElementById('maintenanceToggle');
+                const refreshBtn = document.getElementById('refreshBtn');
+
+                toggle.addEventListener('change', async (e) => {
+                    const newStatus = e.target.checked;
+                    await this.updateMaintenanceStatus(newStatus);
+                });
+
+                refreshBtn.addEventListener('click', () => {
+                    this.loadMaintenanceStatus();
+                });
+
+                this.updateTimestamp();
+            }
+
+            async updateMaintenanceStatus(isActive) {
+                try {
+                    const { error } = await supabase
+                        .from('maintenance_settings')
+                        .upsert({ 
+                            id: 1, 
+                            is_active: isActive,
+                            updated_at: new Date().toISOString()
+                        });
+
+                    if (error) throw error;
+
+                    this.maintenanceStatus = isActive;
+                    this.renderControlPanel();
+                    
+                    // Show success feedback
+                    this.showToast(isActive ? 'Maintenance mode activated' : 'Website is now live');
+                } catch (err) {
+                    console.error('Error updating status:', err);
+                    alert('Failed to update maintenance status: ' + err.message);
+                    this.loadMaintenanceStatus();
+                }
+            }
+
+            async updateTimestamp() {
+                try {
+                    const { data } = await supabase
+                        .from('maintenance_settings')
+                        .select('updated_at')
+                        .eq('id', 1)
+                        .single();
+                    
+                    const lastUpdatedSpan = document.getElementById('lastUpdated');
+                    if (lastUpdatedSpan && data && data.updated_at) {
+                        const date = new Date(data.updated_at);
+                        lastUpdatedSpan.textContent = date.toLocaleString();
+                    } else if (lastUpdatedSpan) {
+                        lastUpdatedSpan.textContent = 'Just now';
+                    }
+                } catch (err) {
+                    console.error('Error fetching timestamp:', err);
+                }
+            }
+
+            showToast(message) {
+                // Simple alert for now, but could be improved
+                alert(message);
+            }
+        }
+
+        // Initialize the app
+        new MaintenanceControl();
+    </script>
+</body>
+</html>
