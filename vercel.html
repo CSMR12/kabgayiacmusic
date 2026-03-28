@@ -288,37 +288,19 @@
             cursor: not-allowed;
         }
 
-        .plans-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 1rem;
+        .plan-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
         }
 
-        .plan-card {
-            background: #0a0a0a;
-            border: 1px solid #222222;
-            border-radius: 12px;
-            padding: 1rem;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .plan-card:hover {
-            border-color: #0070f3;
-            transform: translateY(-2px);
-        }
-
-        .plan-name {
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .plan-buttons {
-            font-size: 0.8rem;
-            color: #0070f3;
-            margin: 0.5rem 0;
-        }
+        .plan-easy { background: #00ff0022; color: #00ff00; border: 1px solid #00ff00; }
+        .plan-medium { background: #ffaa0022; color: #ffaa00; border: 1px solid #ffaa00; }
+        .plan-hard { background: #ff444422; color: #ff4444; border: 1px solid #ff4444; }
+        .plan-extreme { background: #ff00ff22; color: #ff00ff; border: 1px solid #ff00ff; }
 
         @media (max-width: 1024px) {
             .sidebar {
@@ -327,8 +309,7 @@
             .main-content {
                 margin-left: 0;
             }
-            .stats-grid,
-            .plans-grid {
+            .stats-grid {
                 grid-template-columns: 1fr;
             }
         }
@@ -364,10 +345,6 @@
                     <i class="fas fa-terminal"></i>
                     <span>Logs</span>
                 </li>
-                <li class="sidebar-nav-item" data-tab="settings">
-                    <i class="fas fa-sliders-h"></i>
-                    <span>Settings</span>
-                </li>
             </ul>
         </div>
 
@@ -385,7 +362,6 @@
     </div>
 
     <script>
-        // Use IIFE to avoid variable conflicts
         (function() {
             // Supabase Configuration
             const SUPABASE_URL = 'https://amnkoumnvwyjzqcwxord.supabase.co';
@@ -396,16 +372,26 @@
             // Global state
             let maintenanceStatus = false;
             let maintenanceStartTime = null;
-            let selectedPlan = 'easy';
+            let detectedPlan = null; // Will be detected from code
             let enabledButtons = [];
             let history = [];
 
-            // Button lists for each plan
-            const buttonLists = {
-                easy: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments'],
-                medium: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR'],
-                hard: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR', 'Dependabot', 'Secret Scanning', 'CodeQL', 'Advanced Security', 'Compliance Checks', 'Audit Logs', 'SSO'],
-                extreme: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR', 'Dependabot', 'Secret Scanning', 'CodeQL', 'Advanced Security', 'Compliance Checks', 'Audit Logs', 'SSO', 'Quantum Encryption', 'Zero-Trust Architecture', 'Blockchain Verification', 'AI Threat Detection', 'Disaster Recovery', 'Multi-Region Failover']
+            // ALL BUTTONS - 27 total (shown all at once in CONFIGS)
+            const ALL_BUTTONS = [
+                'GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments',
+                'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 
+                'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR', 
+                'Dependabot', 'Secret Scanning', 'CodeQL', 'Advanced Security', 'Compliance Checks', 
+                'Audit Logs', 'SSO', 'Quantum Encryption', 'Zero-Trust Architecture', 'Blockchain Verification', 
+                'AI Threat Detection', 'Disaster Recovery', 'Multi-Region Failover'
+            ];
+
+            // Required button counts per plan
+            const REQUIRED_COUNTS = {
+                easy: 5,
+                medium: 15,
+                hard: 22,
+                extreme: 27
             };
 
             // Load maintenance status from Supabase
@@ -463,7 +449,7 @@
                     timestamp: new Date().toISOString(),
                     action: action,
                     details: details,
-                    plan: selectedPlan
+                    plan: detectedPlan
                 };
                 history.unshift(entry);
                 localStorage.setItem('maintenance_history', JSON.stringify(history));
@@ -484,7 +470,7 @@
                     
                     maintenanceStatus = false;
                     updateStatusDisplay();
-                    await saveToHistory('MAINTENANCE_DISABLED', `Disabled using ${selectedPlan.toUpperCase()} plan`);
+                    await saveToHistory('MAINTENANCE_DISABLED', `Disabled using ${detectedPlan?.toUpperCase() || 'UNKNOWN'} plan`);
                     return true;
                 } catch (err) {
                     console.error('Error disabling maintenance:', err);
@@ -500,6 +486,27 @@
                 if (diff < 60) return `${diff} minutes`;
                 if (diff < 1440) return `${Math.floor(diff / 60)} hours`;
                 return `${Math.floor(diff / 1440)} days`;
+            }
+
+            // Detect plan from code
+            function detectPlanFromCode(code) {
+                if (!code) return null;
+                
+                // Check which code matches
+                if (window.RECOVERY_CODES) {
+                    if (code.trim() === window.RECOVERY_CODES.easy.trim()) return 'easy';
+                    if (code.trim() === window.RECOVERY_CODES.medium.trim()) return 'medium';
+                    if (code.trim() === window.RECOVERY_CODES.hard.trim()) return 'hard';
+                    if (code.trim() === window.RECOVERY_CODES.extreme.trim()) return 'extreme';
+                }
+                
+                // Also check by content patterns
+                if (code.includes('KMA_EASY')) return 'easy';
+                if (code.includes('KMA_MEDIUM')) return 'medium';
+                if (code.includes('KMA_HARD')) return 'hard';
+                if (code.includes('KMA-EXTREME')) return 'extreme';
+                
+                return null;
             }
 
             // Toggle config button
@@ -524,22 +531,21 @@
                     }
                 });
                 
-                const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
-                const recoveryBtn = document.getElementById('executeRecovery');
-                if (recoveryBtn) {
-                    recoveryBtn.disabled = enabledButtons.length < requiredCount;
+                // Update recovery button state based on detected plan
+                if (detectedPlan && REQUIRED_COUNTS[detectedPlan]) {
+                    const recoveryBtn = document.getElementById('executeRecovery');
+                    if (recoveryBtn) {
+                        recoveryBtn.disabled = enabledButtons.length < REQUIRED_COUNTS[detectedPlan];
+                    }
                 }
-            };
-
-            // Select plan
-            window.selectPlan = function(plan) {
-                selectedPlan = plan;
-                enabledButtons = [];
-                renderCurrentTab();
             };
 
             // Dashboard Tab
             function renderDashboard() {
+                const planDisplay = detectedPlan ? 
+                    `<span class="plan-badge plan-${detectedPlan}">${detectedPlan.toUpperCase()}</span>` : 
+                    '<span style="color: #888;">No plan detected</span>';
+                
                 return `
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -553,8 +559,8 @@
                             <div class="stat-value">${maintenanceStatus ? getMaintenanceDuration() : 'N/A'}</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">Last Check</div>
-                            <div class="stat-value">${new Date().toLocaleTimeString()}</div>
+                            <div class="stat-label">Active Recovery Plan</div>
+                            <div class="stat-value" style="font-size: 1rem;">${planDisplay}</div>
                         </div>
                     </div>
                     
@@ -608,7 +614,7 @@
                         </div>
                         <table class="history-table">
                             <thead>
-                                <tr><th>Timestamp</th><th>Action</th><th>Details</th><th>Plan</th></tr>
+                                <tr><th>Timestamp</th><th>Action</th><th>Details</th><th>Plan</th>\\
                             </thead>
                             <tbody>
                                 ${history.map(h => `
@@ -616,7 +622,7 @@
                                         <td>${new Date(h.timestamp).toLocaleString()}</td>
                                         <td>${h.action}</td>
                                         <td>${h.details}</td>
-                                        <td>${h.plan || '-'}</td>
+                                        <td>${h.plan ? h.plan.toUpperCase() : '-'}</td>
                                     </tr>
                                 `).join('') || '<tr><td colspan="4">No history available</td></tr>'}
                             </tbody>
@@ -666,34 +672,39 @@
                 `;
             }
 
-            // Configs Tab
+            // Configs Tab - ALL buttons shown
             function renderConfigs() {
-                const buttons = buttonLists[selectedPlan];
-                const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
+                const requiredForCurrentPlan = detectedPlan ? REQUIRED_COUNTS[detectedPlan] : 0;
                 
                 return `
                     <div class="card">
                         <div class="card-title">
                             <i class="fas fa-cog"></i>
-                            System Configuration
+                            System Configuration (${ALL_BUTTONS.length} Services)
                         </div>
                         <div style="margin-bottom: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
                                 <div>
-                                    <strong>Current Plan:</strong> ${selectedPlan.toUpperCase()}
-                                    <div style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">
-                                        Required configurations: ${requiredCount}/${buttons.length}
-                                    </div>
+                                    <strong>Current Plan:</strong> 
+                                    ${detectedPlan ? 
+                                        `<span class="plan-badge plan-${detectedPlan}">${detectedPlan.toUpperCase()}</span>` : 
+                                        '<span style="color: #ff4444;">No plan detected - Enter code in Logs tab</span>'
+                                    }
+                                    ${detectedPlan ? `
+                                        <div style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">
+                                            Required configurations for ${detectedPlan.toUpperCase()}: ${requiredForCurrentPlan}/${REQUIRED_COUNTS[detectedPlan]}
+                                        </div>
+                                    ` : ''}
                                 </div>
-                                <div class="status-badge" style="background: ${enabledButtons.length >= requiredCount ? '#00ff0022' : '#ff444422'}">
-                                    <i class="fas ${enabledButtons.length >= requiredCount ? 'fa-check-circle' : 'fa-lock'}"></i>
-                                    ${enabledButtons.length >= requiredCount ? 'READY' : `${requiredCount - enabledButtons.length} remaining`}
+                                <div class="status-badge" style="background: ${detectedPlan && enabledButtons.length >= requiredForCurrentPlan ? '#00ff0022' : '#ff444422'}">
+                                    <i class="fas ${detectedPlan && enabledButtons.length >= requiredForCurrentPlan ? 'fa-check-circle' : 'fa-lock'}"></i>
+                                    ${detectedPlan && enabledButtons.length >= requiredForCurrentPlan ? 'READY' : `${requiredForCurrentPlan - enabledButtons.length} remaining`}
                                 </div>
                             </div>
                         </div>
                         
                         <div class="buttons-grid">
-                            ${buttons.map(btn => `
+                            ${ALL_BUTTONS.map(btn => `
                                 <div class="config-btn ${enabledButtons.includes(btn) ? 'enabled' : ''}" 
                                      data-btn="${btn}"
                                      onclick="toggleConfigButton('${btn}')">
@@ -708,8 +719,8 @@
 
             // Logs Tab
             function renderLogs() {
-                const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
-                const isReady = enabledButtons.length >= requiredCount;
+                const requiredCount = detectedPlan ? REQUIRED_COUNTS[detectedPlan] : 0;
+                const isReady = detectedPlan && enabledButtons.length >= requiredCount;
                 
                 return `
                     <div class="card">
@@ -718,54 +729,31 @@
                             Recovery Console
                         </div>
                         <div style="margin-bottom: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
-                            <div style="color: #888; margin-bottom: 0.5rem;">Selected Plan: ${selectedPlan.toUpperCase()}</div>
-                            <div style="color: #888; font-size: 0.8rem;">Required configurations: ${enabledButtons.length}/${requiredCount}</div>
+                            <div style="color: #888; margin-bottom: 0.5rem;">
+                                <i class="fas fa-info-circle"></i> Enter the recovery code for your plan
+                            </div>
+                            <div style="color: #888; font-size: 0.8rem;">
+                                ${detectedPlan ? 
+                                    `Detected Plan: <span class="plan-badge plan-${detectedPlan}">${detectedPlan.toUpperCase()}</span> | Configurations: ${enabledButtons.length}/${requiredCount}` : 
+                                    'No plan detected. Enter a valid recovery code to determine your plan.'
+                                }
+                            </div>
                         </div>
                         
                         <div class="code-editor">
-                            <textarea id="codeInput" rows="12" placeholder="Enter recovery code...">${window.RECOVERY_CODES ? window.RECOVERY_CODES[selectedPlan] : 'Loading codes...'}</textarea>
+                            <textarea id="codeInput" rows="12" placeholder="Enter recovery code..."></textarea>
                         </div>
+                        
+                        <button class="btn btn-primary" id="detectPlanBtn" style="margin-bottom: 1rem; background: #444;">
+                            <i class="fas fa-search"></i> Detect Plan from Code
+                        </button>
                         
                         <button class="btn btn-primary" id="executeRecovery" ${!isReady ? 'disabled' : ''}>
                             <i class="fas fa-play"></i> Execute Recovery Protocol
                         </button>
                         
                         <div class="terminal" id="terminalOutput">
-                            <div class="terminal-line">> System ready. Awaiting execution...</div>
-                        </div>
-                    </div>
-                `;
-            }
-
-            // Settings Tab
-            function renderSettings() {
-                return `
-                    <div class="card">
-                        <div class="card-title">
-                            <i class="fas fa-sliders-h"></i>
-                            Recovery Plans
-                        </div>
-                        <div class="plans-grid">
-                            <div class="plan-card" onclick="selectPlan('easy')" style="border-color: ${selectedPlan === 'easy' ? '#0070f3' : '#222'}">
-                                <div class="plan-name">⚡ Quick Recovery</div>
-                                <div class="plan-buttons">5 configurations</div>
-                                <div style="font-size: 0.7rem; color: #888;">Basic verification required</div>
-                            </div>
-                            <div class="plan-card" onclick="selectPlan('medium')" style="border-color: ${selectedPlan === 'medium' ? '#0070f3' : '#222'}">
-                                <div class="plan-name">🔄 Standard</div>
-                                <div class="plan-buttons">15 configurations</div>
-                                <div style="font-size: 0.7rem; color: #888;">Full system verification</div>
-                            </div>
-                            <div class="plan-card" onclick="selectPlan('hard')" style="border-color: ${selectedPlan === 'hard' ? '#0070f3' : '#222'}">
-                                <div class="plan-name">🔒 Advanced</div>
-                                <div class="plan-buttons">22 configurations</div>
-                                <div style="font-size: 0.7rem; color: #888;">Security enhanced protocol</div>
-                            </div>
-                            <div class="plan-card" onclick="selectPlan('extreme')" style="border-color: ${selectedPlan === 'extreme' ? '#0070f3' : '#222'}">
-                                <div class="plan-name">⚠️ Enterprise</div>
-                                <div class="plan-buttons">27 configurations</div>
-                                <div style="font-size: 0.7rem; color: #888;">Maximum security tier</div>
-                            </div>
+                            <div class="terminal-line">> System ready. Enter code and click "Detect Plan" to identify your recovery level.</div>
                         </div>
                     </div>
                 `;
@@ -773,22 +761,57 @@
 
             // Execute recovery
             function attachLogsEvents() {
+                const detectBtn = document.getElementById('detectPlanBtn');
                 const executeBtn = document.getElementById('executeRecovery');
+                const terminal = document.getElementById('terminalOutput');
+                const codeInput = document.getElementById('codeInput');
+                
+                if (detectBtn) {
+                    detectBtn.onclick = () => {
+                        const code = codeInput.value;
+                        const plan = detectPlanFromCode(code);
+                        
+                        if (plan) {
+                            detectedPlan = plan;
+                            terminal.innerHTML = `<div class="terminal-line" style="color: #00ff00;">✓ Plan detected: ${plan.toUpperCase()}</div>`;
+                            terminal.innerHTML += `<div class="terminal-line">> Required configurations: ${REQUIRED_COUNTS[plan]}/${REQUIRED_COUNTS[plan]}</div>`;
+                            terminal.innerHTML += `<div class="terminal-line">> Go to Configs tab and enable the required services</div>`;
+                            
+                            // Update recovery button state
+                            const isReady = enabledButtons.length >= REQUIRED_COUNTS[plan];
+                            if (executeBtn) {
+                                executeBtn.disabled = !isReady;
+                            }
+                            
+                            // Re-render configs to show updated plan
+                            const activeTab = document.querySelector('.sidebar-nav-item.active').getAttribute('data-tab');
+                            if (activeTab === 'configs') {
+                                document.getElementById('tabContent').innerHTML = renderConfigs();
+                            } else if (activeTab === 'dashboard') {
+                                document.getElementById('tabContent').innerHTML = renderDashboard();
+                            }
+                        } else {
+                            terminal.innerHTML = `<div class="terminal-line terminal-error">✗ No valid plan detected</div>`;
+                            terminal.innerHTML += `<div class="terminal-line">> Please enter a valid recovery code from the available plans</div>`;
+                            detectedPlan = null;
+                            if (executeBtn) executeBtn.disabled = true;
+                        }
+                    };
+                }
+                
                 if (executeBtn) {
                     executeBtn.onclick = async () => {
-                        const terminal = document.getElementById('terminalOutput');
-                        const code = document.getElementById('codeInput').value;
-                        const expectedCode = window.RECOVERY_CODES ? window.RECOVERY_CODES[selectedPlan] : '';
+                        const code = codeInput.value;
+                        const plan = detectPlanFromCode(code);
+                        const requiredCount = REQUIRED_COUNTS[plan];
                         
                         terminal.innerHTML = '<div class="terminal-line">> Executing recovery protocol...</div>';
                         await new Promise(resolve => setTimeout(resolve, 1500));
                         
-                        if (code.trim() === expectedCode.trim()) {
+                        if (plan && plan === detectedPlan) {
                             terminal.innerHTML += '<div class="terminal-line">> Code verification passed</div>';
                             terminal.innerHTML += '<div class="terminal-line">> Checking system configurations...</div>';
                             await new Promise(resolve => setTimeout(resolve, 1000));
-                            
-                            const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
                             
                             if (enabledButtons.length >= requiredCount) {
                                 terminal.innerHTML += '<div class="terminal-line">✓ All configurations verified</div>';
@@ -801,11 +824,15 @@
                                 const missing = requiredCount - enabledButtons.length;
                                 terminal.innerHTML += `<div class="terminal-line terminal-error">✗ Configuration error: ${missing} required services not initialized</div>`;
                                 terminal.innerHTML += `<div class="terminal-line">> System integrity check failed</div>`;
+                                terminal.innerHTML += `<div class="terminal-line">> Please enable all required configurations in Configs tab</div>`;
                             }
-                        } else {
-                            terminal.innerHTML += '<div class="terminal-line terminal-error">✗ Code verification failed</div>';
-                            terminal.innerHTML += '<div class="terminal-line">> Recovery sequence terminated</div>';
-                            terminal.innerHTML += '<div class="terminal-line">> Invalid recovery signature detected</div>';
+                        } else if (!plan) {
+                            terminal.innerHTML += '<div class="terminal-line terminal-error">✗ Invalid recovery code</div>';
+                            terminal.innerHTML += '<div class="terminal-line">> Please enter a valid recovery code and detect plan first</div>';
+                        } else if (plan !== detectedPlan) {
+                            terminal.innerHTML += '<div class="terminal-line terminal-error">✗ Plan mismatch</div>';
+                            terminal.innerHTML += `<div class="terminal-line">> Detected ${plan.toUpperCase()} from code but current plan is ${detectedPlan.toUpperCase()}</div>`;
+                            terminal.innerHTML += '<div class="terminal-line">> Please detect plan again before executing</div>';
                         }
                     };
                 }
@@ -841,10 +868,6 @@
                         title.textContent = 'Recovery Logs';
                         tabContent.innerHTML = renderLogs();
                         attachLogsEvents();
-                        break;
-                    case 'settings':
-                        title.textContent = 'Settings';
-                        tabContent.innerHTML = renderSettings();
                         break;
                 }
             }
