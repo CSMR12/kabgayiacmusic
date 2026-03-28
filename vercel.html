@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="codes.js"></script>
     <style>
         * {
             margin: 0;
@@ -26,7 +27,6 @@
             min-height: 100vh;
         }
 
-        /* Sidebar */
         .sidebar {
             width: 260px;
             background: #111111;
@@ -43,13 +43,6 @@
             gap: 0.75rem;
             margin-bottom: 2rem;
             padding: 0 0.5rem;
-        }
-
-        .vercel-icon {
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 4px;
         }
 
         .sidebar-logo span {
@@ -84,14 +77,12 @@
             color: #ffffff;
         }
 
-        /* Main Content */
         .main-content {
             flex: 1;
             margin-left: 260px;
             padding: 2rem 3rem;
         }
 
-        /* Header */
         .header {
             display: flex;
             justify-content: space-between;
@@ -138,7 +129,6 @@
             50% { opacity: 0.3; }
         }
 
-        /* Cards */
         .card {
             background: #111111;
             border: 1px solid #222222;
@@ -156,7 +146,6 @@
             gap: 0.5rem;
         }
 
-        /* Stats Grid */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -183,7 +172,6 @@
             font-weight: 700;
         }
 
-        /* Buttons Grid for Configs */
         .buttons-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -212,7 +200,6 @@
             color: white;
         }
 
-        /* Terminal */
         .terminal {
             background: #0a0a0a;
             border-radius: 8px;
@@ -233,7 +220,6 @@
             color: #ff4444;
         }
 
-        /* Code Editor */
         .code-editor {
             background: #0a0a0a;
             border-radius: 8px;
@@ -252,7 +238,6 @@
             outline: none;
         }
 
-        /* Iframe Preview */
         .preview-frame {
             width: 100%;
             height: 500px;
@@ -261,7 +246,6 @@
             background: white;
         }
 
-        /* History Table */
         .history-table {
             width: 100%;
             border-collapse: collapse;
@@ -280,7 +264,6 @@
             font-size: 0.8rem;
         }
 
-        /* Buttons */
         .btn {
             padding: 0.75rem 1.5rem;
             border-radius: 8px;
@@ -305,7 +288,6 @@
             cursor: not-allowed;
         }
 
-        /* Plan Cards */
         .plans-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -318,6 +300,13 @@
             border-radius: 12px;
             padding: 1rem;
             text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .plan-card:hover {
+            border-color: #0070f3;
+            transform: translateY(-2px);
         }
 
         .plan-name {
@@ -331,7 +320,6 @@
             margin: 0.5rem 0;
         }
 
-        /* Responsive */
         @media (max-width: 1024px) {
             .sidebar {
                 display: none;
@@ -397,592 +385,499 @@
     </div>
 
     <script>
-        // Supabase Configuration
-        const supabaseUrl = 'https://amnkoumnvwyjzqcwxord.supabase.co';
-        const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
-
-        // Global state
-        let maintenanceStatus = false;
-        let maintenanceStartTime = null;
-        let selectedPlan = 'easy';
-        let enabledButtons = [];
-        let history = [];
-
-        // Button lists for each plan
-        const buttonLists = {
-            easy: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments'],
-            medium: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR'],
-            hard: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR', 'Dependabot', 'Secret Scanning', 'CodeQL', 'Advanced Security', 'Compliance Checks', 'Audit Logs', 'SSO'],
-            extreme: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR', 'Dependabot', 'Secret Scanning', 'CodeQL', 'Advanced Security', 'Compliance Checks', 'Audit Logs', 'SSO', 'Quantum Encryption', 'Zero-Trust Architecture', 'Blockchain Verification', 'AI Threat Detection', 'Disaster Recovery', 'Multi-Region Failover']
-        };
-
-        // Fixed codes for each plan
-        const recoveryCodes = {
-            easy: `def recover_system():
-    import hashlib
-    verification = hashlib.sha256(b"maintenance_recovery_2024").hexdigest()
-    if verification[:16] == "7d3f9a2b8c1e4f6a":
-        return True
-    return False
-
-result = recover_system()
-print(f"Recovery Status: {result}")`,
-            medium: `def execute_recovery():
-    import json
-    import base64
-    
-    recovery_key = "KMA_MEDIUM_2024"
-    payload = base64.b64encode(recovery_key.encode()).decode()
-    
-    if payload == "S01BX01FRElVTV8yMDI0":
-        return {"status": "success", "message": "System restored"}
-    return {"status": "failed", "message": "Invalid recovery sequence"}
-    
-result = execute_recovery()
-print(f"Recovery Result: {json.dumps(result)}")`,
-            hard: `def quantum_recovery():
-    import hashlib
-    import time
-    
-    seed = int(time.time()) % 10000
-    hash_result = hashlib.sha512(str(seed).encode()).hexdigest()
-    
-    if hash_result[:8] == "a1b2c3d4":
-        return "Quantum verification passed"
-    return "Verification in progress"
-    
-print(quantum_recovery())`,
-            extreme: `def nuclear_recovery():
-    import hashlib
-    import hmac
-    import secrets
-    
-    master_key = secrets.token_hex(32)
-    signature = hmac.new(b"extreme_recovery", master_key.encode(), hashlib.sha3_256).hexdigest()
-    
-    if signature[:16] == "f7e8d9c0b1a2e3d4":
-        return "SYSTEM RESTORED - MAINTENANCE DISABLED"
-    return "Authorization required"
-    
-print(nuclear_recovery())`
-        };
-
-        // Load maintenance status from Supabase
-        async function loadMaintenanceStatus() {
-            try {
-                const { data, error } = await supabase
-                    .from('maintenance_settings')
-                    .select('*')
-                    .eq('id', 1)
-                    .single();
-
-                if (error) throw error;
-
-                maintenanceStatus = data.is_active;
-                if (maintenanceStatus && !maintenanceStartTime) {
-                    maintenanceStartTime = new Date(data.updated_at || new Date());
-                }
-
-                updateStatusDisplay();
-                return maintenanceStatus;
-            } catch (err) {
-                console.error('Error loading status:', err);
-                return false;
-            }
-        }
-
-        // Update status badge
-        function updateStatusDisplay() {
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
+        // Use IIFE to avoid variable conflicts
+        (function() {
+            // Supabase Configuration
+            const SUPABASE_URL = 'https://amnkoumnvwyjzqcwxord.supabase.co';
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
             
-            if (maintenanceStatus) {
-                dot.className = 'status-dot active';
-                text.textContent = 'Maintenance Mode: ACTIVE';
-            } else {
-                dot.className = 'status-dot inactive';
-                text.textContent = 'System Online';
-            }
-        }
+            const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Load history from localStorage
-        function loadHistory() {
-            const stored = localStorage.getItem('maintenance_history');
-            if (stored) {
-                history = JSON.parse(stored);
-            } else {
-                history = [];
-            }
-        }
+            // Global state
+            let maintenanceStatus = false;
+            let maintenanceStartTime = null;
+            let selectedPlan = 'easy';
+            let enabledButtons = [];
+            let history = [];
 
-        // Save to history
-        async function saveToHistory(action, details) {
-            const entry = {
-                id: Date.now(),
-                timestamp: new Date().toISOString(),
-                action: action,
-                details: details,
-                plan: selectedPlan
+            // Button lists for each plan
+            const buttonLists = {
+                easy: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments'],
+                medium: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR'],
+                hard: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR', 'Dependabot', 'Secret Scanning', 'CodeQL', 'Advanced Security', 'Compliance Checks', 'Audit Logs', 'SSO'],
+                extreme: ['GitHub Actions', 'Vercel Functions', 'Environment Variables', 'Build Settings', 'Preview Deployments', 'Edge Functions', 'Middleware', 'Image Optimization', 'Analytics', 'Log Drains', 'Web Analytics', 'Speed Insights', 'Serverless Functions', 'ISR', 'SSR', 'Dependabot', 'Secret Scanning', 'CodeQL', 'Advanced Security', 'Compliance Checks', 'Audit Logs', 'SSO', 'Quantum Encryption', 'Zero-Trust Architecture', 'Blockchain Verification', 'AI Threat Detection', 'Disaster Recovery', 'Multi-Region Failover']
             };
-            history.unshift(entry);
-            localStorage.setItem('maintenance_history', JSON.stringify(history));
-            
-            // Also save to Supabase history table if exists
-            try {
-                await supabase
-                    .from('maintenance_history')
-                    .insert([entry]);
-            } catch (err) {
-                console.log('History table not found, using localStorage');
+
+            // Load maintenance status from Supabase
+            async function loadMaintenanceStatus() {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('maintenance_settings')
+                        .select('*')
+                        .eq('id', 1)
+                        .single();
+
+                    if (error) throw error;
+
+                    maintenanceStatus = data.is_active;
+                    if (maintenanceStatus && !maintenanceStartTime) {
+                        maintenanceStartTime = new Date(data.updated_at || new Date());
+                    }
+
+                    updateStatusDisplay();
+                    return maintenanceStatus;
+                } catch (err) {
+                    console.error('Error loading status:', err);
+                    return false;
+                }
             }
-        }
 
-        // Disable maintenance mode
-        async function disableMaintenance() {
-            try {
-                const { error } = await supabase
-                    .from('maintenance_settings')
-                    .update({ 
-                        is_active: false, 
-                        updated_at: new Date().toISOString() 
-                    })
-                    .eq('id', 1);
-
-                if (error) throw error;
+            // Update status badge
+            function updateStatusDisplay() {
+                const dot = document.getElementById('statusDot');
+                const text = document.getElementById('statusText');
                 
-                maintenanceStatus = false;
-                updateStatusDisplay();
-                await saveToHistory('MAINTENANCE_DISABLED', `Disabled using ${selectedPlan.toUpperCase()} plan`);
-                return true;
-            } catch (err) {
-                console.error('Error disabling maintenance:', err);
-                return false;
+                if (maintenanceStatus) {
+                    dot.className = 'status-dot active';
+                    text.textContent = 'Maintenance Mode: ACTIVE';
+                } else {
+                    dot.className = 'status-dot inactive';
+                    text.textContent = 'System Online';
+                }
             }
-        }
 
-        // Get maintenance duration
-        function getMaintenanceDuration() {
-            if (!maintenanceStartTime) return 'Not in maintenance';
-            const now = new Date();
-            const diff = Math.floor((now - maintenanceStartTime) / 1000 / 60); // minutes
-            if (diff < 60) return `${diff} minutes`;
-            if (diff < 1440) return `${Math.floor(diff / 60)} hours`;
-            return `${Math.floor(diff / 1440)} days`;
-        }
+            // Load history from localStorage
+            function loadHistory() {
+                const stored = localStorage.getItem('maintenance_history');
+                if (stored) {
+                    history = JSON.parse(stored);
+                } else {
+                    history = [];
+                }
+            }
 
-        // Dashboard Tab
-        function renderDashboard() {
-            return `
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-label">System Status</div>
-                        <div class="stat-value" style="color: ${maintenanceStatus ? '#ff4444' : '#00ff00'}">
-                            ${maintenanceStatus ? 'MAINTENANCE' : 'OPERATIONAL'}
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Maintenance Duration</div>
-                        <div class="stat-value">${maintenanceStatus ? getMaintenanceDuration() : 'N/A'}</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-label">Last Check</div>
-                        <div class="stat-value">${new Date().toLocaleTimeString()}</div>
-                    </div>
-                </div>
+            // Save to history
+            async function saveToHistory(action, details) {
+                const entry = {
+                    id: Date.now(),
+                    timestamp: new Date().toISOString(),
+                    action: action,
+                    details: details,
+                    plan: selectedPlan
+                };
+                history.unshift(entry);
+                localStorage.setItem('maintenance_history', JSON.stringify(history));
+            }
+
+            // Disable maintenance mode
+            async function disableMaintenance() {
+                try {
+                    const { error } = await supabaseClient
+                        .from('maintenance_settings')
+                        .update({ 
+                            is_active: false, 
+                            updated_at: new Date().toISOString() 
+                        })
+                        .eq('id', 1);
+
+                    if (error) throw error;
+                    
+                    maintenanceStatus = false;
+                    updateStatusDisplay();
+                    await saveToHistory('MAINTENANCE_DISABLED', `Disabled using ${selectedPlan.toUpperCase()} plan`);
+                    return true;
+                } catch (err) {
+                    console.error('Error disabling maintenance:', err);
+                    return false;
+                }
+            }
+
+            // Get maintenance duration
+            function getMaintenanceDuration() {
+                if (!maintenanceStartTime) return 'Not in maintenance';
+                const now = new Date();
+                const diff = Math.floor((now - maintenanceStartTime) / 1000 / 60);
+                if (diff < 60) return `${diff} minutes`;
+                if (diff < 1440) return `${Math.floor(diff / 60)} hours`;
+                return `${Math.floor(diff / 1440)} days`;
+            }
+
+            // Toggle config button
+            window.toggleConfigButton = function(btnName) {
+                const index = enabledButtons.indexOf(btnName);
+                if (index === -1) {
+                    enabledButtons.push(btnName);
+                } else {
+                    enabledButtons.splice(index, 1);
+                }
                 
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-chart-line"></i>
-                        System Health Metrics
-                    </div>
-                    <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
-                        <div class="stat-card">
-                            <div class="stat-label">Uptime (30d)</div>
-                            <div class="stat-value">${maintenanceStatus ? '94.2%' : '99.9%'}</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Response Time</div>
-                            <div class="stat-value">${maintenanceStatus ? '2.3s' : '0.4s'}</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Active Sessions</div>
-                            <div class="stat-value">${maintenanceStatus ? '0' : '47'}</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-label">Error Rate</div>
-                            <div class="stat-value">${maintenanceStatus ? '18.5%' : '0.02%'}</div>
-                        </div>
-                    </div>
-                </div>
+                const btns = document.querySelectorAll('.config-btn');
+                btns.forEach(btn => {
+                    if (btn.getAttribute('data-btn') === btnName) {
+                        if (enabledButtons.includes(btnName)) {
+                            btn.classList.add('enabled');
+                            btn.innerHTML = `<i class="fas fa-check-circle"></i> ${btnName}`;
+                        } else {
+                            btn.classList.remove('enabled');
+                            btn.innerHTML = `<i class="fas fa-circle"></i> ${btnName}`;
+                        }
+                    }
+                });
                 
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-clock"></i>
-                        Recent Activity
-                    </div>
-                    ${history.slice(0, 5).map(h => `
-                        <div style="padding: 0.5rem 0; border-bottom: 1px solid #222;">
-                            <small style="color: #888;">${new Date(h.timestamp).toLocaleString()}</small>
-                            <div>${h.action} - ${h.details}</div>
-                        </div>
-                    `).join('') || '<div>No recent activity</div>'}
-                </div>
-            `;
-        }
+                const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
+                const recoveryBtn = document.getElementById('executeRecovery');
+                if (recoveryBtn) {
+                    recoveryBtn.disabled = enabledButtons.length < requiredCount;
+                }
+            };
 
-        // Deployments Tab (History)
-        function renderDeployments() {
-            return `
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-history"></i>
-                        Maintenance History
-                    </div>
-                    <table class="history-table">
-                        <thead>
-                            <tr><th>Timestamp</th><th>Action</th><th>Details</th><th>Plan</th></tr>
-                        </thead>
-                        <tbody>
-                            ${history.map(h => `
-                                <tr>
-                                    <td>${new Date(h.timestamp).toLocaleString()}</td>
-                                    <td>${h.action}</td>
-                                    <td>${h.details}</td>
-                                    <td>${h.plan || '-'}</td>
-                                </tr>
-                            `).join('') || '<tr><td colspan="4">No history available</td></tr>'}
-                        </tbody>
-                    </table>
-                </div>
-            `;
-        }
+            // Select plan
+            window.selectPlan = function(plan) {
+                selectedPlan = plan;
+                enabledButtons = [];
+                renderCurrentTab();
+            };
 
-        // Analytics Tab with site preview
-        function renderAnalytics() {
-            return `
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-eye"></i>
-                        Live Site Preview
-                    </div>
-                    ${maintenanceStatus ? `
-                        <div style="background: #0a0a0a; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
-                            <div style="color: #ff4444; margin-bottom: 0.5rem;">
-                                <i class="fas fa-exclamation-triangle"></i> Site is in maintenance mode
-                            </div>
-                            <div style="color: #888; font-size: 0.85rem;">
-                                Current parameters affecting site availability:
-                                <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
-                                    <li>Deployment state: PAUSED</li>
-                                    <li>Edge network: RESTRICTED</li>
-                                    <li>SSL certificate: VALID</li>
-                                    <li>Database connection: LIMITED</li>
-                                    <li>API rate limits: ENFORCED</li>
-                                    <li>CDN cache: STALE</li>
-                                </ul>
+            // Dashboard Tab
+            function renderDashboard() {
+                return `
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">System Status</div>
+                            <div class="stat-value" style="color: ${maintenanceStatus ? '#ff4444' : '#00ff00'}">
+                                ${maintenanceStatus ? 'MAINTENANCE' : 'OPERATIONAL'}
                             </div>
                         </div>
-                        <div style="background: #0a0a0a; border-radius: 8px; padding: 1rem; text-align: center; color: #888;">
-                            <i class="fas fa-lock" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                            <div>Site preview unavailable during maintenance</div>
-                            <div style="font-size: 0.75rem; margin-top: 0.5rem;">Enable recovery in Logs tab to restore access</div>
+                        <div class="stat-card">
+                            <div class="stat-label">Maintenance Duration</div>
+                            <div class="stat-value">${maintenanceStatus ? getMaintenanceDuration() : 'N/A'}</div>
                         </div>
-                    ` : `
-                        <iframe src="https://kabgayiacmusic.vercel.app" class="preview-frame" title="Site Preview"></iframe>
-                        <div style="margin-top: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
-                            <div style="color: #00ff00; margin-bottom: 0.5rem;">✓ Everything is operational</div>
-                            <div style="color: #888; font-size: 0.85rem;">
-                                All systems normal. No anomalies detected.
+                        <div class="stat-card">
+                            <div class="stat-label">Last Check</div>
+                            <div class="stat-value">${new Date().toLocaleTimeString()}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-chart-line"></i>
+                            System Health Metrics
+                        </div>
+                        <div class="stats-grid" style="grid-template-columns: repeat(2, 1fr);">
+                            <div class="stat-card">
+                                <div class="stat-label">Uptime (30d)</div>
+                                <div class="stat-value">${maintenanceStatus ? '94.2%' : '99.9%'}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Response Time</div>
+                                <div class="stat-value">${maintenanceStatus ? '2.3s' : '0.4s'}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Active Sessions</div>
+                                <div class="stat-value">${maintenanceStatus ? '0' : '47'}</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-label">Error Rate</div>
+                                <div class="stat-value">${maintenanceStatus ? '18.5%' : '0.02%'}</div>
                             </div>
                         </div>
-                    `}
-                </div>
-            `;
-        }
-
-        // Configs Tab with buttons
-        function renderConfigs() {
-            const buttons = buttonLists[selectedPlan];
-            const requiredCount = {
-                easy: 5,
-                medium: 15,
-                hard: 22,
-                extreme: 27
-            }[selectedPlan];
-            
-            return `
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-cog"></i>
-                        System Configuration
                     </div>
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>Current Plan:</strong> ${selectedPlan.toUpperCase()}
-                                <div style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">
-                                    Required configurations: ${requiredCount}/${buttons.length}
+                    
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-clock"></i>
+                            Recent Activity
+                        </div>
+                        ${history.slice(0, 5).map(h => `
+                            <div style="padding: 0.5rem 0; border-bottom: 1px solid #222;">
+                                <small style="color: #888;">${new Date(h.timestamp).toLocaleString()}</small>
+                                <div>${h.action} - ${h.details}</div>
+                            </div>
+                        `).join('') || '<div>No recent activity</div>'}
+                    </div>
+                `;
+            }
+
+            // Deployments Tab
+            function renderDeployments() {
+                return `
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-history"></i>
+                            Maintenance History
+                        </div>
+                        <table class="history-table">
+                            <thead>
+                                <tr><th>Timestamp</th><th>Action</th><th>Details</th><th>Plan</th></tr>
+                            </thead>
+                            <tbody>
+                                ${history.map(h => `
+                                    <tr>
+                                        <td>${new Date(h.timestamp).toLocaleString()}</td>
+                                        <td>${h.action}</td>
+                                        <td>${h.details}</td>
+                                        <td>${h.plan || '-'}</td>
+                                    </tr>
+                                `).join('') || '<tr><td colspan="4">No history available</td></tr>'}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            }
+
+            // Analytics Tab
+            function renderAnalytics() {
+                return `
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-eye"></i>
+                            Live Site Preview
+                        </div>
+                        ${maintenanceStatus ? `
+                            <div style="background: #0a0a0a; border-radius: 8px; padding: 1rem; margin-bottom: 1rem;">
+                                <div style="color: #ff4444; margin-bottom: 0.5rem;">
+                                    <i class="fas fa-exclamation-triangle"></i> Site is in maintenance mode
+                                </div>
+                                <div style="color: #888; font-size: 0.85rem;">
+                                    Current parameters affecting site availability:
+                                    <ul style="margin-top: 0.5rem; margin-left: 1.5rem;">
+                                        <li>Deployment state: PAUSED</li>
+                                        <li>Edge network: RESTRICTED</li>
+                                        <li>SSL certificate: VALID</li>
+                                        <li>Database connection: LIMITED</li>
+                                        <li>API rate limits: ENFORCED</li>
+                                        <li>CDN cache: STALE</li>
+                                    </ul>
                                 </div>
                             </div>
-                            <div class="status-badge" style="background: ${enabledButtons.length >= requiredCount ? '#00ff0022' : '#ff444422'}">
-                                <i class="fas ${enabledButtons.length >= requiredCount ? 'fa-check-circle' : 'fa-lock'}"></i>
-                                ${enabledButtons.length >= requiredCount ? 'READY' : `${requiredCount - enabledButtons.length} remaining`}
+                            <div style="background: #0a0a0a; border-radius: 8px; padding: 1rem; text-align: center; color: #888;">
+                                <i class="fas fa-lock" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                                <div>Site preview unavailable during maintenance</div>
+                                <div style="font-size: 0.75rem; margin-top: 0.5rem;">Enable recovery in Logs tab to restore access</div>
+                            </div>
+                        ` : `
+                            <iframe src="https://kabgayiacmusic.vercel.app" class="preview-frame" title="Site Preview"></iframe>
+                            <div style="margin-top: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
+                                <div style="color: #00ff00; margin-bottom: 0.5rem;">✓ Everything is operational</div>
+                                <div style="color: #888; font-size: 0.85rem;">All systems normal. No anomalies detected.</div>
+                            </div>
+                        `}
+                    </div>
+                `;
+            }
+
+            // Configs Tab
+            function renderConfigs() {
+                const buttons = buttonLists[selectedPlan];
+                const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
+                
+                return `
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-cog"></i>
+                            System Configuration
+                        </div>
+                        <div style="margin-bottom: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>
+                                    <strong>Current Plan:</strong> ${selectedPlan.toUpperCase()}
+                                    <div style="font-size: 0.75rem; color: #888; margin-top: 0.25rem;">
+                                        Required configurations: ${requiredCount}/${buttons.length}
+                                    </div>
+                                </div>
+                                <div class="status-badge" style="background: ${enabledButtons.length >= requiredCount ? '#00ff0022' : '#ff444422'}">
+                                    <i class="fas ${enabledButtons.length >= requiredCount ? 'fa-check-circle' : 'fa-lock'}"></i>
+                                    ${enabledButtons.length >= requiredCount ? 'READY' : `${requiredCount - enabledButtons.length} remaining`}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="buttons-grid">
+                            ${buttons.map(btn => `
+                                <div class="config-btn ${enabledButtons.includes(btn) ? 'enabled' : ''}" 
+                                     data-btn="${btn}"
+                                     onclick="toggleConfigButton('${btn}')">
+                                    <i class="fas ${enabledButtons.includes(btn) ? 'fa-check-circle' : 'fa-circle'}"></i>
+                                    ${btn}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Logs Tab
+            function renderLogs() {
+                const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
+                const isReady = enabledButtons.length >= requiredCount;
+                
+                return `
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-terminal"></i>
+                            Recovery Console
+                        </div>
+                        <div style="margin-bottom: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
+                            <div style="color: #888; margin-bottom: 0.5rem;">Selected Plan: ${selectedPlan.toUpperCase()}</div>
+                            <div style="color: #888; font-size: 0.8rem;">Required configurations: ${enabledButtons.length}/${requiredCount}</div>
+                        </div>
+                        
+                        <div class="code-editor">
+                            <textarea id="codeInput" rows="12" placeholder="Enter recovery code...">${window.RECOVERY_CODES ? window.RECOVERY_CODES[selectedPlan] : 'Loading codes...'}</textarea>
+                        </div>
+                        
+                        <button class="btn btn-primary" id="executeRecovery" ${!isReady ? 'disabled' : ''}>
+                            <i class="fas fa-play"></i> Execute Recovery Protocol
+                        </button>
+                        
+                        <div class="terminal" id="terminalOutput">
+                            <div class="terminal-line">> System ready. Awaiting execution...</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Settings Tab
+            function renderSettings() {
+                return `
+                    <div class="card">
+                        <div class="card-title">
+                            <i class="fas fa-sliders-h"></i>
+                            Recovery Plans
+                        </div>
+                        <div class="plans-grid">
+                            <div class="plan-card" onclick="selectPlan('easy')" style="border-color: ${selectedPlan === 'easy' ? '#0070f3' : '#222'}">
+                                <div class="plan-name">⚡ Quick Recovery</div>
+                                <div class="plan-buttons">5 configurations</div>
+                                <div style="font-size: 0.7rem; color: #888;">Basic verification required</div>
+                            </div>
+                            <div class="plan-card" onclick="selectPlan('medium')" style="border-color: ${selectedPlan === 'medium' ? '#0070f3' : '#222'}">
+                                <div class="plan-name">🔄 Standard</div>
+                                <div class="plan-buttons">15 configurations</div>
+                                <div style="font-size: 0.7rem; color: #888;">Full system verification</div>
+                            </div>
+                            <div class="plan-card" onclick="selectPlan('hard')" style="border-color: ${selectedPlan === 'hard' ? '#0070f3' : '#222'}">
+                                <div class="plan-name">🔒 Advanced</div>
+                                <div class="plan-buttons">22 configurations</div>
+                                <div style="font-size: 0.7rem; color: #888;">Security enhanced protocol</div>
+                            </div>
+                            <div class="plan-card" onclick="selectPlan('extreme')" style="border-color: ${selectedPlan === 'extreme' ? '#0070f3' : '#222'}">
+                                <div class="plan-name">⚠️ Enterprise</div>
+                                <div class="plan-buttons">27 configurations</div>
+                                <div style="font-size: 0.7rem; color: #888;">Maximum security tier</div>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="buttons-grid">
-                        ${buttons.map(btn => `
-                            <div class="config-btn ${enabledButtons.includes(btn) ? 'enabled' : ''}" 
-                                 data-btn="${btn}"
-                                 onclick="toggleConfigButton('${btn}')">
-                                <i class="fas ${enabledButtons.includes(btn) ? 'fa-check-circle' : 'fa-circle'}"></i>
-                                ${btn}
-                            </div>
-                        `).join('')}
-                    </div>
-                </div>
-            `;
-        }
-
-        // Logs Tab with code input
-        function renderLogs() {
-            return `
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-terminal"></i>
-                        Recovery Console
-                    </div>
-                    <div style="margin-bottom: 1rem; padding: 1rem; background: #0a0a0a; border-radius: 8px;">
-                        <div style="color: #888; margin-bottom: 0.5rem;">Selected Plan: ${selectedPlan.toUpperCase()}</div>
-                        <div style="color: #888; font-size: 0.8rem;">Required configurations: ${buttonLists[selectedPlan].length === enabledButtons.length ? '✓ Complete' : `${enabledButtons.length}/${buttonLists[selectedPlan].length} enabled`}</div>
-                    </div>
-                    
-                    <div class="code-editor">
-                        <textarea id="codeInput" rows="12" placeholder="Enter recovery code...">${recoveryCodes[selectedPlan]}</textarea>
-                    </div>
-                    
-                    <button class="btn btn-primary" id="executeRecovery" ${enabledButtons.length !== buttonLists[selectedPlan].length ? 'disabled' : ''}>
-                        <i class="fas fa-play"></i> Execute Recovery Protocol
-                    </button>
-                    
-                    <div class="terminal" id="terminalOutput">
-                        <div class="terminal-line">> System ready. Awaiting execution...</div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Settings Tab with plans
-        function renderSettings() {
-            return `
-                <div class="card">
-                    <div class="card-title">
-                        <i class="fas fa-sliders-h"></i>
-                        Recovery Plans
-                    </div>
-                    <div class="plans-grid">
-                        <div class="plan-card" onclick="selectPlan('easy')" style="cursor: pointer; border-color: ${selectedPlan === 'easy' ? '#0070f3' : '#222'};">
-                            <div class="plan-name">⚡ Quick Recovery</div>
-                            <div class="plan-buttons">5 configurations</div>
-                            <div style="font-size: 0.7rem; color: #888;">Basic verification required</div>
-                        </div>
-                        <div class="plan-card" onclick="selectPlan('medium')" style="cursor: pointer; border-color: ${selectedPlan === 'medium' ? '#0070f3' : '#222'};">
-                            <div class="plan-name">🔄 Standard</div>
-                            <div class="plan-buttons">15 configurations</div>
-                            <div style="font-size: 0.7rem; color: #888;">Full system verification</div>
-                        </div>
-                        <div class="plan-card" onclick="selectPlan('hard')" style="cursor: pointer; border-color: ${selectedPlan === 'hard' ? '#0070f3' : '#222'};">
-                            <div class="plan-name">🔒 Advanced</div>
-                            <div class="plan-buttons">22 configurations</div>
-                            <div style="font-size: 0.7rem; color: #888;">Security enhanced protocol</div>
-                        </div>
-                        <div class="plan-card" onclick="selectPlan('extreme')" style="cursor: pointer; border-color: ${selectedPlan === 'extreme' ? '#0070f3' : '#222'};">
-                            <div class="plan-name">⚠️ Enterprise</div>
-                            <div class="plan-buttons">27 configurations</div>
-                            <div style="font-size: 0.7rem; color: #888;">Maximum security tier</div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Toggle config button
-        window.toggleConfigButton = function(btnName) {
-            const index = enabledButtons.indexOf(btnName);
-            if (index === -1) {
-                enabledButtons.push(btnName);
-            } else {
-                enabledButtons.splice(index, 1);
+                `;
             }
-            
-            // Update UI
-            const btns = document.querySelectorAll('.config-btn');
-            btns.forEach(btn => {
-                if (btn.dataset.btn === btnName) {
-                    if (enabledButtons.includes(btnName)) {
-                        btn.classList.add('enabled');
-                        btn.innerHTML = `<i class="fas fa-check-circle"></i> ${btnName}`;
-                    } else {
-                        btn.classList.remove('enabled');
-                        btn.innerHTML = `<i class="fas fa-circle"></i> ${btnName}`;
-                    }
-                }
-            });
-            
-            // Update recovery button state
-            const requiredCount = {
-                easy: 5,
-                medium: 15,
-                hard: 22,
-                extreme: 27
-            }[selectedPlan];
-            
-            const recoveryBtn = document.getElementById('executeRecovery');
-            if (recoveryBtn) {
-                if (enabledButtons.length >= requiredCount) {
-                    recoveryBtn.disabled = false;
-                } else {
-                    recoveryBtn.disabled = true;
-                }
-            }
-            
-            // Update status display in configs tab
-            const configCard = document.querySelector('.configs-status');
-            if (configCard) {
-                configCard.innerHTML = `${enabledButtons.length}/${buttonLists[selectedPlan].length} configurations enabled`;
-            }
-        };
 
-        // Select plan
-        window.selectPlan = function(plan) {
-            selectedPlan = plan;
-            enabledButtons = [];
-            // Re-render configs and logs
-            const activeTab = document.querySelector('.sidebar-nav-item.active').dataset.tab;
-            if (activeTab === 'configs') {
-                document.getElementById('tabContent').innerHTML = renderConfigs();
-            } else if (activeTab === 'logs') {
-                document.getElementById('tabContent').innerHTML = renderLogs();
-                attachLogsEvents();
-            }
-            document.getElementById('tabContent').innerHTML = renderSettings();
-            renderCurrentTab();
-        };
-
-        // Execute recovery
-        function attachLogsEvents() {
-            const executeBtn = document.getElementById('executeRecovery');
-            if (executeBtn) {
-                executeBtn.onclick = async () => {
-                    const terminal = document.getElementById('terminalOutput');
-                    const code = document.getElementById('codeInput').value;
-                    
-                    terminal.innerHTML = '<div class="terminal-line">> Executing recovery protocol...</div>';
-                    
-                    // Simulate execution
-                    await new Promise(resolve => setTimeout(resolve, 1500));
-                    
-                    // Check if code matches the expected pattern
-                    const expectedCode = recoveryCodes[selectedPlan];
-                    if (code.trim() === expectedCode.trim()) {
-                        terminal.innerHTML += '<div class="terminal-line">> Code verification passed</div>';
-                        terminal.innerHTML += '<div class="terminal-line">> Checking system configurations...</div>';
-                        await new Promise(resolve => setTimeout(resolve, 1000));
+            // Execute recovery
+            function attachLogsEvents() {
+                const executeBtn = document.getElementById('executeRecovery');
+                if (executeBtn) {
+                    executeBtn.onclick = async () => {
+                        const terminal = document.getElementById('terminalOutput');
+                        const code = document.getElementById('codeInput').value;
+                        const expectedCode = window.RECOVERY_CODES ? window.RECOVERY_CODES[selectedPlan] : '';
                         
-                        const requiredCount = {
-                            easy: 5,
-                            medium: 15,
-                            hard: 22,
-                            extreme: 27
-                        }[selectedPlan];
+                        terminal.innerHTML = '<div class="terminal-line">> Executing recovery protocol...</div>';
+                        await new Promise(resolve => setTimeout(resolve, 1500));
                         
-                        if (enabledButtons.length >= requiredCount) {
-                            terminal.innerHTML += '<div class="terminal-line">✓ All configurations verified</div>';
-                            terminal.innerHTML += '<div class="terminal-line">> Initiating recovery sequence...</div>';
-                            await new Promise(resolve => setTimeout(resolve, 1500));
-                            terminal.innerHTML += '<div class="terminal-line" style="color: #00ff00;">✓ RECOVERY SUCCESSFUL!</div>';
-                            terminal.innerHTML += '<div class="terminal-line" style="color: #00ff00;">> Maintenance mode disabled</div>';
+                        if (code.trim() === expectedCode.trim()) {
+                            terminal.innerHTML += '<div class="terminal-line">> Code verification passed</div>';
+                            terminal.innerHTML += '<div class="terminal-line">> Checking system configurations...</div>';
+                            await new Promise(resolve => setTimeout(resolve, 1000));
                             
-                            await disableMaintenance();
+                            const requiredCount = { easy: 5, medium: 15, hard: 22, extreme: 27 }[selectedPlan];
+                            
+                            if (enabledButtons.length >= requiredCount) {
+                                terminal.innerHTML += '<div class="terminal-line">✓ All configurations verified</div>';
+                                terminal.innerHTML += '<div class="terminal-line">> Initiating recovery sequence...</div>';
+                                await new Promise(resolve => setTimeout(resolve, 1500));
+                                terminal.innerHTML += '<div class="terminal-line" style="color: #00ff00;">✓ RECOVERY SUCCESSFUL!</div>';
+                                terminal.innerHTML += '<div class="terminal-line" style="color: #00ff00;">> Maintenance mode disabled</div>';
+                                await disableMaintenance();
+                            } else {
+                                const missing = requiredCount - enabledButtons.length;
+                                terminal.innerHTML += `<div class="terminal-line terminal-error">✗ Configuration error: ${missing} required services not initialized</div>`;
+                                terminal.innerHTML += `<div class="terminal-line">> System integrity check failed</div>`;
+                            }
                         } else {
-                            const missing = requiredCount - enabledButtons.length;
-                            terminal.innerHTML += `<div class="terminal-line terminal-error">✗ Configuration error: ${missing} required services not initialized</div>`;
-                            terminal.innerHTML += `<div class="terminal-line">> System integrity check failed</div>`;
+                            terminal.innerHTML += '<div class="terminal-line terminal-error">✗ Code verification failed</div>';
+                            terminal.innerHTML += '<div class="terminal-line">> Recovery sequence terminated</div>';
+                            terminal.innerHTML += '<div class="terminal-line">> Invalid recovery signature detected</div>';
                         }
-                    } else {
-                        terminal.innerHTML += '<div class="terminal-line terminal-error">✗ Code verification failed</div>';
-                        terminal.innerHTML += '<div class="terminal-line">> Recovery sequence terminated</div>';
-                        terminal.innerHTML += '<div class="terminal-line">> Invalid recovery signature detected</div>';
-                    }
-                };
-            }
-        }
-
-        // Render current tab
-        function renderCurrentTab() {
-            const activeTab = document.querySelector('.sidebar-nav-item.active').dataset.tab;
-            const title = document.getElementById('pageTitle');
-            
-            switch(activeTab) {
-                case 'dashboard':
-                    title.textContent = 'Dashboard';
-                    document.getElementById('tabContent').innerHTML = renderDashboard();
-                    break;
-                case 'deployments':
-                    title.textContent = 'Deployments';
-                    document.getElementById('tabContent').innerHTML = renderDeployments();
-                    break;
-                case 'analytics':
-                    title.textContent = 'Analytics';
-                    document.getElementById('tabContent').innerHTML = renderAnalytics();
-                    break;
-                case 'configs':
-                    title.textContent = 'Configurations';
-                    document.getElementById('tabContent').innerHTML = renderConfigs();
-                    break;
-                case 'logs':
-                    title.textContent = 'Recovery Logs';
-                    document.getElementById('tabContent').innerHTML = renderLogs();
-                    attachLogsEvents();
-                    break;
-                case 'settings':
-                    title.textContent = 'Settings';
-                    document.getElementById('tabContent').innerHTML = renderSettings();
-                    break;
-            }
-        }
-
-        // Tab switching
-        document.querySelectorAll('.sidebar-nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-                renderCurrentTab();
-            });
-        });
-
-        // Initialize
-        async function init() {
-            await loadMaintenanceStatus();
-            loadHistory();
-            renderCurrentTab();
-            
-            // Update maintenance start time if active
-            if (maintenanceStatus) {
-                const { data } = await supabase
-                    .from('maintenance_settings')
-                    .select('updated_at')
-                    .eq('id', 1)
-                    .single();
-                if (data && data.updated_at) {
-                    maintenanceStartTime = new Date(data.updated_at);
+                    };
                 }
             }
-        }
-        
-        init();
+
+            // Render current tab
+            function renderCurrentTab() {
+                const activeTabElement = document.querySelector('.sidebar-nav-item.active');
+                if (!activeTabElement) return;
+                
+                const activeTab = activeTabElement.getAttribute('data-tab');
+                const title = document.getElementById('pageTitle');
+                const tabContent = document.getElementById('tabContent');
+                
+                switch(activeTab) {
+                    case 'dashboard':
+                        title.textContent = 'Dashboard';
+                        tabContent.innerHTML = renderDashboard();
+                        break;
+                    case 'deployments':
+                        title.textContent = 'Deployments';
+                        tabContent.innerHTML = renderDeployments();
+                        break;
+                    case 'analytics':
+                        title.textContent = 'Analytics';
+                        tabContent.innerHTML = renderAnalytics();
+                        break;
+                    case 'configs':
+                        title.textContent = 'Configurations';
+                        tabContent.innerHTML = renderConfigs();
+                        break;
+                    case 'logs':
+                        title.textContent = 'Recovery Logs';
+                        tabContent.innerHTML = renderLogs();
+                        attachLogsEvents();
+                        break;
+                    case 'settings':
+                        title.textContent = 'Settings';
+                        tabContent.innerHTML = renderSettings();
+                        break;
+                }
+            }
+
+            // Tab switching
+            document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.sidebar-nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    renderCurrentTab();
+                });
+            });
+
+            // Initialize
+            async function init() {
+                await loadMaintenanceStatus();
+                loadHistory();
+                renderCurrentTab();
+                
+                if (maintenanceStatus) {
+                    const { data } = await supabaseClient
+                        .from('maintenance_settings')
+                        .select('updated_at')
+                        .eq('id', 1)
+                        .single();
+                    if (data && data.updated_at) {
+                        maintenanceStartTime = new Date(data.updated_at);
+                    }
+                }
+            }
+            
+            init();
+        })();
     </script>
 </body>
 </html>
