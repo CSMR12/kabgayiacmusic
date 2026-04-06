@@ -3,11 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kabgayi Music Academy </title>
+    <title>Kabgayi Music Academy | Sacred Music Education</title>
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1e5f7a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kabgayi Music">
+    <link rel="apple-touch-icon" href="image/logo.png">
     <!-- Poppins font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -21,7 +28,7 @@
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: #d4eaff; /* sky base */
+            background: #d4eaff;
             color: #1e1e1e;
             min-height: 100vh;
             width: 100vw;
@@ -32,10 +39,10 @@
             align-items: center;
             justify-content: flex-start;
             position: relative;
-            font-size: 16px; /* base for desktop */
+            font-size: 16px;
         }
 
-        /* Moving blur background - sky blue enhanced (fixed) */
+        /* Moving blur background */
         .moving-blur {
             position: fixed;
             top: 0;
@@ -55,54 +62,11 @@
             animation: moveBlur 20s infinite alternate ease-in-out;
         }
 
-        .orb1 {
-            width: 600px;
-            height: 600px;
-            background: #9ac9ff;
-            top: -250px;
-            left: -150px;
-            animation-duration: 27s;
-        }
-
-        .orb2 {
-            width: 500px;
-            height: 500px;
-            background: #b3d9ff;
-            bottom: -200px;
-            right: -100px;
-            animation-duration: 24s;
-            animation-delay: -5s;
-        }
-
-        .orb3 {
-            width: 450px;
-            height: 450px;
-            background: #c5e0ff;
-            top: 30%;
-            right: 15%;
-            animation-duration: 30s;
-            animation-delay: -12s;
-        }
-
-        .orb4 {
-            width: 400px;
-            height: 400px;
-            background: #a8ceff;
-            bottom: 10%;
-            left: 20%;
-            animation-duration: 22s;
-            animation-delay: -8s;
-        }
-
-        .orb5 {
-            width: 550px;
-            height: 550px;
-            background: #d0e6ff;
-            top: 50%;
-            left: 40%;
-            animation-duration: 28s;
-            animation-delay: -3s;
-        }
+        .orb1 { width: 600px; height: 600px; background: #9ac9ff; top: -250px; left: -150px; animation-duration: 27s; }
+        .orb2 { width: 500px; height: 500px; background: #b3d9ff; bottom: -200px; right: -100px; animation-duration: 24s; animation-delay: -5s; }
+        .orb3 { width: 450px; height: 450px; background: #c5e0ff; top: 30%; right: 15%; animation-duration: 30s; animation-delay: -12s; }
+        .orb4 { width: 400px; height: 400px; background: #a8ceff; bottom: 10%; left: 20%; animation-duration: 22s; animation-delay: -8s; }
+        .orb5 { width: 550px; height: 550px; background: #d0e6ff; top: 50%; left: 40%; animation-duration: 28s; animation-delay: -3s; }
 
         @keyframes moveBlur {
             0% { transform: translate(0, 0) scale(1); }
@@ -111,7 +75,62 @@
             100% { transform: translate(40px, -30px) scale(1.02); }
         }
 
-        /* SPLASH OVERLAY: hero image + WELCOME! */
+        /* Announcement Bar */
+        .announcement-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #1e5f7a, #134257);
+            color: white;
+            padding: 12px 20px;
+            z-index: 2000;
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+        .announcement-bar.show {
+            transform: translateY(0);
+        }
+        .announcement-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            flex-wrap: wrap;
+        }
+        .announcement-content i {
+            font-size: 1.3rem;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        .announcement-text {
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .announcement-close {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            cursor: pointer;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+        .announcement-close:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* SPLASH OVERLAY */
         .splash-overlay {
             position: fixed;
             top: 0;
@@ -129,14 +148,12 @@
             visibility: visible;
             pointer-events: auto;
         }
-
         .splash-overlay img {
             width: 60%;
             max-width: 600px;
             height: auto;
             animation: gentlePulse 2s infinite alternate ease-in-out;
         }
-
         .splash-welcome {
             margin-top: 1.5rem;
             font-size: 3rem;
@@ -145,45 +162,129 @@
             text-shadow: 0 2px 10px rgba(0,0,0,0.05);
             letter-spacing: 2px;
         }
-
         @keyframes gentlePulse {
             0% { transform: scale(1); opacity: 0.9; }
             100% { transform: scale(1.02); opacity: 1; }
         }
-
         .splash-overlay.hidden {
             opacity: 0;
             visibility: hidden;
             pointer-events: none;
         }
 
-        /* Logo on left side (appears after splash) */
-        .side-logo {
+        /* Install PWA Button */
+        .install-pwa {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 70px;
-            height: auto;
-            z-index: 1500;
-            transition: opacity 0.5s ease;
-            pointer-events: none; /* doesn't block clicks */
-            border-radius: 16px;
-            box-shadow: 0 6px 14px rgba(0,0,0,0.05);
+            bottom: 90px;
+            right: 20px;
+            background: #1e5f7a;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            z-index: 2300;
+            display: none;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        .install-pwa:hover {
+            background: #134257;
+            transform: scale(1.02);
+        }
+        .install-pwa i {
+            font-size: 1.1rem;
         }
 
-        /* Main container */
+        /* Navigation Menu */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(12px);
+            z-index: 1500;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #1e5f7a;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .nav-links a:hover {
+            color: #134257;
+        }
+        .nav-links a i {
+            font-size: 0.9rem;
+        }
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #1e5f7a;
+            cursor: pointer;
+        }
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                padding: 15px 0;
+            }
+            .nav-links.show {
+                display: flex;
+            }
+            .splash-welcome { font-size: 2rem; }
+        }
+
+        .side-logo {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            width: 60px;
+            height: auto;
+            z-index: 1500;
+            pointer-events: none;
+            border-radius: 16px;
+        }
+
         .welcome {
             position: relative;
             z-index: 10;
             width: 100%;
-            max-width: 1200px; /* wider for desktop */
-            padding: 2rem 2rem 4rem;
+            max-width: 1200px;
+            padding: 100px 2rem 4rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             animation: fadeIn 0.6s ease;
-            margin-top: 0;
         }
 
         @keyframes fadeIn {
@@ -191,51 +292,37 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Title */
         .title {
             text-align: center;
             margin-bottom: 2rem;
         }
-
         .title h1 {
             font-size: clamp(2.8rem, 5vw, 4rem);
             font-weight: 600;
-            line-height: 1.2;
             color: #1e1e1e;
         }
-
         .title h1 span {
             color: #1e5f7a;
-            font-weight: 600;
         }
-
         .title p {
             font-size: 1.2rem;
             color: #2c4e66;
-            font-weight: 300;
             margin-top: 0.4rem;
-            margin-bottom: 2rem; /* space for kids image */
         }
 
-        /* kids image - plain */
         .kids-image {
             display: block;
             max-width: 500px;
             width: auto;
-            height: auto;
             margin: 0 auto 2rem;
             border-radius: 24px;
-            box-shadow: none;
         }
 
-        /* Horizontal scroll cards */
         .cards-wrapper {
             width: 100%;
             max-width: 900px;
             margin: 1.5rem auto 2rem;
-            position: relative;
         }
-
         .cards-scroll {
             display: flex;
             gap: 1.2rem;
@@ -243,40 +330,24 @@
             scroll-snap-type: x mandatory;
             padding: 0.5rem 0.2rem 1.5rem;
             scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
             cursor: grab;
         }
-
         .cards-scroll::-webkit-scrollbar {
             display: none;
         }
-        .cards-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
         .card-minimal {
             flex: 0 0 220px;
             scroll-snap-align: center;
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255,255,255,0.75);
             backdrop-filter: blur(10px);
             border-radius: 28px;
             padding: 1.8rem 1.2rem;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.02);
-            transition: all 0.2s ease;
-            border: 1px solid rgba(255, 255, 255, 0.6);
+            border: 1px solid rgba(255,255,255,0.6);
         }
-
-        .card-minimal:hover {
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.04);
-            transform: translateY(-2px);
-            background: rgba(255, 255, 255, 0.9);
-        }
-
         .card-icon {
             width: 48px;
             height: 48px;
-            background: rgba(210, 235, 255, 0.9);
+            background: rgba(210,235,255,0.9);
             border-radius: 18px;
             display: flex;
             align-items: center;
@@ -285,51 +356,40 @@
             color: #1e5f7a;
             font-size: 1.4rem;
         }
-
         .card-label {
             font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 0.8px;
             color: #4a6375;
             margin-bottom: 0.3rem;
         }
-
         .card-value {
             font-size: 1.6rem;
             font-weight: 600;
             color: #1e1e1e;
-            margin-bottom: 0.3rem;
-            line-height: 1.2;
         }
-
         .card-desc {
             font-size: 0.9rem;
             color: #5b7485;
         }
 
-        /* Dots */
         .dot-container {
             display: flex;
             justify-content: center;
             gap: 0.8rem;
             margin: 1rem 0 2rem;
         }
-
         .dot-minimal {
             width: 8px;
             height: 8px;
             border-radius: 12px;
             background: #a0bbd0;
-            transition: all 0.2s ease;
             cursor: pointer;
         }
-
         .dot-minimal.active {
             width: 26px;
             background: #1e5f7a;
         }
 
-        /* Buttons */
         .actions {
             display: flex;
             gap: 1.5rem;
@@ -337,7 +397,6 @@
             flex-wrap: wrap;
             justify-content: center;
         }
-
         .btn {
             padding: 0.9rem 2.5rem;
             border-radius: 40px;
@@ -347,52 +406,34 @@
             align-items: center;
             gap: 0.8rem;
             cursor: pointer;
-            transition: all 0.15s ease;
             text-decoration: none;
-            border: none;
-            font-family: 'Poppins', sans-serif;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255,255,255,0.8);
             backdrop-filter: blur(10px);
             color: #1e1e1e;
             border: 1px solid rgba(255,255,255,0.7);
         }
-
         .btn-primary {
             background: #1e3b4c;
             color: white;
-            border: none;
         }
-
         .btn-primary i {
             color: #ffd966;
-            font-size: 1rem;
         }
-
         .btn-primary:hover {
             background: #15303e;
             transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.1);
         }
 
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.95);
-            transform: translateY(-2px);
-        }
-
-        /* Contact strip - slightly transparent to match sky theme */
         .contact-strip {
             display: flex;
             gap: 2.5rem;
-            background: rgba(255, 255, 255, 0.4);
+            background: rgba(255,255,255,0.4);
             backdrop-filter: blur(8px);
             border-radius: 60px;
             padding: 0.8rem 2.8rem;
-            font-size: 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.5);
             flex-wrap: wrap;
             justify-content: center;
         }
-
         .contact-item {
             display: flex;
             align-items: center;
@@ -400,28 +441,16 @@
             color: #1d445b;
             text-decoration: none;
         }
-
         .contact-item i {
             color: #1e5f7a;
-            width: 18px;
-            font-size: 1.2rem;
         }
 
-        .dot-sep {
-            width: 4px;
-            height: 4px;
-            background: #8faec7;
-            border-radius: 50%;
-            align-self: center;
-        }
-
-        /* Fixed left vertical button */
         .need-website-btn {
             position: fixed;
             left: 0;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(30, 95, 122, 0.9);
+            background: rgba(30,95,122,0.9);
             backdrop-filter: blur(5px);
             color: white;
             writing-mode: vertical-rl;
@@ -430,101 +459,25 @@
             border-radius: 0 16px 16px 0;
             font-size: 1rem;
             font-weight: 500;
-            letter-spacing: 1px;
             cursor: pointer;
-            z-index: 2100; /* above splash */
-            border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
-            line-height: 1.5;
-            text-align: center;
+            z-index: 2100;
         }
 
-        .need-website-btn:hover {
-            background: #124c63;
-            padding: 2.3rem 0.7rem;
-        }
-
-        /* Popup box */
         .popup-box {
             position: fixed;
             left: 90px;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.96);
+            background: rgba(255,255,255,0.96);
             backdrop-filter: blur(20px);
             border-radius: 28px;
             padding: 2rem;
-            box-shadow: 0 25px 45px rgba(0,0,0,0.15);
             z-index: 2200;
             min-width: 300px;
-            border: 1px solid rgba(255, 255, 255, 0.7);
             display: none;
         }
+        .popup-box.show { display: block; }
 
-        .popup-box.show {
-            display: block;
-        }
-
-        .popup-content {
-            display: flex;
-            flex-direction: column;
-            gap: 1.2rem;
-        }
-
-        .popup-question {
-            font-size: 1.1rem;
-            font-weight: 500;
-            color: #1e1e1e;
-        }
-
-        .popup-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .popup-btn {
-            padding: 0.7rem 1.8rem;
-            border-radius: 30px;
-            font-size: 1rem;
-            font-weight: 500;
-            border: none;
-            cursor: pointer;
-            transition: all 0.1s ease;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .popup-btn-yes {
-            background: #1e5f7a;
-            color: white;
-        }
-
-        .popup-btn-yes:hover { background: #134257; }
-        .popup-btn-no {
-            background: #e3ecf2;
-            color: #1e1e1e;
-        }
-        .popup-btn-no:hover { background: #d0dee8; }
-
-        .popup-message {
-            font-size: 1rem;
-            color: #1e5f7a;
-            text-align: center;
-            padding: 1rem;
-        }
-
-        /* Footer */
-        .footer {
-            width: 100%;
-            text-align: center;
-            font-size: 0.9rem;
-            color: #2f566b;
-            z-index: 20;
-            padding: 1.5rem 0 1rem;
-        }
-
-        /* music control (same as mobile but optional) */
         .music-control {
             position: fixed;
             bottom: 25px;
@@ -541,33 +494,74 @@
             font-size: 1.5rem;
             color: #1e5f7a;
             cursor: pointer;
-            border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: 0.2s;
-        }
-        .music-control.playing {
-            color: #124c63;
-            background: rgba(210, 235, 255, 0.9);
         }
 
-        /* small screens: handled by redirect, but we keep responsive */
+        .footer {
+            width: 100%;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #2f566b;
+            padding: 1.5rem 0;
+        }
+
+        /* Progress Tracker */
+        .progress-tracker {
+            background: rgba(255,255,255,0.5);
+            backdrop-filter: blur(8px);
+            border-radius: 20px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 400px;
+            text-align: center;
+        }
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .step {
+            flex: 1;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #8aaec2;
+            position: relative;
+        }
+        .step.completed {
+            color: #1e5f7a;
+        }
+        .step.completed::before {
+            content: '✓';
+            display: block;
+            width: 24px;
+            height: 24px;
+            background: #1e5f7a;
+            color: white;
+            border-radius: 50%;
+            margin: 0 auto 5px;
+            line-height: 24px;
+        }
+        .step::before {
+            content: '○';
+            display: block;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
-            /* this won't be seen because redirect happens, but just in case */
-            .splash-welcome { font-size: 2.2rem; }
+            .welcome { padding-top: 80px; }
+            .side-logo { top: 70px; width: 45px; }
+            .contact-strip { padding: 0.6rem 1.5rem; gap: 1rem; }
+            .popup-box { left: 10px; right: 10px; top: auto; bottom: 90px; transform: none; }
         }
     </style>
 </head>
 <body>
-    <!-- REDIRECT TO MOBILE VERSION IF SMALL SCREEN -->
     <script>
-        (function() {
-            if (window.innerWidth <= 768) {
-                window.location.replace('index2.html');
-            }
-        })();
+        if (window.innerWidth <= 768) {
+            window.location.replace('index2.html');
+        }
     </script>
 
-    <!-- moving sky blur (fixed) -->
     <div class="moving-blur">
         <div class="blur-orb orb1"></div>
         <div class="blur-orb orb2"></div>
@@ -576,21 +570,41 @@
         <div class="blur-orb orb5"></div>
     </div>
 
-    <!-- SPLASH OVERLAY: hero.png + WELCOME! -->
+    <!-- Announcement Bar -->
+    <div class="announcement-bar" id="announcementBar">
+        <div class="announcement-content">
+            <i class="fas fa-bullhorn"></i>
+            <span class="announcement-text" id="announcementText">Welcome to Kabgayi Music Academy! Registration open until March 31, 2026.</span>
+        </div>
+        <button class="announcement-close" id="closeAnnouncement"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="nav-menu">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="image/logo.png" alt="logo" style="height: 35px; width: auto;">
+            <span style="font-weight: 600; color: #1e5f7a;">Kabgayi Music</span>
+        </div>
+        <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+        <div class="nav-links" id="navLinks">
+            <a href="index.html"><i class="fas fa-home"></i> Home</a>
+            <a href="about.html"><i class="fas fa-info-circle"></i> About</a>
+            <a href="contact.html"><i class="fas fa-envelope"></i> Contact</a>
+            <a href="news.html"><i class="fas fa-newspaper"></i> News</a>
+            <a href="music-lab.html"><i class="fas fa-music"></i> Music Lab</a>
+            <a href="media-gallery.html"><i class="fas fa-images"></i> Gallery</a>
+        </div>
+    </div>
+
+    <img src="image/logo.png" alt="logo" class="side-logo">
+
     <div class="splash-overlay" id="splashOverlay">
         <img src="image/hero.png" alt="splash" draggable="false">
         <div class="splash-welcome">IYANDIKISHE HANO!</div>
     </div>
 
-    <!-- Logo on left side (appears after splash) -->
-    <img src="image/logo.png" alt="logo" class="side-logo" id="sideLogo">
+    <div class="need-website-btn" id="needWebsiteBtn">NEED A<br>WEBSITE?</div>
 
-    <!-- left vertical button -->
-    <div class="need-website-btn" id="needWebsiteBtn">
-        NEED A<br>WEBSITE?
-    </div>
-
-    <!-- popup box -->
     <div class="popup-box" id="popupBox">
         <div class="popup-content" id="popupContent">
             <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
@@ -601,16 +615,27 @@
         </div>
     </div>
 
-    <!-- main content -->
+    <!-- Install PWA Button -->
+    <button class="install-pwa" id="installPwaBtn"><i class="fas fa-download"></i> Install App</button>
+
     <div class="welcome">
         <div class="title">
             <h1>Children's <span>Music School</span></h1>
             <p>Sacred music education for young talents</p>
-            <!-- kids image added below tagline -->
             <img src="image/kids.png" alt="kids" class="kids-image">
         </div>
 
-        <!-- Horizontal scroll cards -->
+        <!-- Progress Tracker -->
+        <div class="progress-tracker" id="progressTracker">
+            <strong><i class="fas fa-chart-line"></i> Your Progress</strong>
+            <div class="progress-steps" id="progressSteps">
+                <div class="step" data-step="1">Visit</div>
+                <div class="step" data-step="2">Register</div>
+                <div class="step" data-step="3">Submit</div>
+                <div class="step" data-step="4">Confirmed</div>
+            </div>
+        </div>
+
         <div class="cards-wrapper">
             <div class="cards-scroll" id="cardsScroll">
                 <div class="card-minimal"><div class="card-icon"><i class="far fa-calendar-alt"></i></div><div class="card-label">Registration</div><div class="card-value">01/03 – 31/03</div><div class="card-desc">March 2026</div></div>
@@ -623,18 +648,15 @@
             <div class="dot-container" id="dotContainer"></div>
         </div>
 
-        <!-- Buttons -->
         <div class="actions">
             <a href="register.html" class="btn btn-primary"><i class="fas fa-pen"></i> Apply now</a>
-            <a href="https://wa.me/250789209371" class="btn btn-secondary" target="_blank"><i class="fab fa-whatsapp"></i> Father Pater</a>
+            <a href="https://wa.me/250789209371" class="btn" target="_blank"><i class="fab fa-whatsapp"></i> Father Pater</a>
+            <a href="music-lab.html" class="btn"><i class="fas fa-piano"></i> Try Music Lab</a>
         </div>
 
-        <!-- Contact strip (semi‑transparent, sky‑style) -->
         <div class="contact-strip">
             <a href="https://wa.me/250789209371" class="contact-item" target="_blank"><i class="fab fa-whatsapp"></i> 0789 209 371</a>
-            <span class="dot-sep"></span>
             <span class="contact-item"><i class="fas fa-map-pin"></i> Gitarama</span>
-            <span class="dot-sep"></span>
             <span class="contact-item"><i class="fas fa-map-pin"></i> Kabgayi</span>
         </div>
     </div>
@@ -643,142 +665,81 @@
         Diocese Kabgayi · Children's Music School
     </div>
 
-    <!-- music player (optional, same as mobile) -->
     <audio id="bgMusic" loop preload="auto">
         <source src="music/back.mp3" type="audio/mpeg">
     </audio>
-    <div class="music-control" id="musicToggle" title="background music"><i class="fas fa-music"></i></div>
+    <div class="music-control" id="musicToggle"><i class="fas fa-music"></i></div>
 
+    <script src="announcement.js"></script>
     <script>
         (function() {
-            // ---------- SPLASH FADE ON SCROLL ----------
+            // Splash hide
             const splash = document.getElementById('splashOverlay');
             let splashHidden = false;
-
             function hideSplash() {
                 if (!splashHidden) {
                     splash.classList.add('hidden');
                     splashHidden = true;
-                    window.removeEventListener('scroll', scrollHandler);
-                    window.removeEventListener('touchmove', scrollHandler);
                 }
             }
-
-            function scrollHandler() {
-                if (window.scrollY > 5) {
-                    hideSplash();
-                }
-            }
-
-            window.addEventListener('scroll', scrollHandler);
-            window.addEventListener('touchmove', scrollHandler);
+            window.addEventListener('scroll', () => { if (window.scrollY > 5) hideSplash(); });
             splash.addEventListener('click', hideSplash);
 
-            // ---------- CARDS SCROLL (same logic) ----------
+            // Cards scroll
             const scrollContainer = document.getElementById('cardsScroll');
             const cards = document.querySelectorAll('.card-minimal');
             const cardCount = cards.length;
             const dotContainer = document.getElementById('dotContainer');
-
             for (let i = 0; i < cardCount; i++) {
                 const dot = document.createElement('span');
                 dot.classList.add('dot-minimal');
                 dot.dataset.index = i;
-                dot.addEventListener('click', function() {
-                    const index = parseInt(this.dataset.index);
-                    scrollToCard(index);
-                    resetAutoScroll();
-                });
+                dot.addEventListener('click', () => scrollToCard(parseInt(dot.dataset.index)));
                 dotContainer.appendChild(dot);
             }
-
             const dots = document.querySelectorAll('.dot-minimal');
-
             function scrollToCard(index) {
-                if (index >= 0 && index < cardCount) {
-                    const card = cards[index];
-                    const containerRect = scrollContainer.getBoundingClientRect();
-                    const cardRect = card.getBoundingClientRect();
-                    const scrollLeft = card.offsetLeft - (containerRect.width / 2) + (cardRect.width / 2);
-                    scrollContainer.scrollTo({ left: scrollLeft, behavior: 'smooth' });
-                }
+                const card = cards[index];
+                const containerRect = scrollContainer.getBoundingClientRect();
+                const cardRect = card.getBoundingClientRect();
+                const scrollLeft = card.offsetLeft - (containerRect.width / 2) + (cardRect.width / 2);
+                scrollContainer.scrollTo({ left: scrollLeft, behavior: 'smooth' });
             }
-
             function updateActiveDot() {
                 const containerRect = scrollContainer.getBoundingClientRect();
                 const containerCenter = containerRect.left + containerRect.width / 2;
-                let activeIndex = 0;
-                let minDistance = Infinity;
+                let activeIndex = 0, minDistance = Infinity;
                 cards.forEach((card, idx) => {
                     const cardRect = card.getBoundingClientRect();
-                    const cardCenter = cardRect.left + cardRect.width / 2;
-                    const distance = Math.abs(cardCenter - containerCenter);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        activeIndex = idx;
-                    }
+                    const distance = Math.abs((cardRect.left + cardRect.width / 2) - containerCenter);
+                    if (distance < minDistance) { minDistance = distance; activeIndex = idx; }
                 });
                 dots.forEach((dot, idx) => {
                     if (idx === activeIndex) dot.classList.add('active');
                     else dot.classList.remove('active');
                 });
-                return activeIndex;
             }
-
-            let autoScrollInterval;
-            let currentIndex = 0;
-
-            function startAutoScroll() {
-                if (autoScrollInterval) clearInterval(autoScrollInterval);
-                autoScrollInterval = setInterval(() => {
-                    currentIndex = (currentIndex + 1) % cardCount;
-                    scrollToCard(currentIndex);
-                }, 3000);
-            }
-
-            function resetAutoScroll() {
-                if (autoScrollInterval) {
-                    clearInterval(autoScrollInterval);
-                    startAutoScroll();
-                }
-            }
-
-            scrollContainer.addEventListener('scroll', () => {
-                currentIndex = updateActiveDot();
-            });
-            scrollContainer.addEventListener('mouseenter', () => clearInterval(autoScrollInterval));
-            scrollContainer.addEventListener('mouseleave', startAutoScroll);
-            scrollContainer.addEventListener('touchstart', () => clearInterval(autoScrollInterval));
-            scrollContainer.addEventListener('touchend', startAutoScroll);
-
-            // grab to scroll
-            let isDown = false, startX, scrollLeft;
-            scrollContainer.addEventListener('mousedown', (e) => {
-                isDown = true;
-                scrollContainer.style.cursor = 'grabbing';
-                startX = e.pageX - scrollContainer.offsetLeft;
-                scrollLeft = scrollContainer.scrollLeft;
-            });
-            scrollContainer.addEventListener('mouseleave', () => { isDown = false; scrollContainer.style.cursor = 'grab'; });
-            scrollContainer.addEventListener('mouseup', () => { isDown = false; scrollContainer.style.cursor = 'grab'; });
-            scrollContainer.addEventListener('mousemove', (e) => {
-                if (!isDown) return;
-                e.preventDefault();
-                const x = e.pageX - scrollContainer.offsetLeft;
-                const walk = (x - startX) * 1.5;
-                scrollContainer.scrollLeft = scrollLeft - walk;
-            });
-
+            scrollContainer.addEventListener('scroll', updateActiveDot);
             updateActiveDot();
-            startAutoScroll();
 
-            // ---------- WEBSITE POPUP ----------
+            let autoInterval = setInterval(() => {
+                let current = Array.from(dots).findIndex(d => d.classList.contains('active'));
+                let next = (current + 1) % cardCount;
+                scrollToCard(next);
+            }, 3000);
+            scrollContainer.addEventListener('mouseenter', () => clearInterval(autoInterval));
+            scrollContainer.addEventListener('mouseleave', () => {
+                autoInterval = setInterval(() => {
+                    let current = Array.from(dots).findIndex(d => d.classList.contains('active'));
+                    scrollToCard((current + 1) % cardCount);
+                }, 3000);
+            });
+
+            // Popup
             const needBtn = document.getElementById('needWebsiteBtn');
             const popup = document.getElementById('popupBox');
             const popupContent = document.getElementById('popupContent');
-
             function closePopup() { popup.classList.remove('show'); }
-
             function openPopup() {
                 popupContent.innerHTML = `
                     <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
@@ -787,78 +748,53 @@
                         <button class="popup-btn popup-btn-no" id="popupNo">NO</button>
                     </div>
                 `;
-                document.getElementById('popupYes').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    window.open('https://mkbertrand.vercel.app/#contact', '_blank');
-                    closePopup();
-                });
-                document.getElementById('popupNo').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    popupContent.innerHTML = `<div class="popup-message">Text 0795 065 789 if you change your mind</div>`;
-                    setTimeout(closePopup, 3000);
-                });
+                document.getElementById('popupYes')?.addEventListener('click', () => { window.open('https://mkbertrand.vercel.app/#contact', '_blank'); closePopup(); });
+                document.getElementById('popupNo')?.addEventListener('click', () => { popupContent.innerHTML = '<div class="popup-message">Text 0795 065 789 if you change your mind</div>'; setTimeout(closePopup, 3000); });
                 popup.classList.add('show');
             }
-
-            needBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (popup.classList.contains('show')) closePopup();
-                else openPopup();
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!popup.contains(e.target) && !needBtn.contains(e.target)) closePopup();
-            });
+            needBtn.addEventListener('click', (e) => { e.stopPropagation(); if (popup.classList.contains('show')) closePopup(); else openPopup(); });
+            document.addEventListener('click', (e) => { if (!popup.contains(e.target) && !needBtn.contains(e.target)) closePopup(); });
             popup.addEventListener('click', e => e.stopPropagation());
 
-            // ---------- AUDIO (optional) ----------
+            // Audio
             const audio = document.getElementById('bgMusic');
             const toggleBtn = document.getElementById('musicToggle');
-            let audioPlaying = false;
-
-            function attemptPlay() {
-                audio.play().then(() => {
-                    audioPlaying = true;
-                    toggleBtn.classList.add('playing');
-                }).catch(() => {
-                    audioPlaying = false;
-                    toggleBtn.classList.remove('playing');
-                });
-            }
-
-            attemptPlay();
-
-            const firstInteraction = () => {
-                if (!audioPlaying) {
-                    audio.play().then(() => {
-                        audioPlaying = true;
-                        toggleBtn.classList.add('playing');
-                    }).catch(() => {});
-                }
-                document.removeEventListener('touchstart', firstInteraction);
-                document.removeEventListener('click', firstInteraction);
-            };
-            document.addEventListener('touchstart', firstInteraction);
-            document.addEventListener('click', firstInteraction);
-
-            toggleBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (audio.paused) {
-                    audio.play().then(() => {
-                        toggleBtn.classList.add('playing');
-                        audioPlaying = true;
-                    }).catch(() => {});
-                } else {
-                    audio.pause();
-                    toggleBtn.classList.remove('playing');
-                    audioPlaying = false;
-                }
+            audio.play().catch(() => {});
+            toggleBtn.addEventListener('click', () => {
+                if (audio.paused) { audio.play(); toggleBtn.classList.add('playing'); }
+                else { audio.pause(); toggleBtn.classList.remove('playing'); }
             });
 
-            // resize redirect (if window becomes small, e.g. tablet resized)
-            window.addEventListener('resize', function() {
-                if (window.innerWidth <= 768) {
-                    window.location.replace('index2.html');
+            // Menu toggle
+            const menuToggle = document.getElementById('menuToggle');
+            const navLinks = document.getElementById('navLinks');
+            menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+
+            // Progress Tracking
+            let visited = localStorage.getItem('kabgayi_visited') || 'false';
+            if (visited === 'false') {
+                localStorage.setItem('kabgayi_visited', 'true');
+            }
+            const steps = document.querySelectorAll('.step');
+            if (localStorage.getItem('kabgayi_registered') === 'true') {
+                steps[1]?.classList.add('completed');
+            }
+            if (localStorage.getItem('kabgayi_submitted') === 'true') {
+                steps[2]?.classList.add('completed');
+            }
+
+            // PWA Install
+            let deferredPrompt;
+            const installBtn = document.getElementById('installPwaBtn');
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+                installBtn.style.display = 'flex';
+            });
+            installBtn.addEventListener('click', () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then(() => { installBtn.style.display = 'none'; });
                 }
             });
         })();
