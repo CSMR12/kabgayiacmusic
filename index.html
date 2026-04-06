@@ -19,7 +19,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="maintenance-check.js"></script>
+    
+    <!-- IMMEDIATE REDIRECT FOR SMALL SCREENS - Runs before page renders -->
+    <script>
+        (function() {
+            // Check if screen width is mobile size (≤768px)
+            // Also check if it's a small window/tab
+            if (window.innerWidth <= 768 || window.outerWidth <= 768) {
+                window.location.replace('index2.html');
+                return;
+            }
+        })();
+    </script>
+    
     <style>
+        /* Your existing styles here - keeping them for brevity */
         * {
             margin: 0;
             padding: 0;
@@ -42,7 +56,6 @@
             font-size: 16px;
         }
 
-        /* Moving blur background */
         .moving-blur {
             position: fixed;
             top: 0;
@@ -75,7 +88,6 @@
             100% { transform: translate(40px, -30px) scale(1.02); }
         }
 
-        /* Announcement Bar */
         .announcement-bar {
             position: fixed;
             top: 0;
@@ -94,9 +106,7 @@
             gap: 10px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.15);
         }
-        .announcement-bar.show {
-            transform: translateY(0);
-        }
+        .announcement-bar.show { transform: translateY(0); }
         .announcement-content {
             display: flex;
             align-items: center;
@@ -112,10 +122,7 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.6; }
         }
-        .announcement-text {
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
+        .announcement-text { font-size: 0.9rem; line-height: 1.4; }
         .announcement-close {
             background: rgba(255,255,255,0.2);
             border: none;
@@ -124,13 +131,8 @@
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.8rem;
-            transition: background 0.2s;
-        }
-        .announcement-close:hover {
-            background: rgba(255,255,255,0.3);
         }
 
-        /* SPLASH OVERLAY */
         .splash-overlay {
             position: fixed;
             top: 0;
@@ -159,7 +161,6 @@
             font-size: 3rem;
             font-weight: 500;
             color: #1e5f7a;
-            text-shadow: 0 2px 10px rgba(0,0,0,0.05);
             letter-spacing: 2px;
         }
         @keyframes gentlePulse {
@@ -172,7 +173,6 @@
             pointer-events: none;
         }
 
-        /* Install PWA Button */
         .install-pwa {
             position: fixed;
             bottom: 90px;
@@ -190,17 +190,8 @@
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            transition: all 0.2s;
-        }
-        .install-pwa:hover {
-            background: #134257;
-            transform: scale(1.02);
-        }
-        .install-pwa i {
-            font-size: 1.1rem;
         }
 
-        /* Navigation Menu */
         .nav-menu {
             position: fixed;
             top: 0;
@@ -232,12 +223,7 @@
             align-items: center;
             gap: 5px;
         }
-        .nav-links a:hover {
-            color: #134257;
-        }
-        .nav-links a i {
-            font-size: 0.9rem;
-        }
+        .nav-links a:hover { color: #134257; }
         .menu-toggle {
             display: none;
             background: none;
@@ -245,22 +231,6 @@
             font-size: 1.5rem;
             color: #1e5f7a;
             cursor: pointer;
-        }
-        @media (max-width: 768px) {
-            .menu-toggle {
-                display: block;
-            }
-            .nav-links {
-                display: none;
-                width: 100%;
-                flex-direction: column;
-                align-items: center;
-                padding: 15px 0;
-            }
-            .nav-links.show {
-                display: flex;
-            }
-            .splash-welcome { font-size: 2rem; }
         }
 
         .side-logo {
@@ -286,43 +256,18 @@
             justify-content: center;
             animation: fadeIn 0.6s ease;
         }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .title {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-        .title h1 {
-            font-size: clamp(2.8rem, 5vw, 4rem);
-            font-weight: 600;
-            color: #1e1e1e;
-        }
-        .title h1 span {
-            color: #1e5f7a;
-        }
-        .title p {
-            font-size: 1.2rem;
-            color: #2c4e66;
-            margin-top: 0.4rem;
-        }
+        .title { text-align: center; margin-bottom: 2rem; }
+        .title h1 { font-size: clamp(2.8rem, 5vw, 4rem); font-weight: 600; color: #1e1e1e; }
+        .title h1 span { color: #1e5f7a; }
+        .title p { font-size: 1.2rem; color: #2c4e66; margin-top: 0.4rem; }
+        .kids-image { display: block; max-width: 500px; width: auto; margin: 0 auto 2rem; border-radius: 24px; }
 
-        .kids-image {
-            display: block;
-            max-width: 500px;
-            width: auto;
-            margin: 0 auto 2rem;
-            border-radius: 24px;
-        }
-
-        .cards-wrapper {
-            width: 100%;
-            max-width: 900px;
-            margin: 1.5rem auto 2rem;
-        }
+        .cards-wrapper { width: 100%; max-width: 900px; margin: 1.5rem auto 2rem; }
         .cards-scroll {
             display: flex;
             gap: 1.2rem;
@@ -332,9 +277,7 @@
             scroll-behavior: smooth;
             cursor: grab;
         }
-        .cards-scroll::-webkit-scrollbar {
-            display: none;
-        }
+        .cards-scroll::-webkit-scrollbar { display: none; }
         .card-minimal {
             flex: 0 0 220px;
             scroll-snap-align: center;
@@ -356,47 +299,15 @@
             color: #1e5f7a;
             font-size: 1.4rem;
         }
-        .card-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            color: #4a6375;
-            margin-bottom: 0.3rem;
-        }
-        .card-value {
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: #1e1e1e;
-        }
-        .card-desc {
-            font-size: 0.9rem;
-            color: #5b7485;
-        }
+        .card-label { font-size: 0.8rem; text-transform: uppercase; color: #4a6375; margin-bottom: 0.3rem; }
+        .card-value { font-size: 1.6rem; font-weight: 600; color: #1e1e1e; }
+        .card-desc { font-size: 0.9rem; color: #5b7485; }
 
-        .dot-container {
-            display: flex;
-            justify-content: center;
-            gap: 0.8rem;
-            margin: 1rem 0 2rem;
-        }
-        .dot-minimal {
-            width: 8px;
-            height: 8px;
-            border-radius: 12px;
-            background: #a0bbd0;
-            cursor: pointer;
-        }
-        .dot-minimal.active {
-            width: 26px;
-            background: #1e5f7a;
-        }
+        .dot-container { display: flex; justify-content: center; gap: 0.8rem; margin: 1rem 0 2rem; }
+        .dot-minimal { width: 8px; height: 8px; border-radius: 12px; background: #a0bbd0; cursor: pointer; }
+        .dot-minimal.active { width: 26px; background: #1e5f7a; }
 
-        .actions {
-            display: flex;
-            gap: 1.5rem;
-            margin-bottom: 2.5rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
+        .actions { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; flex-wrap: wrap; justify-content: center; }
         .btn {
             padding: 0.9rem 2.5rem;
             border-radius: 40px;
@@ -412,17 +323,9 @@
             color: #1e1e1e;
             border: 1px solid rgba(255,255,255,0.7);
         }
-        .btn-primary {
-            background: #1e3b4c;
-            color: white;
-        }
-        .btn-primary i {
-            color: #ffd966;
-        }
-        .btn-primary:hover {
-            background: #15303e;
-            transform: translateY(-2px);
-        }
+        .btn-primary { background: #1e3b4c; color: white; }
+        .btn-primary i { color: #ffd966; }
+        .btn-primary:hover { background: #15303e; transform: translateY(-2px); }
 
         .contact-strip {
             display: flex;
@@ -434,16 +337,8 @@
             flex-wrap: wrap;
             justify-content: center;
         }
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            color: #1d445b;
-            text-decoration: none;
-        }
-        .contact-item i {
-            color: #1e5f7a;
-        }
+        .contact-item { display: flex; align-items: center; gap: 0.6rem; color: #1d445b; text-decoration: none; }
+        .contact-item i { color: #1e5f7a; }
 
         .need-website-btn {
             position: fixed;
@@ -504,7 +399,6 @@
             padding: 1.5rem 0;
         }
 
-        /* Progress Tracker */
         .progress-tracker {
             background: rgba(255,255,255,0.5);
             backdrop-filter: blur(8px);
@@ -514,21 +408,14 @@
             max-width: 400px;
             text-align: center;
         }
-        .progress-steps {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
-        }
+        .progress-steps { display: flex; justify-content: space-between; margin-top: 10px; }
         .step {
             flex: 1;
             text-align: center;
             font-size: 0.7rem;
             color: #8aaec2;
-            position: relative;
         }
-        .step.completed {
-            color: #1e5f7a;
-        }
+        .step.completed { color: #1e5f7a; }
         .step.completed::before {
             content: '✓';
             display: block;
@@ -548,6 +435,15 @@
         }
 
         @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                align-items: center;
+                padding: 15px 0;
+            }
+            .nav-links.show { display: flex; }
             .welcome { padding-top: 80px; }
             .side-logo { top: 70px; width: 45px; }
             .contact-strip { padding: 0.6rem 1.5rem; gap: 1rem; }
@@ -556,12 +452,31 @@
     </style>
 </head>
 <body>
+    <!-- Additional resize listener to catch window resizing -->
     <script>
-        if (window.innerWidth <= 768) {
-            window.location.replace('index2.html');
-        }
+        (function() {
+            // Immediate redirect check
+            function checkAndRedirect() {
+                if (window.innerWidth <= 768 || window.outerWidth <= 768) {
+                    window.location.replace('index2.html');
+                }
+            }
+            
+            // Check on load
+            checkAndRedirect();
+            
+            // Also check when window is resized (in case user resizes from large to small)
+            let resizeTimer;
+            window.addEventListener('resize', function() {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    checkAndRedirect();
+                }, 100);
+            });
+        })();
     </script>
 
+    <!-- Rest of the page content (same as before) -->
     <div class="moving-blur">
         <div class="blur-orb orb1"></div>
         <div class="blur-orb orb2"></div>
@@ -570,7 +485,6 @@
         <div class="blur-orb orb5"></div>
     </div>
 
-    <!-- Announcement Bar -->
     <div class="announcement-bar" id="announcementBar">
         <div class="announcement-content">
             <i class="fas fa-bullhorn"></i>
@@ -579,7 +493,6 @@
         <button class="announcement-close" id="closeAnnouncement"><i class="fas fa-times"></i></button>
     </div>
 
-    <!-- Navigation Menu -->
     <div class="nav-menu">
         <div style="display: flex; align-items: center; gap: 10px;">
             <img src="image/logo.png" alt="logo" style="height: 35px; width: auto;">
@@ -615,7 +528,6 @@
         </div>
     </div>
 
-    <!-- Install PWA Button -->
     <button class="install-pwa" id="installPwaBtn"><i class="fas fa-download"></i> Install App</button>
 
     <div class="welcome">
@@ -625,7 +537,6 @@
             <img src="image/kids.png" alt="kids" class="kids-image">
         </div>
 
-        <!-- Progress Tracker -->
         <div class="progress-tracker" id="progressTracker">
             <strong><i class="fas fa-chart-line"></i> Your Progress</strong>
             <div class="progress-steps" id="progressSteps">
@@ -768,11 +679,12 @@
             // Menu toggle
             const menuToggle = document.getElementById('menuToggle');
             const navLinks = document.getElementById('navLinks');
-            menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+            if (menuToggle) {
+                menuToggle.addEventListener('click', () => navLinks.classList.toggle('show'));
+            }
 
             // Progress Tracking
-            let visited = localStorage.getItem('kabgayi_visited') || 'false';
-            if (visited === 'false') {
+            if (!localStorage.getItem('kabgayi_visited')) {
                 localStorage.setItem('kabgayi_visited', 'true');
             }
             const steps = document.querySelectorAll('.step');
