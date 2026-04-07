@@ -4,106 +4,41 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Kabgayi · Admin Dashboard</title>
-    <!-- Bootstrap 5 CSS + Icons -->
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <!-- Poppins font -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #f0f4f8;
-            overflow-x: hidden;
-        }
+        body { font-family: 'Poppins', sans-serif; background: #f0f4f8; overflow-x: hidden; }
         .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            width: 280px;
+            position: fixed; top: 0; left: 0; height: 100vh; width: 280px;
             background: linear-gradient(180deg, #1e5f7a 0%, #134257 100%);
-            color: white;
-            transition: all 0.3s;
-            z-index: 1000;
-            overflow-y: auto;
+            color: white; transition: all 0.3s; z-index: 1000; overflow-y: auto;
         }
-        .sidebar-header {
-            padding: 25px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            text-align: center;
-        }
-        .sidebar-header img {
-            width: 60px;
-            height: 60px;
-            border-radius: 15px;
-            margin-bottom: 10px;
-        }
-        .sidebar-header h4 { font-size: 1.1rem; margin-bottom: 5px; }
-        .sidebar-header p { font-size: 0.7rem; opacity: 0.7; }
+        .sidebar-header { padding: 25px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); text-align: center; }
+        .sidebar-header img { width: 60px; height: 60px; border-radius: 15px; margin-bottom: 10px; }
+        .sidebar-header h4 { font-size: 1.1rem; }
         .nav-item {
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: all 0.2s;
-            cursor: pointer;
-            border-left: 3px solid transparent;
+            padding: 12px 20px; display: flex; align-items: center; gap: 12px;
+            color: rgba(255,255,255,0.8); cursor: pointer; border-left: 3px solid transparent;
         }
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border-left-color: #ffd966;
-        }
-        .nav-item i { width: 24px; font-size: 1.1rem; }
-        .main-content {
-            margin-left: 280px;
-            padding: 20px 30px;
-            min-height: 100vh;
-        }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; border-left-color: #ffd966; }
+        .main-content { margin-left: 280px; padding: 20px 30px; min-height: 100vh; }
         .top-bar {
-            background: white;
-            border-radius: 15px;
-            padding: 15px 25px;
-            margin-bottom: 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: white; border-radius: 15px; padding: 15px 25px; margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center;
         }
         .page-title { font-size: 1.5rem; font-weight: 600; color: #1e5f7a; }
         .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
+            background: white; border-radius: 20px; padding: 20px;
+            display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-            transition: transform 0.2s;
         }
-        .stat-card:hover { transform: translateY(-3px); }
-        .stat-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(30,95,122,0.1);
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: #1e5f7a;
-        }
-        .table-container {
-            background: white;
-            border-radius: 20px;
-            padding: 20px;
-            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
-            overflow-x: auto;
-        }
+        .stat-icon { width: 50px; height: 50px; background: rgba(30,95,122,0.1); border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #1e5f7a; }
+        .table-container { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); overflow-x: auto; margin-bottom: 20px; }
         .modal-content { border-radius: 20px; }
         .form-label { font-weight: 500; color: #1e5f7a; }
         @media (max-width: 992px) {
@@ -112,51 +47,24 @@
             .main-content { margin-left: 0; }
             .menu-toggle-btn { display: block; }
         }
-        .menu-toggle-btn {
-            display: none;
-            background: #1e5f7a;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 10px;
-            margin-right: 15px;
-        }
+        .menu-toggle-btn { display: none; background: #1e5f7a; color: white; border: none; padding: 10px 15px; border-radius: 10px; margin-right: 15px; }
         #loginOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(10px);
+            z-index: 2000; display: flex; align-items: center; justify-content: center;
         }
-        .login-card {
-            background: white;
-            border-radius: 30px;
-            padding: 40px;
-            width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-        .footer {
-            text-align: center;
-            padding: 20px;
-            font-size: 0.8rem;
-            color: #6c757d;
-        }
+        .login-card { background: white; border-radius: 30px; padding: 40px; width: 90%; max-width: 400px; text-align: center; }
         .gallery-card-img { height: 150px; object-fit: cover; }
-        .badge-status { font-size: 0.7rem; padding: 3px 8px; }
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
+        .image-preview { width: 100px; height: 100px; object-fit: cover; border-radius: 10px; margin-top: 10px; }
+        .upload-area {
+            border: 2px dashed #ccc; border-radius: 10px; padding: 20px; text-align: center;
+            cursor: pointer; transition: all 0.3s; background: #f8f9fa;
         }
+        .upload-area:hover { border-color: #1e5f7a; background: #e3f2fd; }
+        .upload-area.dragover { border-color: #1e5f7a; background: #e3f2fd; }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #f3f3f3; border-top: 2px solid #1e5f7a; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
     </style>
 </head>
 <body>
@@ -189,7 +97,6 @@
             <div class="nav-item" data-tab="gallery"><i class="fas fa-images"></i> Media Gallery</div>
             <div class="nav-item" data-tab="sheetmusic"><i class="fas fa-music"></i> Sheet Music</div>
             <div class="nav-item" data-tab="stats"><i class="fas fa-chart-line"></i> Site Stats</div>
-            <div class="nav-item" data-tab="createtables"><i class="fas fa-database"></i> Create Tables</div>
             <div class="nav-item" data-tab="logout" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);"><i class="fas fa-sign-out-alt"></i> Logout</div>
         </div>
 
@@ -205,216 +112,129 @@
             <!-- Dashboard Tab -->
             <div id="dashboardTab" class="tab-content active">
                 <div class="row g-4 mb-4">
-                    <div class="col-md-3 col-sm-6"><div class="stat-card d-flex justify-content-between align-items-center"><div><h3 class="mb-0" id="totalRegistrations">0</h3><span class="text-muted">Registrations</span></div><div class="stat-icon"><i class="fas fa-user-plus"></i></div></div></div>
-                    <div class="col-md-3 col-sm-6"><div class="stat-card d-flex justify-content-between align-items-center"><div><h3 class="mb-0" id="totalNews">0</h3><span class="text-muted">News Articles</span></div><div class="stat-icon"><i class="fas fa-newspaper"></i></div></div></div>
-                    <div class="col-md-3 col-sm-6"><div class="stat-card d-flex justify-content-between align-items-center"><div><h3 class="mb-0" id="totalGallery">0</h3><span class="text-muted">Gallery Items</span></div><div class="stat-icon"><i class="fas fa-images"></i></div></div></div>
-                    <div class="col-md-3 col-sm-6"><div class="stat-card d-flex justify-content-between align-items-center"><div><h3 class="mb-0" id="totalTeam">0</h3><span class="text-muted">Team Members</span></div><div class="stat-icon"><i class="fas fa-users"></i></div></div></div>
+                    <div class="col-md-3 col-sm-6"><div class="stat-card"><div><h3 class="mb-0" id="totalRegistrations">0</h3><span class="text-muted">Registrations</span></div><div class="stat-icon"><i class="fas fa-user-plus"></i></div></div></div>
+                    <div class="col-md-3 col-sm-6"><div class="stat-card"><div><h3 class="mb-0" id="totalNews">0</h3><span class="text-muted">News</span></div><div class="stat-icon"><i class="fas fa-newspaper"></i></div></div></div>
+                    <div class="col-md-3 col-sm-6"><div class="stat-card"><div><h3 class="mb-0" id="totalGallery">0</h3><span class="text-muted">Gallery</span></div><div class="stat-icon"><i class="fas fa-images"></i></div></div></div>
+                    <div class="col-md-3 col-sm-6"><div class="stat-card"><div><h3 class="mb-0" id="totalTeam">0</h3><span class="text-muted">Team</span></div><div class="stat-icon"><i class="fas fa-users"></i></div></div></div>
                 </div>
                 <div class="row">
-                    <div class="col-md-7">
+                    <div class="col-md-12">
                         <div class="table-container">
                             <h5><i class="fas fa-chart-pie"></i> Recent Registrations</h5>
                             <div class="table-responsive"><table class="table table-sm"><thead><tr><th>Name</th><th>Contact</th><th>Date</th><th>Status</th></tr></thead><tbody id="recentRegistrations"></tbody></table></div>
                         </div>
                     </div>
-                    <div class="col-md-5">
-                        <div class="table-container">
-                            <h5><i class="fas fa-calendar"></i> Quick Actions</h5>
-                            <div class="d-grid gap-2">
-                                <button class="btn btn-outline-primary" onclick="window.open('register.html', '_blank')"><i class="fas fa-external-link-alt"></i> View Registration Page</button>
-                                <button class="btn btn-outline-success" onclick="exportAllData()"><i class="fas fa-download"></i> Export All Data (CSV)</button>
-                                <button class="btn btn-outline-info" onclick="sendTestNotification()"><i class="fas fa-bell"></i> Test Notification</button>
-                                <button class="btn btn-outline-secondary" onclick="clearAllCache()"><i class="fas fa-trash-alt"></i> Clear Site Cache</button>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <!-- Create Tables Tab -->
-            <div id="createtablesTab" class="tab-content" style="display: none;">
+            <!-- Registrations Tab -->
+            <div id="registrationsTab" class="tab-content" style="display: none;">
                 <div class="table-container">
-                    <h5><i class="fas fa-database"></i> Create Required Database Tables</h5>
-                    <p class="text-muted">Click the button below to create all necessary tables in your Supabase database. This only needs to be done once.</p>
-                    <div id="tableCreationStatus" class="mb-3"></div>
-                    <button class="btn btn-primary" id="createTablesBtn" onclick="createAllTables()"><i class="fas fa-play"></i> Create All Tables</button>
-                    <hr>
-                    <h6>Tables to be created:</h6>
-                    <ul class="list-group mt-2">
-                        <li class="list-group-item"><i class="fas fa-table"></i> registrations - Student registration data</li>
-                        <li class="list-group-item"><i class="fas fa-table"></i> site_settings - Announcements and settings</li>
-                        <li class="list-group-item"><i class="fas fa-table"></i> about_content - About page content</li>
-                        <li class="list-group-item"><i class="fas fa-table"></i> team_members - Staff and faculty members</li>
-                        <li class="list-group-item"><i class="fas fa-table"></i> news_articles - News and announcements</li>
-                        <li class="list-group-item"><i class="fas fa-table"></i> media_gallery - Photos and videos</li>
-                        <li class="list-group-item"><i class="fas fa-table"></i> sheet_music - PDF sheet music library</li>
-                        <li class="list-group-item"><i class="fas fa-table"></i> site_stats - Statistics displayed on about page</li>
-                    </ul>
+                    <h5><i class="fas fa-list"></i> All Registrations</h5>
+                    <input type="text" id="searchReg" class="form-control mb-3" placeholder="Search by name, contact or email...">
+                    <div class="table-responsive"><table class="table"><thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="registrationsList"></tbody></table></div>
+                    <button class="btn btn-success mt-2" onclick="exportRegistrations()"><i class="fas fa-download"></i> Export CSV</button>
+                    <button class="btn btn-secondary mt-2 ms-2" onclick="loadRegistrations()"><i class="fas fa-sync-alt"></i> Refresh</button>
                 </div>
             </div>
 
-            <!-- Other Tabs (simplified) -->
-            <div id="registrationsTab" class="tab-content" style="display: none;"><div class="table-container"><h5>Registrations</h5><div class="table-responsive"><table class="table"><thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="registrationsList"></tbody></table></div></div></div>
-            <div id="announcementsTab" class="tab-content" style="display: none;"><div class="table-container"><h5>Announcement</h5><div id="currentAnnouncementDisplay" class="alert alert-info"></div><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#announcementModal">Edit Announcement</button></div></div>
-            <div id="aboutTab" class="tab-content" style="display: none;"><div class="table-container"><h5>About Content</h5><form id="aboutForm"><div class="mb-2"><label>Page Title</label><input class="form-control" id="aboutTitle"></div><div class="mb-2"><label>History</label><textarea class="form-control" id="aboutHistory" rows="3"></textarea></div><div class="mb-2"><label>Mission</label><textarea class="form-control" id="aboutMission" rows="2"></textarea></div><div class="mb-2"><label>Vision</label><textarea class="form-control" id="aboutVision" rows="2"></textarea></div><button type="submit" class="btn btn-primary">Save</button></form></div></div>
-            <div id="teamTab" class="tab-content" style="display: none;"><div class="table-container"><h5>Team Members</h5><button class="btn btn-primary btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#teamModal" onclick="openTeamModal()">Add Member</button><div class="table-responsive"><table class="table"><thead><tr><th>Name</th><th>Position</th><th>Actions</th></tr></thead><tbody id="teamList"></tbody></table></div></div></div>
-            <div id="newsTab" class="tab-content" style="display: none;"><div class="table-container"><h5>News Articles</h5><button class="btn btn-primary btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#newsModal" onclick="openNewsModal()">Add Article</button><div class="table-responsive"><table class="table"><thead><tr><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead><tbody id="newsList"></tbody></table></div></div></div>
-            <div id="galleryTab" class="tab-content" style="display: none;"><div class="table-container"><h5>Media Gallery</h5><button class="btn btn-primary btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#galleryModal" onclick="openGalleryModal()">Add Media</button><div class="row" id="galleryList"></div></div></div>
-            <div id="sheetmusicTab" class="tab-content" style="display: none;"><div class="table-container"><h5>Sheet Music</h5><button class="btn btn-primary btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#sheetMusicModal" onclick="openSheetMusicModal()">Add PDF</button><div class="table-responsive"><table class="table"><thead><tr><th>Title</th><th>Actions</th></tr></thead><tbody id="sheetMusicList"></tbody></table></div></div></div>
-            <div id="statsTab" class="tab-content" style="display: none;"><div class="table-container"><h5>Site Stats</h5><button class="btn btn-primary btn-sm mb-2" data-bs-toggle="modal" data-bs-target="#statModal" onclick="openStatModal()">Add Stat</button><div class="table-responsive"><table class="table"><thead><tr><th>Number</th><th>Label</th><th>Actions</th></tr></thead><tbody id="statsList"></tbody></table></div></div></div>
+            <!-- Announcements Tab -->
+            <div id="announcementsTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-bullhorn"></i> Announcement</h5>
+                    <div id="currentAnnouncementDisplay" class="alert alert-info"></div>
+                    <textarea class="form-control mb-2" id="announcementText" rows="3"></textarea>
+                    <button class="btn btn-primary" id="saveAnnouncementBtn">Save Announcement</button>
+                </div>
+            </div>
 
-            <div class="footer">Kabgayi Music Academy · Admin Dashboard</div>
+            <!-- About Tab -->
+            <div id="aboutTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-info-circle"></i> About Page Content</h5>
+                    <div class="mb-2"><label class="form-label">Page Title</label><input class="form-control" id="aboutTitle"></div>
+                    <div class="mb-2"><label class="form-label">Page Subtitle</label><input class="form-control" id="aboutSubtitle"></div>
+                    <div class="mb-2"><label class="form-label">History</label><textarea class="form-control" id="aboutHistory" rows="3"></textarea></div>
+                    <div class="mb-2"><label class="form-label">Mission</label><textarea class="form-control" id="aboutMission" rows="2"></textarea></div>
+                    <div class="mb-2"><label class="form-label">Vision</label><textarea class="form-control" id="aboutVision" rows="2"></textarea></div>
+                    <div class="mb-2"><label class="form-label">Core Values</label><textarea class="form-control" id="aboutValues" rows="2"></textarea></div>
+                    <button class="btn btn-primary" id="saveAboutBtn">Save Changes</button>
+                </div>
+            </div>
+
+            <!-- Team Tab -->
+            <div id="teamTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-user-friends"></i> Team Members</h5>
+                    <button class="btn btn-primary btn-sm mb-2" onclick="openTeamModal()"><i class="fas fa-plus"></i> Add Member</button>
+                    <div class="table-responsive"><table class="table"><thead><tr><th>Image</th><th>Name</th><th>Position</th><th>Order</th><th>Actions</th></tr></thead><tbody id="teamList"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- News Tab -->
+            <div id="newsTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-newspaper"></i> News Articles</h5>
+                    <button class="btn btn-primary btn-sm mb-2" onclick="openNewsModal()"><i class="fas fa-plus"></i> Add Article</button>
+                    <div class="table-responsive"><table class="table"><thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></tr></thead><tbody id="newsList"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div id="galleryTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-images"></i> Media Gallery</h5>
+                    <button class="btn btn-primary btn-sm mb-2" onclick="openGalleryModal()"><i class="fas fa-plus"></i> Add Media</button>
+                    <div class="row" id="galleryList"></div>
+                </div>
+            </div>
+
+            <!-- Sheet Music Tab -->
+            <div id="sheetmusicTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-music"></i> Sheet Music Library</h5>
+                    <button class="btn btn-primary btn-sm mb-2" onclick="openSheetMusicModal()"><i class="fas fa-plus"></i> Add PDF</button>
+                    <div class="table-responsive"><table class="table"><thead><tr><th>Title</th><th>Description</th><th>PDF URL</th><th>Actions</th></tr></thead><tbody id="sheetMusicList"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="statsTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-chart-line"></i> Site Statistics</h5>
+                    <button class="btn btn-primary btn-sm mb-2" onclick="openStatModal()"><i class="fas fa-plus"></i> Add Stat</button>
+                    <div class="table-responsive"><table class="table"><thead><tr><th>Number</th><th>Label</th><th>Actions</th></tr></thead><tbody id="statsList"></tbody></tr></div>
+                </div>
+            </div>
+
+            <div class="footer text-center py-3 text-muted">Kabgayi Music Academy · Admin Dashboard</div>
         </div>
     </div>
 
-    <!-- Modals -->
-    <div class="modal fade" id="announcementModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Edit Announcement</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="form-control" id="announcementText" rows="3"></textarea></div><div class="modal-footer"><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveAnnouncementBtn">Save</button></div></div></div></div>
-    <div class="modal fade" id="teamModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Team Member</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="teamId"><div class="mb-2"><label>Name</label><input class="form-control" id="teamName"></div><div class="mb-2"><label>Position</label><input class="form-control" id="teamPosition"></div><div class="mb-2"><label>Bio</label><textarea class="form-control" id="teamBio" rows="2"></textarea></div><div class="mb-2"><label>Image URL</label><input class="form-control" id="teamImage"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteTeamBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveTeamBtn">Save</button></div></div></div></div>
-    <div class="modal fade" id="newsModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">News Article</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="newsId"><div class="mb-2"><label>Title</label><input class="form-control" id="newsTitle"></div><div class="mb-2"><label>Category</label><select class="form-control" id="newsCategory"><option>events</option><option>announcements</option><option>success</option></select></div><div class="mb-2"><label>Content</label><textarea class="form-control" id="newsContent" rows="4"></textarea></div><div class="mb-2"><label>Image URL</label><input class="form-control" id="newsImage"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteNewsBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveNewsBtn">Save</button></div></div></div></div>
-    <div class="modal fade" id="galleryModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Gallery Item</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="galleryId"><div class="mb-2"><label>Title</label><input class="form-control" id="galleryTitle"></div><div class="mb-2"><label>Category</label><select class="form-control" id="galleryCategory"><option>students</option><option>events</option><option>concerts</option></select></div><div class="mb-2"><label>Image URL</label><input class="form-control" id="galleryUrl"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteGalleryBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveGalleryBtn">Save</button></div></div></div></div>
-    <div class="modal fade" id="sheetMusicModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Sheet Music</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="sheetId"><div class="mb-2"><label>Title</label><input class="form-control" id="sheetTitle"></div><div class="mb-2"><label>PDF URL</label><input class="form-control" id="sheetUrl"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteSheetBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveSheetBtn">Save</button></div></div></div></div>
-    <div class="modal fade" id="statModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Site Stat</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="statId"><div class="mb-2"><label>Number</label><input class="form-control" id="statNumber"></div><div class="mb-2"><label>Label</label><input class="form-control" id="statLabel"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteStatBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveStatBtn">Save</button></div></div></div></div>
+    <!-- Team Modal -->
+    <div class="modal fade" id="teamModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Team Member</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="teamId"><div class="mb-2"><label>Name</label><input class="form-control" id="teamName"></div><div class="mb-2"><label>Position</label><input class="form-control" id="teamPosition"></div><div class="mb-2"><label>Bio</label><textarea class="form-control" id="teamBio" rows="2"></textarea></div><div class="mb-2"><label>Display Order</label><input type="number" class="form-control" id="teamOrder" value="0"></div><div class="mb-2"><label>Upload Image</label><div class="upload-area" id="teamUploadArea"><i class="fas fa-cloud-upload-alt"></i> Click or drag image to upload</div><input type="file" id="teamImageFile" style="display:none" accept="image/*"><img id="teamImagePreview" class="image-preview" style="display:none"><input type="hidden" id="teamImageUrl"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteTeamBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveTeamBtn">Save</button></div></div></div></div>
+
+    <!-- News Modal -->
+    <div class="modal fade" id="newsModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">News Article</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="newsId"><div class="mb-2"><label>Title</label><input class="form-control" id="newsTitle"></div><div class="mb-2"><label>Category</label><select class="form-control" id="newsCategory"><option>events</option><option>announcements</option><option>success</option></select></div><div class="mb-2"><label>Excerpt (short summary)</label><input class="form-control" id="newsExcerpt"></div><div class="mb-2"><label>Full Content</label><textarea class="form-control" id="newsContent" rows="4"></textarea></div><div class="mb-2"><label>Upload Image</label><div class="upload-area" id="newsUploadArea"><i class="fas fa-cloud-upload-alt"></i> Click or drag image to upload</div><input type="file" id="newsImageFile" style="display:none" accept="image/*"><img id="newsImagePreview" class="image-preview" style="display:none"><input type="hidden" id="newsImageUrl"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteNewsBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveNewsBtn">Save</button></div></div></div></div>
+
+    <!-- Gallery Modal -->
+    <div class="modal fade" id="galleryModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Gallery Item</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="galleryId"><div class="mb-2"><label>Title</label><input class="form-control" id="galleryTitle"></div><div class="mb-2"><label>Caption</label><input class="form-control" id="galleryCaption"></div><div class="mb-2"><label>Category</label><select class="form-control" id="galleryCategory"><option>students</option><option>events</option><option>concerts</option><option>classroom</option></select></div><div class="mb-2"><label>Upload Image</label><div class="upload-area" id="galleryUploadArea"><i class="fas fa-cloud-upload-alt"></i> Click or drag image to upload</div><input type="file" id="galleryImageFile" style="display:none" accept="image/*"><img id="galleryImagePreview" class="image-preview" style="display:none"><input type="hidden" id="galleryImageUrl"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteGalleryBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveGalleryBtn">Save</button></div></div></div></div>
+
+    <!-- Sheet Music Modal -->
+    <div class="modal fade" id="sheetMusicModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Sheet Music</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="sheetId"><div class="mb-2"><label>Title</label><input class="form-control" id="sheetTitle"></div><div class="mb-2"><label>Description</label><input class="form-control" id="sheetDesc"></div><div class="mb-2"><label>PDF URL (direct link)</label><input class="form-control" id="sheetUrl" placeholder="https://..."></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteSheetBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveSheetBtn">Save</button></div></div></div></div>
+
+    <!-- Stat Modal -->
+    <div class="modal fade" id="statModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Site Stat</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="statId"><div class="mb-2"><label>Number (e.g., 500+)</label><input class="form-control" id="statNumber"></div><div class="mb-2"><label>Label (e.g., Students Trained)</label><input class="form-control" id="statLabel"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteStatBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveStatBtn">Save</button></div></div></div></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        // Supabase Configuration
         const SUPABASE_URL = 'https://amnkoumnvwyjzqcwxord.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
         const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // Function to create tables using SQL (via REST API)
-        async function createAllTables() {
-            const statusDiv = document.getElementById('tableCreationStatus');
-            statusDiv.innerHTML = '<div class="alert alert-info">Creating tables... Please wait.</div>';
-            
-            // SQL statements to create tables
-            const sqlStatements = [
-                `CREATE TABLE IF NOT EXISTS registrations (
-                    id SERIAL PRIMARY KEY,
-                    first_name TEXT,
-                    last_name TEXT,
-                    contact TEXT,
-                    email TEXT,
-                    province TEXT,
-                    district TEXT,
-                    sector TEXT,
-                    study BOOLEAN DEFAULT false,
-                    report_image_url TEXT,
-                    done BOOLEAN DEFAULT false,
-                    created_at TIMESTAMP DEFAULT NOW()
-                )`,
-                `CREATE TABLE IF NOT EXISTS site_settings (
-                    id SERIAL PRIMARY KEY,
-                    key TEXT UNIQUE,
-                    value TEXT,
-                    updated_at TIMESTAMP DEFAULT NOW()
-                )`,
-                `CREATE TABLE IF NOT EXISTS about_content (
-                    id SERIAL PRIMARY KEY,
-                    page_title TEXT,
-                    page_subtitle TEXT,
-                    history TEXT,
-                    mission TEXT,
-                    vision TEXT,
-                    core_values TEXT,
-                    updated_at TIMESTAMP DEFAULT NOW()
-                )`,
-                `CREATE TABLE IF NOT EXISTS team_members (
-                    id SERIAL PRIMARY KEY,
-                    name TEXT,
-                    position TEXT,
-                    bio TEXT,
-                    image_url TEXT,
-                    "order" INT DEFAULT 0
-                )`,
-                `CREATE TABLE IF NOT EXISTS news_articles (
-                    id SERIAL PRIMARY KEY,
-                    title TEXT,
-                    content TEXT,
-                    excerpt TEXT,
-                    category TEXT,
-                    image_url TEXT,
-                    created_at TIMESTAMP DEFAULT NOW()
-                )`,
-                `CREATE TABLE IF NOT EXISTS media_gallery (
-                    id SERIAL PRIMARY KEY,
-                    title TEXT,
-                    caption TEXT,
-                    image_url TEXT,
-                    category TEXT,
-                    type TEXT DEFAULT 'image',
-                    created_at TIMESTAMP DEFAULT NOW()
-                )`,
-                `CREATE TABLE IF NOT EXISTS sheet_music (
-                    id SERIAL PRIMARY KEY,
-                    title TEXT,
-                    description TEXT,
-                    file_url TEXT,
-                    created_at TIMESTAMP DEFAULT NOW()
-                )`,
-                `CREATE TABLE IF NOT EXISTS site_stats (
-                    id SERIAL PRIMARY KEY,
-                    number TEXT,
-                    label TEXT
-                )`
-            ];
-            
-            // Insert default data
-            const insertStatements = [
-                `INSERT INTO site_settings (key, value) VALUES ('announcement', 'Welcome to Kabgayi Music Academy! Registration open until March 31, 2026.') ON CONFLICT (key) DO NOTHING`,
-                `INSERT INTO about_content (page_title, page_subtitle, history, mission, vision, core_values) VALUES 
-                    ('About Kabgayi Music Academy', 
-                     'Nurturing young talents through sacred music education since 1985',
-                     'Kabgayi Music Academy was established in 1985 by the Diocese of Kabgayi with the vision of preserving and promoting sacred music among the youth. Over the years, the academy has grown to become a center of excellence, training hundreds of young musicians who now serve in parishes across Rwanda.',
-                     'To provide quality sacred music education to children, nurturing their musical talents while instilling values of faith, discipline, and service to the community.',
-                     'To become a leading center of excellence in sacred music formation in Rwanda, producing skilled musicians who glorify God through their talents.',
-                     'Excellence · Faith · Discipline · Creativity · Service') ON CONFLICT DO NOTHING`
-            ];
-            
-            let successCount = 0;
-            let errorCount = 0;
-            
-            // Execute table creation
-            for (const sql of sqlStatements) {
-                try {
-                    const response = await fetch(`${SUPABASE_URL}/rest/v1/`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'return=minimal'
-                        },
-                        body: JSON.stringify({ query: sql })
-                    });
-                    successCount++;
-                } catch(e) {
-                    errorCount++;
-                    console.error('SQL Error:', e);
-                }
-            }
-            
-            // Insert default data
-            for (const sql of insertStatements) {
-                try {
-                    await fetch(`${SUPABASE_URL}/rest/v1/`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': SUPABASE_ANON_KEY,
-                            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ query: sql })
-                    });
-                } catch(e) { console.error(e); }
-            }
-            
-            statusDiv.innerHTML = `<div class="alert alert-success">✅ Tables created! ${successCount} tables created, ${errorCount} errors. Refresh the page and try loading data again.</div>`;
-            
-            // Try to load data after a delay
-            setTimeout(() => {
-                loadAllData();
-            }, 2000);
-        }
+        // ImgBB API Key
+        const IMGBB_API_KEY = '99c6aa298645e8a4742979117fc73be6';
         
         // Login
         document.getElementById('loginBtn').addEventListener('click', () => {
@@ -428,6 +248,72 @@
             }
         });
         
+        // Upload image to ImgBB
+        async function uploadToImgBB(file) {
+            return new Promise((resolve, reject) => {
+                const formData = new FormData();
+                formData.append('image', file);
+                formData.append('key', IMGBB_API_KEY);
+                
+                fetch('https://api.imgbb.com/1/upload', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        resolve(data.data.url);
+                    } else {
+                        reject('Upload failed: ' + (data.error?.message || 'Unknown error'));
+                    }
+                })
+                .catch(reject);
+            });
+        }
+        
+        // Setup image upload handlers
+        function setupUploadHandler(uploadAreaId, fileInputId, previewId, urlInputId) {
+            const uploadArea = document.getElementById(uploadAreaId);
+            const fileInput = document.getElementById(fileInputId);
+            const preview = document.getElementById(previewId);
+            const urlInput = document.getElementById(urlInputId);
+            
+            uploadArea.addEventListener('click', () => fileInput.click());
+            uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.classList.add('dragover'); });
+            uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('dragover'));
+            uploadArea.addEventListener('drop', async (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    await processImageUpload(file, preview, urlInput, uploadArea);
+                }
+            });
+            fileInput.addEventListener('change', async (e) => {
+                if (e.target.files[0]) {
+                    await processImageUpload(e.target.files[0], preview, urlInput, uploadArea);
+                }
+            });
+        }
+        
+        async function processImageUpload(file, preview, urlInput, uploadArea) {
+            const originalHtml = uploadArea.innerHTML;
+            uploadArea.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+            try {
+                const imageUrl = await uploadToImgBB(file);
+                urlInput.value = imageUrl;
+                preview.src = imageUrl;
+                preview.style.display = 'block';
+                uploadArea.innerHTML = '<i class="fas fa-check-circle"></i> Upload successful! Click to change';
+                setTimeout(() => { uploadArea.innerHTML = originalHtml; }, 2000);
+            } catch (error) {
+                uploadArea.innerHTML = '<i class="fas fa-exclamation-triangle"></i> Upload failed. Click to retry';
+                console.error(error);
+                setTimeout(() => { uploadArea.innerHTML = originalHtml; }, 3000);
+            }
+        }
+        
+        // Load all data
         async function loadAllData() {
             await loadDashboardStats();
             await loadRegistrations();
@@ -440,125 +326,534 @@
             await loadStats();
         }
         
-        async function safeQuery(table, select = '*') {
-            try {
-                const { data, error } = await sb.from(table).select(select);
-                if (error) {
-                    if (error.code === '42P01') {
-                        console.warn(`Table "${table}" does not exist. Please create tables first.`);
-                        return [];
-                    }
-                    console.error(`Error with ${table}:`, error);
-                    return [];
-                }
-                return data || [];
-            } catch(e) {
-                console.error(`Failed to query ${table}:`, e);
-                return [];
-            }
-        }
-        
+        // Dashboard Stats
         async function loadDashboardStats() {
-            const regs = await safeQuery('registrations', 'id');
-            const news = await safeQuery('news_articles', 'id');
-            const gallery = await safeQuery('media_gallery', 'id');
-            const team = await safeQuery('team_members', 'id');
-            document.getElementById('totalRegistrations').innerText = regs.length;
-            document.getElementById('totalNews').innerText = news.length;
-            document.getElementById('totalGallery').innerText = gallery.length;
-            document.getElementById('totalTeam').innerText = team.length;
-            
-            const recent = await safeQuery('registrations', '*');
-            const tbody = document.getElementById('recentRegistrations');
-            if (recent.length > 0) {
-                tbody.innerHTML = recent.slice(0,5).map(r => `<tr><td>${r.first_name || ''} ${r.last_name || ''}</td><td>${r.contact || ''}</td><td>${new Date(r.created_at).toLocaleDateString()}</td><td><span class="badge ${r.done ? 'bg-success' : 'bg-warning'}">${r.done ? 'Done' : 'New'}</span></td></tr>`).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="4" class="text-center">No registrations yet</td></tr>';
+            try {
+                const { data: regs } = await sb.from('registrations').select('id', { count: 'exact', head: true });
+                const { data: news } = await sb.from('news_articles').select('id', { count: 'exact', head: true });
+                const { data: gallery } = await sb.from('media_gallery').select('id', { count: 'exact', head: true });
+                const { data: team } = await sb.from('team_members').select('id', { count: 'exact', head: true });
+                
+                document.getElementById('totalRegistrations').innerText = regs?.length || 0;
+                document.getElementById('totalNews').innerText = news?.length || 0;
+                document.getElementById('totalGallery').innerText = gallery?.length || 0;
+                document.getElementById('totalTeam').innerText = team?.length || 0;
+                
+                const { data: recent } = await sb.from('registrations').select('*').order('created_at', { ascending: false }).limit(5);
+                const tbody = document.getElementById('recentRegistrations');
+                if (recent && recent.length > 0) {
+                    tbody.innerHTML = recent.map(r => `<tr>
+                        <td>${r.first_name || ''} ${r.last_name || ''}</td>
+                        <td>${r.contact || ''}</td>
+                        <td>${new Date(r.created_at).toLocaleDateString()}</td>
+                        <td><span class="badge ${r.done ? 'bg-success' : 'bg-warning'}">${r.done ? 'Completed' : 'Pending'}</span></td>
+                    </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">No registrations yet</td></tr>';
+                }
+            } catch (error) {
+                console.error('Dashboard stats error:', error);
             }
         }
         
+        // Registrations
         async function loadRegistrations() {
-            const data = await safeQuery('registrations', '*');
-            const tbody = document.getElementById('registrationsList');
-            if (data.length > 0) {
-                tbody.innerHTML = data.map(r => `<tr><td>${r.id}</td><td>${r.first_name || ''} ${r.last_name || ''}</td><td>${r.contact || ''}</td><td>${r.email || ''}</td><td><span class="badge ${r.done ? 'bg-success' : 'bg-warning'}">${r.done ? 'Completed' : 'Pending'}</span></td><td><button class="btn btn-sm btn-outline-success" onclick="markDone(${r.id})"><i class="fas fa-check"></i></button> <button class="btn btn-sm btn-outline-danger" onclick="deleteRegistration(${r.id})"><i class="fas fa-trash"></i></button></td></tr>`).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">No registrations found</td></tr>';
+            try {
+                const { data, error } = await sb.from('registrations').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                const tbody = document.getElementById('registrationsList');
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(r => `<tr>
+                        <td>${r.id}</td>
+                        <td>${r.first_name || ''} ${r.last_name || ''}</td>
+                        <td>${r.contact || ''}</td>
+                        <td>${r.email || ''}</td>
+                        <td><span class="badge ${r.done ? 'bg-success' : 'bg-warning'}">${r.done ? 'Completed' : 'Pending'}</span></td>
+                        <td><button class="btn btn-sm btn-outline-success" onclick="markDone(${r.id})"><i class="fas fa-check"></i></button></td>
+                    </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">No registrations found</td></tr>';
+                }
+            } catch (error) {
+                console.error('Load registrations error:', error);
             }
         }
         
-        window.markDone = async (id) => { await sb.from('registrations').update({ done: true }).eq('id', id); loadRegistrations(); loadDashboardStats(); };
-        window.deleteRegistration = async (id) => { if(confirm('Delete?')){ await sb.from('registrations').delete().eq('id', id); loadRegistrations(); loadDashboardStats(); } };
+        window.markDone = async (id) => {
+            await sb.from('registrations').update({ done: true }).eq('id', id);
+            loadRegistrations();
+            loadDashboardStats();
+        };
         
+        // Announcements
         async function loadAnnouncement() {
-            const data = await safeQuery('site_settings', 'value');
-            const announcement = data.find(d => d.key === 'announcement');
-            const text = announcement?.value || 'Welcome to Kabgayi Music Academy!';
-            document.getElementById('currentAnnouncementDisplay').innerHTML = `<i class="fas fa-bullhorn"></i> ${text}`;
-            document.getElementById('announcementText').value = text;
-            localStorage.setItem('kabgayi_announcement', text);
+            try {
+                const { data, error } = await sb.from('site_settings').select('value').eq('key', 'announcement').single();
+                const text = data?.value || 'Welcome to Kabgayi Music Academy! Registration open until March 31, 2026.';
+                document.getElementById('currentAnnouncementDisplay').innerHTML = `<i class="fas fa-bullhorn"></i> ${text}`;
+                document.getElementById('announcementText').value = text;
+            } catch (error) {
+                console.error('Load announcement error:', error);
+            }
         }
         
         document.getElementById('saveAnnouncementBtn').addEventListener('click', async () => {
             const text = document.getElementById('announcementText').value;
             await sb.from('site_settings').upsert({ key: 'announcement', value: text });
             loadAnnouncement();
-            bootstrap.Modal.getInstance(document.getElementById('announcementModal')).hide();
+            alert('Announcement saved successfully!');
         });
         
+        // About Content
         async function loadAboutContent() {
-            const data = await safeQuery('about_content', '*');
-            if(data.length > 0){
-                document.getElementById('aboutTitle').value = data[0].page_title || '';
-                document.getElementById('aboutHistory').value = data[0].history || '';
-                document.getElementById('aboutMission').value = data[0].mission || '';
-                document.getElementById('aboutVision').value = data[0].vision || '';
+            try {
+                const { data, error } = await sb.from('about_content').select('*').single();
+                if (data) {
+                    document.getElementById('aboutTitle').value = data.page_title || '';
+                    document.getElementById('aboutSubtitle').value = data.page_subtitle || '';
+                    document.getElementById('aboutHistory').value = data.history || '';
+                    document.getElementById('aboutMission').value = data.mission || '';
+                    document.getElementById('aboutVision').value = data.vision || '';
+                    document.getElementById('aboutValues').value = data.core_values || '';
+                }
+            } catch (error) {
+                console.error('Load about content error:', error);
             }
         }
         
-        document.getElementById('aboutForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const data = { page_title: document.getElementById('aboutTitle').value, history: document.getElementById('aboutHistory').value, mission: document.getElementById('aboutMission').value, vision: document.getElementById('aboutVision').value };
+        document.getElementById('saveAboutBtn').addEventListener('click', async () => {
+            const data = {
+                page_title: document.getElementById('aboutTitle').value,
+                page_subtitle: document.getElementById('aboutSubtitle').value,
+                history: document.getElementById('aboutHistory').value,
+                mission: document.getElementById('aboutMission').value,
+                vision: document.getElementById('aboutVision').value,
+                core_values: document.getElementById('aboutValues').value
+            };
             await sb.from('about_content').upsert(data);
-            alert('Saved!');
+            alert('About content saved successfully!');
         });
         
-        async function loadTeam() { const data = await safeQuery('team_members', '*'); document.getElementById('teamList').innerHTML = data.map(t => `<tr><td>${t.name}</td><td>${t.position}</td><td><button class="btn btn-sm btn-warning" onclick="editTeam(${t.id})">Edit</button></td>`).join(''); }
-        window.editTeam = async (id) => { const { data } = await sb.from('team_members').select('*').eq('id', id).single(); if(data){ document.getElementById('teamId').value = data.id; document.getElementById('teamName').value = data.name; document.getElementById('teamPosition').value = data.position; document.getElementById('teamBio').value = data.bio || ''; document.getElementById('teamImage').value = data.image_url || ''; document.getElementById('deleteTeamBtn').style.display = 'inline-block'; new bootstrap.Modal(document.getElementById('teamModal')).show(); } };
-        document.getElementById('saveTeamBtn').onclick = async () => { const id = document.getElementById('teamId').value; const data = { name: document.getElementById('teamName').value, position: document.getElementById('teamPosition').value, bio: document.getElementById('teamBio').value, image_url: document.getElementById('teamImage').value }; if(id) await sb.from('team_members').update(data).eq('id', id); else await sb.from('team_members').insert(data); loadTeam(); bootstrap.Modal.getInstance(document.getElementById('teamModal')).hide(); };
-        document.getElementById('deleteTeamBtn').onclick = async () => { const id = document.getElementById('teamId').value; if(confirm('Delete?')){ await sb.from('team_members').delete().eq('id', id); loadTeam(); bootstrap.Modal.getInstance(document.getElementById('teamModal')).hide(); } };
-        function openTeamModal(){ document.getElementById('teamId').value = ''; document.getElementById('teamName').value = ''; document.getElementById('teamPosition').value = ''; document.getElementById('teamBio').value = ''; document.getElementById('teamImage').value = ''; document.getElementById('deleteTeamBtn').style.display = 'none'; }
+        // Team Members
+        async function loadTeam() {
+            try {
+                const { data, error } = await sb.from('team_members').select('*').order('order', { ascending: true });
+                if (error) throw error;
+                const tbody = document.getElementById('teamList');
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(t => `<tr>
+                        <td><img src="${t.image_url || 'https://via.placeholder.com/40'}" width="40" height="40" style="border-radius:50%; object-fit:cover;"></td>
+                        <td>${t.name}</td>
+                        <td>${t.position}</td>
+                        <td>${t.order || 0}</td>
+                        <td><button class="btn btn-sm btn-warning" onclick="editTeam(${t.id})"><i class="fas fa-edit"></i></button></td>
+                    </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No team members</td></tr>';
+                }
+            } catch (error) {
+                console.error('Load team error:', error);
+            }
+        }
         
-        async function loadNews() { const data = await safeQuery('news_articles', '*'); document.getElementById('newsList').innerHTML = data.map(n => `<tr><td>${n.title}</td><td>${n.category}</td><td>${new Date(n.created_at).toLocaleDateString()}</td><td><button class="btn btn-sm btn-warning" onclick="editNews(${n.id})">Edit</button></td>`).join(''); }
-        window.editNews = async (id) => { const { data } = await sb.from('news_articles').select('*').eq('id', id).single(); if(data){ document.getElementById('newsId').value = data.id; document.getElementById('newsTitle').value = data.title; document.getElementById('newsCategory').value = data.category; document.getElementById('newsContent').value = data.content; document.getElementById('newsImage').value = data.image_url || ''; document.getElementById('deleteNewsBtn').style.display = 'inline-block'; new bootstrap.Modal(document.getElementById('newsModal')).show(); } };
-        document.getElementById('saveNewsBtn').onclick = async () => { const id = document.getElementById('newsId').value; const data = { title: document.getElementById('newsTitle').value, category: document.getElementById('newsCategory').value, content: document.getElementById('newsContent').value, image_url: document.getElementById('newsImage').value }; if(id) await sb.from('news_articles').update(data).eq('id', id); else await sb.from('news_articles').insert(data); loadNews(); bootstrap.Modal.getInstance(document.getElementById('newsModal')).hide(); };
-        document.getElementById('deleteNewsBtn').onclick = async () => { const id = document.getElementById('newsId').value; if(confirm('Delete?')){ await sb.from('news_articles').delete().eq('id', id); loadNews(); bootstrap.Modal.getInstance(document.getElementById('newsModal')).hide(); } };
-        function openNewsModal(){ document.getElementById('newsId').value = ''; document.getElementById('newsTitle').value = ''; document.getElementById('newsCategory').value = 'events'; document.getElementById('newsContent').value = ''; document.getElementById('newsImage').value = ''; document.getElementById('deleteNewsBtn').style.display = 'none'; }
+        window.editTeam = async (id) => {
+            const { data } = await sb.from('team_members').select('*').eq('id', id).single();
+            if (data) {
+                document.getElementById('teamId').value = data.id;
+                document.getElementById('teamName').value = data.name;
+                document.getElementById('teamPosition').value = data.position;
+                document.getElementById('teamBio').value = data.bio || '';
+                document.getElementById('teamOrder').value = data.order || 0;
+                document.getElementById('teamImageUrl').value = data.image_url || '';
+                if (data.image_url) {
+                    document.getElementById('teamImagePreview').src = data.image_url;
+                    document.getElementById('teamImagePreview').style.display = 'block';
+                }
+                document.getElementById('deleteTeamBtn').style.display = 'inline-block';
+                new bootstrap.Modal(document.getElementById('teamModal')).show();
+            }
+        };
         
-        async function loadGallery() { const data = await safeQuery('media_gallery', '*'); document.getElementById('galleryList').innerHTML = data.map(g => `<div class="col-md-3 col-sm-6 mb-3"><div class="card"><img src="${g.image_url}" class="card-img-top gallery-card-img" onerror="this.src='https://via.placeholder.com/300'"><div class="card-body p-2"><small>${g.title}</small><div><button class="btn btn-sm btn-warning" onclick="editGallery(${g.id})">Edit</button> <button class="btn btn-sm btn-danger" onclick="deleteGalleryItem(${g.id})">Delete</button></div></div></div></div>`).join(''); }
-        window.editGallery = async (id) => { const { data } = await sb.from('media_gallery').select('*').eq('id', id).single(); if(data){ document.getElementById('galleryId').value = data.id; document.getElementById('galleryTitle').value = data.title || ''; document.getElementById('galleryCategory').value = data.category || 'students'; document.getElementById('galleryUrl').value = data.image_url; document.getElementById('deleteGalleryBtn').style.display = 'inline-block'; new bootstrap.Modal(document.getElementById('galleryModal')).show(); } };
-        window.deleteGalleryItem = async (id) => { if(confirm('Delete?')){ await sb.from('media_gallery').delete().eq('id', id); loadGallery(); } };
-        document.getElementById('saveGalleryBtn').onclick = async () => { const id = document.getElementById('galleryId').value; const data = { title: document.getElementById('galleryTitle').value, category: document.getElementById('galleryCategory').value, image_url: document.getElementById('galleryUrl').value }; if(id) await sb.from('media_gallery').update(data).eq('id', id); else await sb.from('media_gallery').insert(data); loadGallery(); bootstrap.Modal.getInstance(document.getElementById('galleryModal')).hide(); };
-        document.getElementById('deleteGalleryBtn').onclick = async () => { const id = document.getElementById('galleryId').value; if(confirm('Delete?')){ await sb.from('media_gallery').delete().eq('id', id); loadGallery(); bootstrap.Modal.getInstance(document.getElementById('galleryModal')).hide(); } };
-        function openGalleryModal(){ document.getElementById('galleryId').value = ''; document.getElementById('galleryTitle').value = ''; document.getElementById('galleryCategory').value = 'students'; document.getElementById('galleryUrl').value = ''; document.getElementById('deleteGalleryBtn').style.display = 'none'; }
+        document.getElementById('saveTeamBtn').onclick = async () => {
+            const id = document.getElementById('teamId').value;
+            const imageUrl = document.getElementById('teamImageUrl').value;
+            const teamData = {
+                name: document.getElementById('teamName').value,
+                position: document.getElementById('teamPosition').value,
+                bio: document.getElementById('teamBio').value,
+                order: parseInt(document.getElementById('teamOrder').value) || 0,
+                image_url: imageUrl || null
+            };
+            if (id) {
+                await sb.from('team_members').update(teamData).eq('id', parseInt(id));
+            } else {
+                await sb.from('team_members').insert(teamData);
+            }
+            loadTeam();
+            bootstrap.Modal.getInstance(document.getElementById('teamModal')).hide();
+            resetTeamModal();
+            alert('Team member saved!');
+        };
         
-        async function loadSheetMusic() { const data = await safeQuery('sheet_music', '*'); document.getElementById('sheetMusicList').innerHTML = data.map(s => `<tr><td>${s.title}</td><td><button class="btn btn-sm btn-warning" onclick="editSheet(${s.id})">Edit</button></td>`).join(''); }
-        window.editSheet = async (id) => { const { data } = await sb.from('sheet_music').select('*').eq('id', id).single(); if(data){ document.getElementById('sheetId').value = data.id; document.getElementById('sheetTitle').value = data.title; document.getElementById('sheetUrl').value = data.file_url; document.getElementById('deleteSheetBtn').style.display = 'inline-block'; new bootstrap.Modal(document.getElementById('sheetMusicModal')).show(); } };
-        document.getElementById('saveSheetBtn').onclick = async () => { const id = document.getElementById('sheetId').value; const data = { title: document.getElementById('sheetTitle').value, file_url: document.getElementById('sheetUrl').value }; if(id) await sb.from('sheet_music').update(data).eq('id', id); else await sb.from('sheet_music').insert(data); loadSheetMusic(); bootstrap.Modal.getInstance(document.getElementById('sheetMusicModal')).hide(); };
-        document.getElementById('deleteSheetBtn').onclick = async () => { const id = document.getElementById('sheetId').value; if(confirm('Delete?')){ await sb.from('sheet_music').delete().eq('id', id); loadSheetMusic(); bootstrap.Modal.getInstance(document.getElementById('sheetMusicModal')).hide(); } };
-        function openSheetMusicModal(){ document.getElementById('sheetId').value = ''; document.getElementById('sheetTitle').value = ''; document.getElementById('sheetUrl').value = ''; document.getElementById('deleteSheetBtn').style.display = 'none'; }
+        document.getElementById('deleteTeamBtn').onclick = async () => {
+            const id = document.getElementById('teamId').value;
+            if (confirm('Delete this team member?')) {
+                await sb.from('team_members').delete().eq('id', parseInt(id));
+                loadTeam();
+                bootstrap.Modal.getInstance(document.getElementById('teamModal')).hide();
+                resetTeamModal();
+            }
+        };
         
-        async function loadStats() { const data = await safeQuery('site_stats', '*'); document.getElementById('statsList').innerHTML = data.map(s => `<tr><td>${s.number}</td><td>${s.label}</td><td><button class="btn btn-sm btn-warning" onclick="editStat(${s.id})">Edit</button></td>`).join(''); }
-        window.editStat = async (id) => { const { data } = await sb.from('site_stats').select('*').eq('id', id).single(); if(data){ document.getElementById('statId').value = data.id; document.getElementById('statNumber').value = data.number; document.getElementById('statLabel').value = data.label; document.getElementById('deleteStatBtn').style.display = 'inline-block'; new bootstrap.Modal(document.getElementById('statModal')).show(); } };
-        document.getElementById('saveStatBtn').onclick = async () => { const id = document.getElementById('statId').value; const data = { number: document.getElementById('statNumber').value, label: document.getElementById('statLabel').value }; if(id) await sb.from('site_stats').update(data).eq('id', id); else await sb.from('site_stats').insert(data); loadStats(); bootstrap.Modal.getInstance(document.getElementById('statModal')).hide(); };
-        document.getElementById('deleteStatBtn').onclick = async () => { const id = document.getElementById('statId').value; if(confirm('Delete?')){ await sb.from('site_stats').delete().eq('id', id); loadStats(); bootstrap.Modal.getInstance(document.getElementById('statModal')).hide(); } };
-        function openStatModal(){ document.getElementById('statId').value = ''; document.getElementById('statNumber').value = ''; document.getElementById('statLabel').value = ''; document.getElementById('deleteStatBtn').style.display = 'none'; }
+        function openTeamModal() { resetTeamModal(); new bootstrap.Modal(document.getElementById('teamModal')).show(); }
+        function resetTeamModal() {
+            document.getElementById('teamId').value = '';
+            document.getElementById('teamName').value = '';
+            document.getElementById('teamPosition').value = '';
+            document.getElementById('teamBio').value = '';
+            document.getElementById('teamOrder').value = '0';
+            document.getElementById('teamImageUrl').value = '';
+            document.getElementById('teamImagePreview').style.display = 'none';
+            document.getElementById('deleteTeamBtn').style.display = 'none';
+        }
+        
+        // News Articles
+        async function loadNews() {
+            try {
+                const { data, error } = await sb.from('news_articles').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                const tbody = document.getElementById('newsList');
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(n => `<tr>
+                        <td><img src="${n.image_url || 'https://via.placeholder.com/40'}" width="40" height="40" style="border-radius:8px; object-fit:cover;"></td>
+                        <td>${n.title}</td>
+                        <td>${n.category}</td>
+                        <td>${new Date(n.created_at).toLocaleDateString()}</td>
+                        <td><button class="btn btn-sm btn-warning" onclick="editNews(${n.id})"><i class="fas fa-edit"></i></button></td>
+                    </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center">No news articles</td></tr>';
+                }
+            } catch (error) {
+                console.error('Load news error:', error);
+            }
+        }
+        
+        window.editNews = async (id) => {
+            const { data } = await sb.from('news_articles').select('*').eq('id', id).single();
+            if (data) {
+                document.getElementById('newsId').value = data.id;
+                document.getElementById('newsTitle').value = data.title;
+                document.getElementById('newsCategory').value = data.category;
+                document.getElementById('newsExcerpt').value = data.excerpt || '';
+                document.getElementById('newsContent').value = data.content;
+                document.getElementById('newsImageUrl').value = data.image_url || '';
+                if (data.image_url) {
+                    document.getElementById('newsImagePreview').src = data.image_url;
+                    document.getElementById('newsImagePreview').style.display = 'block';
+                }
+                document.getElementById('deleteNewsBtn').style.display = 'inline-block';
+                new bootstrap.Modal(document.getElementById('newsModal')).show();
+            }
+        };
+        
+        document.getElementById('saveNewsBtn').onclick = async () => {
+            const id = document.getElementById('newsId').value;
+            const newsData = {
+                title: document.getElementById('newsTitle').value,
+                category: document.getElementById('newsCategory').value,
+                excerpt: document.getElementById('newsExcerpt').value,
+                content: document.getElementById('newsContent').value,
+                image_url: document.getElementById('newsImageUrl').value || null
+            };
+            if (id) {
+                await sb.from('news_articles').update(newsData).eq('id', parseInt(id));
+            } else {
+                await sb.from('news_articles').insert(newsData);
+            }
+            loadNews();
+            bootstrap.Modal.getInstance(document.getElementById('newsModal')).hide();
+            resetNewsModal();
+            alert('News article saved!');
+        };
+        
+        document.getElementById('deleteNewsBtn').onclick = async () => {
+            const id = document.getElementById('newsId').value;
+            if (confirm('Delete this news article?')) {
+                await sb.from('news_articles').delete().eq('id', parseInt(id));
+                loadNews();
+                bootstrap.Modal.getInstance(document.getElementById('newsModal')).hide();
+                resetNewsModal();
+            }
+        };
+        
+        function openNewsModal() { resetNewsModal(); new bootstrap.Modal(document.getElementById('newsModal')).show(); }
+        function resetNewsModal() {
+            document.getElementById('newsId').value = '';
+            document.getElementById('newsTitle').value = '';
+            document.getElementById('newsCategory').value = 'events';
+            document.getElementById('newsExcerpt').value = '';
+            document.getElementById('newsContent').value = '';
+            document.getElementById('newsImageUrl').value = '';
+            document.getElementById('newsImagePreview').style.display = 'none';
+            document.getElementById('deleteNewsBtn').style.display = 'none';
+        }
+        
+        // Gallery
+        async function loadGallery() {
+            try {
+                const { data, error } = await sb.from('media_gallery').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                const container = document.getElementById('galleryList');
+                if (data && data.length > 0) {
+                    container.innerHTML = data.map(g => `
+                        <div class="col-md-3 col-sm-6 mb-3">
+                            <div class="card h-100">
+                                <img src="${g.image_url}" class="card-img-top gallery-card-img" onerror="this.src='https://via.placeholder.com/300'">
+                                <div class="card-body p-2">
+                                    <small class="fw-bold">${g.title || 'Untitled'}</small>
+                                    <div class="mt-2">
+                                        <button class="btn btn-sm btn-warning" onclick="editGallery(${g.id})"><i class="fas fa-edit"></i></button>
+                                        <button class="btn btn-sm btn-danger" onclick="deleteGalleryItem(${g.id})"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="col-12 text-center">No gallery items</div>';
+                }
+            } catch (error) {
+                console.error('Load gallery error:', error);
+            }
+        }
+        
+        window.editGallery = async (id) => {
+            const { data } = await sb.from('media_gallery').select('*').eq('id', id).single();
+            if (data) {
+                document.getElementById('galleryId').value = data.id;
+                document.getElementById('galleryTitle').value = data.title || '';
+                document.getElementById('galleryCaption').value = data.caption || '';
+                document.getElementById('galleryCategory').value = data.category || 'students';
+                document.getElementById('galleryImageUrl').value = data.image_url;
+                if (data.image_url) {
+                    document.getElementById('galleryImagePreview').src = data.image_url;
+                    document.getElementById('galleryImagePreview').style.display = 'block';
+                }
+                document.getElementById('deleteGalleryBtn').style.display = 'inline-block';
+                new bootstrap.Modal(document.getElementById('galleryModal')).show();
+            }
+        };
+        
+        window.deleteGalleryItem = async (id) => {
+            if (confirm('Delete this gallery item?')) {
+                await sb.from('media_gallery').delete().eq('id', id);
+                loadGallery();
+            }
+        };
+        
+        document.getElementById('saveGalleryBtn').onclick = async () => {
+            const id = document.getElementById('galleryId').value;
+            const galleryData = {
+                title: document.getElementById('galleryTitle').value,
+                caption: document.getElementById('galleryCaption').value,
+                category: document.getElementById('galleryCategory').value,
+                image_url: document.getElementById('galleryImageUrl').value
+            };
+            if (id) {
+                await sb.from('media_gallery').update(galleryData).eq('id', parseInt(id));
+            } else {
+                await sb.from('media_gallery').insert(galleryData);
+            }
+            loadGallery();
+            bootstrap.Modal.getInstance(document.getElementById('galleryModal')).hide();
+            resetGalleryModal();
+            alert('Gallery item saved!');
+        };
+        
+        document.getElementById('deleteGalleryBtn').onclick = async () => {
+            const id = document.getElementById('galleryId').value;
+            if (confirm('Delete this gallery item?')) {
+                await sb.from('media_gallery').delete().eq('id', parseInt(id));
+                loadGallery();
+                bootstrap.Modal.getInstance(document.getElementById('galleryModal')).hide();
+                resetGalleryModal();
+            }
+        };
+        
+        function openGalleryModal() { resetGalleryModal(); new bootstrap.Modal(document.getElementById('galleryModal')).show(); }
+        function resetGalleryModal() {
+            document.getElementById('galleryId').value = '';
+            document.getElementById('galleryTitle').value = '';
+            document.getElementById('galleryCaption').value = '';
+            document.getElementById('galleryCategory').value = 'students';
+            document.getElementById('galleryImageUrl').value = '';
+            document.getElementById('galleryImagePreview').style.display = 'none';
+            document.getElementById('deleteGalleryBtn').style.display = 'none';
+        }
+        
+        // Sheet Music
+        async function loadSheetMusic() {
+            try {
+                const { data, error } = await sb.from('sheet_music').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                const tbody = document.getElementById('sheetMusicList');
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(s => `<tr>
+                        <td>${s.title}</td>
+                        <td>${s.description || ''}</td>
+                        <td><a href="${s.file_url}" target="_blank" class="btn btn-sm btn-outline-info">View PDF</a></td>
+                        <td><button class="btn btn-sm btn-warning" onclick="editSheet(${s.id})"><i class="fas fa-edit"></i></button></td>
+                    </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">No sheet music</td></tr>';
+                }
+            } catch (error) {
+                console.error('Load sheet music error:', error);
+            }
+        }
+        
+        window.editSheet = async (id) => {
+            const { data } = await sb.from('sheet_music').select('*').eq('id', id).single();
+            if (data) {
+                document.getElementById('sheetId').value = data.id;
+                document.getElementById('sheetTitle').value = data.title;
+                document.getElementById('sheetDesc').value = data.description || '';
+                document.getElementById('sheetUrl').value = data.file_url;
+                document.getElementById('deleteSheetBtn').style.display = 'inline-block';
+                new bootstrap.Modal(document.getElementById('sheetMusicModal')).show();
+            }
+        };
+        
+        document.getElementById('saveSheetBtn').onclick = async () => {
+            const id = document.getElementById('sheetId').value;
+            const sheetData = {
+                title: document.getElementById('sheetTitle').value,
+                description: document.getElementById('sheetDesc').value,
+                file_url: document.getElementById('sheetUrl').value
+            };
+            if (id) {
+                await sb.from('sheet_music').update(sheetData).eq('id', parseInt(id));
+            } else {
+                await sb.from('sheet_music').insert(sheetData);
+            }
+            loadSheetMusic();
+            bootstrap.Modal.getInstance(document.getElementById('sheetMusicModal')).hide();
+            resetSheetModal();
+            alert('Sheet music saved!');
+        };
+        
+        document.getElementById('deleteSheetBtn').onclick = async () => {
+            const id = document.getElementById('sheetId').value;
+            if (confirm('Delete this sheet music?')) {
+                await sb.from('sheet_music').delete().eq('id', parseInt(id));
+                loadSheetMusic();
+                bootstrap.Modal.getInstance(document.getElementById('sheetMusicModal')).hide();
+                resetSheetModal();
+            }
+        };
+        
+        function openSheetMusicModal() { resetSheetModal(); new bootstrap.Modal(document.getElementById('sheetMusicModal')).show(); }
+        function resetSheetModal() {
+            document.getElementById('sheetId').value = '';
+            document.getElementById('sheetTitle').value = '';
+            document.getElementById('sheetDesc').value = '';
+            document.getElementById('sheetUrl').value = '';
+            document.getElementById('deleteSheetBtn').style.display = 'none';
+        }
+        
+        // Site Stats
+        async function loadStats() {
+            try {
+                const { data, error } = await sb.from('site_stats').select('*');
+                if (error) throw error;
+                const tbody = document.getElementById('statsList');
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(s => `<tr>
+                        <td>${s.number}</td>
+                        <td>${s.label}</td>
+                        <td><button class="btn btn-sm btn-warning" onclick="editStat(${s.id})"><i class="fas fa-edit"></i></button></td>
+                    </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="3" class="text-center">No stats</td></tr>';
+                }
+            } catch (error) {
+                console.error('Load stats error:', error);
+            }
+        }
+        
+        window.editStat = async (id) => {
+            const { data } = await sb.from('site_stats').select('*').eq('id', id).single();
+            if (data) {
+                document.getElementById('statId').value = data.id;
+                document.getElementById('statNumber').value = data.number;
+                document.getElementById('statLabel').value = data.label;
+                document.getElementById('deleteStatBtn').style.display = 'inline-block';
+                new bootstrap.Modal(document.getElementById('statModal')).show();
+            }
+        };
+        
+        document.getElementById('saveStatBtn').onclick = async () => {
+            const id = document.getElementById('statId').value;
+            const statData = {
+                number: document.getElementById('statNumber').value,
+                label: document.getElementById('statLabel').value
+            };
+            if (id) {
+                await sb.from('site_stats').update(statData).eq('id', parseInt(id));
+            } else {
+                await sb.from('site_stats').insert(statData);
+            }
+            loadStats();
+            bootstrap.Modal.getInstance(document.getElementById('statModal')).hide();
+            resetStatModal();
+            alert('Stat saved!');
+        };
+        
+        document.getElementById('deleteStatBtn').onclick = async () => {
+            const id = document.getElementById('statId').value;
+            if (confirm('Delete this stat?')) {
+                await sb.from('site_stats').delete().eq('id', parseInt(id));
+                loadStats();
+                bootstrap.Modal.getInstance(document.getElementById('statModal')).hide();
+                resetStatModal();
+            }
+        };
+        
+        function openStatModal() { resetStatModal(); new bootstrap.Modal(document.getElementById('statModal')).show(); }
+        function resetStatModal() {
+            document.getElementById('statId').value = '';
+            document.getElementById('statNumber').value = '';
+            document.getElementById('statLabel').value = '';
+            document.getElementById('deleteStatBtn').style.display = 'none';
+        }
+        
+        // Export
+        window.exportRegistrations = async () => {
+            const { data } = await sb.from('registrations').select('*');
+            if (data && data.length > 0) {
+                let csv = 'ID,First Name,Last Name,Contact,Email,Province,District,Sector,Status,Created At\n' + 
+                    data.map(r => `${r.id},${r.first_name || ''},${r.last_name || ''},${r.contact || ''},${r.email || ''},${r.province || ''},${r.district || ''},${r.sector || ''},${r.done ? 'Completed' : 'Pending'},${r.created_at}`).join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `registrations_${new Date().toISOString().slice(0,10)}.csv`;
+                a.click();
+                URL.revokeObjectURL(a.href);
+            } else {
+                alert('No data to export');
+            }
+        };
         
         // Navigation
         document.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', () => {
                 const tab = item.dataset.tab;
-                if(tab === 'logout'){ document.getElementById('loginOverlay').style.display = 'flex'; document.getElementById('dashboardContent').style.display = 'none'; return; }
+                if (tab === 'logout') {
+                    document.getElementById('loginOverlay').style.display = 'flex';
+                    document.getElementById('dashboardContent').style.display = 'none';
+                    return;
+                }
                 document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
                 document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
@@ -566,11 +861,26 @@
                 document.getElementById('pageTitle').innerText = item.innerText.trim();
             });
         });
+        
         document.getElementById('menuToggleBtn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('show'));
         
-        window.exportAllData = async () => { const { data } = await sb.from('registrations').select('*'); if(data && data.length){ let csv = 'ID,Name,Contact,Email,Status\n'+data.map(r=>`${r.id},${r.first_name} ${r.last_name},${r.contact},${r.email},${r.done?'Completed':'Pending'}`).join('\n'); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='registrations.csv'; a.click(); } else alert('No data to export'); };
-        window.sendTestNotification = () => { if('Notification' in window){ Notification.requestPermission().then(perm=>{ if(perm==='granted') new Notification('Kabgayi Music',{body:'Test notification!',icon:'image/logo.png'}); }); } };
-        window.clearAllCache = () => { localStorage.clear(); sessionStorage.clear(); alert('Cache cleared!'); };
+        // Setup image upload handlers
+        setupUploadHandler('teamUploadArea', 'teamImageFile', 'teamImagePreview', 'teamImageUrl');
+        setupUploadHandler('newsUploadArea', 'newsImageFile', 'newsImagePreview', 'newsImageUrl');
+        setupUploadHandler('galleryUploadArea', 'galleryImageFile', 'galleryImagePreview', 'galleryImageUrl');
+        
+        // Search functionality
+        document.getElementById('searchReg')?.addEventListener('keyup', function() {
+            const term = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#registrationsList tr');
+            rows.forEach(row => {
+                if (row.innerText.toLowerCase().includes(term)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        });
     </script>
 </body>
 </html>
