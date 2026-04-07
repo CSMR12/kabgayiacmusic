@@ -1,637 +1,907 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Kabgayi · Admin Panel</title>
-    <!-- Bootstrap 5 CSS -->
+    <title>Kabgayi · Admin Dashboard</title>
+    <!-- Bootstrap 5 CSS + Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- Poppins font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <!-- Supabase client -->
+    <!-- Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="maintenance-check.js"></script>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Poppins', sans-serif;
-            background: #b8e1ff;
-            min-height: 100vh;
-            padding: 1rem;
-            position: relative;
+            background: #f0f4f8;
+            overflow-x: hidden;
         }
-        /* Moving blur background */
-        .moving-blur {
+        /* Sidebar */
+        .sidebar {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden;
-        }
-        .blur-orb {
-            position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4;
-            animation: moveBlur 20s infinite alternate ease-in-out;
-        }
-        .orb1 { width: 600px; height: 600px; background: #b8e1ff; top: -250px; left: -150px; animation-duration: 27s; }
-        .orb2 { width: 500px; height: 500px; background: #ffecb3; bottom: -200px; right: -100px; animation-duration: 24s; animation-delay: -5s; }
-        .orb3 { width: 450px; height: 450px; background: #a0d0ff; top: 30%; right: 15%; animation-duration: 30s; animation-delay: -12s; }
-        .orb4 { width: 400px; height: 400px; background: #ffe0a0; bottom: 10%; left: 20%; animation-duration: 22s; animation-delay: -8s; }
-        .orb5 { width: 550px; height: 550px; background: #cce5ff; top: 50%; left: 40%; animation-duration: 28s; animation-delay: -3s; }
-        @keyframes moveBlur {
-            0% { transform: translate(0,0) scale(1); }
-            33% { transform: translate(70px,-50px) scale(1.05); }
-            66% { transform: translate(-50px,60px) scale(0.98); }
-            100% { transform: translate(40px,-30px) scale(1.02); }
-        }
-        /* White blur corners */
-        .white-blur {
-            position: fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:0;
-        }
-        .white-blur::before {
-            content:''; position:absolute; bottom:0; left:0; width:100%; height:40%;
-            background: radial-gradient(ellipse at bottom, rgba(255,255,255,0.7) 0%, transparent 70%);
-            filter: blur(30px);
-        }
-        .white-blur::after {
-            content:''; position:absolute; top:0; right:0; width:30%; height:30%;
-            background: radial-gradient(circle at top right, rgba(255,255,255,0.8) 0%, transparent 70%);
-            filter: blur(40px);
-        }
-        .corner-blur {
-            position: fixed; bottom:0; right:0; width:30%; height:30%;
-            background: radial-gradient(circle at bottom right, rgba(255,255,255,0.8) 0%, transparent 70%);
-            filter: blur(50px); pointer-events:none; z-index:0;
-        }
-        /* Admin card */
-        .admin-card {
-            background: rgba(255, 255, 255, 0.25);
-            backdrop-filter: blur(12px);
-            border-radius: 32px;
-            padding: 1.5rem;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.05);
-            position: relative;
-            z-index: 10;
-        }
-        /* Password overlay */
-        #passwordOverlay {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.5); backdrop-filter: blur(5px);
-            z-index: 1000; display: flex; align-items: center; justify-content: center;
-        }
-        .password-box {
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(10px);
-            border-radius: 24px; padding: 2rem; width:90%; max-width:400px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        /* Left button */
-        .need-website-btn {
-            position: fixed; left:0; top:50%; transform:translateY(-50%);
-            background: rgba(44,125,160,0.9); backdrop-filter:blur(5px); color:white;
-            writing-mode:vertical-rl; text-orientation:mixed;
-            padding:1.5rem 0.4rem; border-radius:0 12px 12px 0;
-            font-size:0.8rem; font-weight:500; letter-spacing:1px; cursor:pointer;
-            z-index:100; border:none; box-shadow:0 4px 15px rgba(0,0,0,0.1);
-            transition:all 0.2s ease; line-height:1.4;
-        }
-        .need-website-btn:hover { background:#1e5f7a; padding:1.8rem 0.5rem; }
-        /* Popup */
-        .popup-box {
-            position:fixed; left:70px; top:50%; transform:translateY(-50%);
-            background:rgba(255,255,255,0.95); backdrop-filter:blur(15px);
-            border-radius:20px; padding:1.5rem; box-shadow:0 20px 40px rgba(0,0,0,0.1);
-            z-index:200; min-width:260px; border:1px solid rgba(255,255,255,0.5);
-            display:none;
-        }
-        .popup-box.show { display:block; }
-        .popup-content { display:flex; flex-direction:column; gap:1rem; }
-        .popup-question { font-size:0.95rem; font-weight:500; color:#1e1e1e; }
-        .popup-buttons { display:flex; gap:0.8rem; justify-content:center; }
-        .popup-btn { padding:0.5rem 1.2rem; border-radius:20px; font-size:0.8rem; font-weight:500; border:none; cursor:pointer; }
-        .popup-btn-yes { background:#2c7da0; color:white; }
-        .popup-btn-yes:hover { background:#1e5f7a; }
-        .popup-btn-no { background:#f0f0f0; color:#1e1e1e; }
-        .popup-btn-no:hover { background:#e0e0e0; }
-        .popup-message { font-size:0.9rem; color:#2c7da0; text-align:center; }
-        .footer {
-            position:fixed; bottom:1rem; left:0; width:100%; text-align:center;
-            font-size:0.6rem; color:#2c3e50; z-index:20;
-        }
-        /* Tabs */
-        .nav-pills .nav-link {
-            color: #1e3a4a;
-            border-radius: 30px;
-            padding: 0.5rem 1.5rem;
-            margin-right: 0.5rem;
-            background: rgba(255,255,255,0.3);
-            backdrop-filter: blur(4px);
-        }
-        .nav-pills .nav-link.active {
-            background: #2c7da0;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 280px;
+            background: linear-gradient(180deg, #1e5f7a 0%, #134257 100%);
             color: white;
+            transition: all 0.3s;
+            z-index: 1000;
+            overflow-y: auto;
         }
-        /* List group */
-        .list-group-item {
-            background: rgba(255,255,255,0.4);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 0.5rem;
-            border-radius: 16px !important;
-            cursor: pointer;
-            transition: all 0.2s;
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
         }
-        .list-group-item:hover {
-            background: rgba(255,255,255,0.6);
-            transform: translateY(-2px);
+        .sidebar-header img {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            margin-bottom: 10px;
         }
-        .badge-submission {
-            background: #2c7da0;
-            color: white;
-            border-radius: 20px;
-            padding: 0.3rem 0.8rem;
+        .sidebar-header h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        .sidebar-header p {
             font-size: 0.7rem;
+            opacity: 0.7;
         }
-        .badge-done {
-            background: #28a745;
-            color: white;
-            border-radius: 20px;
-            padding: 0.3rem 0.8rem;
-            font-size: 0.7rem;
-        }
-        /* Modal */
-        .modal-content {
-            background: rgba(255,255,255,0.9);
-            backdrop-filter: blur(15px);
-            border-radius: 24px;
-        }
-        .modal-img {
-            max-width: 100%;
-            max-height: 60vh;
-            border-radius: 16px;
-        }
-        .info-row {
+        .nav-item {
+            padding: 12px 20px;
             display: flex;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-            padding-bottom: 0.3rem;
+            align-items: center;
+            gap: 12px;
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 3px solid transparent;
         }
-        .info-label {
-            font-weight: 500;
-            width: 100px;
-            color: #2c7da0;
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border-left-color: #ffd966;
         }
-        .info-value {
-            flex: 1;
-            word-break: break-word;
+        .nav-item i { width: 24px; font-size: 1.1rem; }
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 20px 30px;
+            min-height: 100vh;
         }
-        .search-box {
-            max-width: 300px;
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        /* Mobile adjustments */
-        @media (max-width: 576px) {
-            .admin-card { padding: 1rem; }
-            .info-label { width: 80px; }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: #1e5f7a; }
+        /* Stats Cards */
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); }
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(30,95,122,0.1);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #1e5f7a;
+        }
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+        .btn-action {
+            padding: 5px 10px;
+            margin: 0 3px;
+            border-radius: 8px;
+        }
+        .modal-content {
+            border-radius: 20px;
+        }
+        .form-label { font-weight: 500; color: #1e5f7a; }
+        /* Mobile Responsive */
+        @media (max-width: 992px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.show { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .menu-toggle-btn { display: block; }
+        }
+        .menu-toggle-btn {
+            display: none;
+            background: #1e5f7a;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            margin-right: 15px;
+        }
+        /* Login Overlay */
+        #loginOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e9ecef; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1e5f7a; border-radius: 10px; }
+        .gallery-card-img {
+            height: 150px;
+            object-fit: cover;
+        }
+        .badge-status {
+            font-size: 0.7rem;
+            padding: 3px 8px;
         }
     </style>
 </head>
 <body>
-    <!-- Background effects -->
-    <div class="moving-blur">
-        <div class="blur-orb orb1"></div>
-        <div class="blur-orb orb2"></div>
-        <div class="blur-orb orb3"></div>
-        <div class="blur-orb orb4"></div>
-        <div class="blur-orb orb5"></div>
+    <!-- Login Overlay -->
+    <div id="loginOverlay">
+        <div class="login-card">
+            <img src="image/logo.png" alt="Logo" style="width: 70px; margin-bottom: 20px;" onerror="this.src='https://via.placeholder.com/70'">
+            <h4>Admin Access</h4>
+            <p class="text-muted small">Enter password to access dashboard</p>
+            <input type="password" class="form-control mb-3" id="adminPassword" placeholder="Password">
+            <button class="btn btn-primary w-100" id="loginBtn">Login</button>
+            <div class="text-danger mt-2 small" id="loginError" style="display: none;">Incorrect password</div>
+        </div>
     </div>
-    <div class="white-blur"></div>
-    <div class="corner-blur"></div>
 
-    <!-- Left button -->
-    <div class="need-website-btn" id="needWebsiteBtn">
-        NEED A<br>WEBSITE?
-    </div>
-    <!-- Popup -->
-    <div class="popup-box" id="popupBox">
-        <div class="popup-content" id="popupContent">
-            <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
-            <div class="popup-buttons">
-                <button class="popup-btn popup-btn-yes" id="popupYes">YES</button>
-                <button class="popup-btn popup-btn-no" id="popupNo">NO</button>
+    <!-- Dashboard Content (hidden initially) -->
+    <div id="dashboardContent" style="display: none;">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="image/logo.png" alt="Logo" onerror="this.src='https://via.placeholder.com/60'">
+                <h4>Kabgayi Music</h4>
+                <p>Admin Dashboard</p>
+            </div>
+            <div class="nav-item active" data-tab="dashboard">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </div>
+            <div class="nav-item" data-tab="registrations">
+                <i class="fas fa-users"></i> Registrations
+            </div>
+            <div class="nav-item" data-tab="announcements">
+                <i class="fas fa-bullhorn"></i> Announcements
+            </div>
+            <div class="nav-item" data-tab="about">
+                <i class="fas fa-info-circle"></i> About Content
+            </div>
+            <div class="nav-item" data-tab="team">
+                <i class="fas fa-user-friends"></i> Team Members
+            </div>
+            <div class="nav-item" data-tab="news">
+                <i class="fas fa-newspaper"></i> News Articles
+            </div>
+            <div class="nav-item" data-tab="gallery">
+                <i class="fas fa-images"></i> Media Gallery
+            </div>
+            <div class="nav-item" data-tab="sheetmusic">
+                <i class="fas fa-music"></i> Sheet Music
+            </div>
+            <div class="nav-item" data-tab="stats">
+                <i class="fas fa-chart-line"></i> Site Stats
+            </div>
+            <div class="nav-item" data-tab="logout" style="margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1);">
+                <i class="fas fa-sign-out-alt"></i> Logout
             </div>
         </div>
-    </div>
 
-    <!-- Password overlay -->
-    <div id="passwordOverlay">
-        <div class="password-box">
-            <h4 class="mb-3">Admin Access</h4>
-            <p class="small text-secondary">Enter password to view registrations</p>
-            <input type="password" class="form-control mb-3" id="passwordInput" placeholder="Password">
-            <button class="btn btn-primary w-100" id="submitPassword">Access Panel</button>
-            <div class="text-danger small mt-2" id="passwordError" style="display: none;">Incorrect password</div>
-        </div>
-    </div>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div>
+                    <button class="menu-toggle-btn" id="menuToggleBtn"><i class="fas fa-bars"></i></button>
+                    <span class="page-title" id="pageTitle">Dashboard</span>
+                </div>
+                <div>
+                    <span class="badge bg-primary px-3 py-2"><i class="fas fa-user-shield"></i> Admin</span>
+                </div>
+            </div>
 
-    <!-- Main admin panel (initially hidden) -->
-    <div class="container" id="adminPanel" style="display: none;">
-        <div class="admin-card">
-            <!-- Header with search and refresh/export -->
-            <div class="d-flex justify-content-between align-items-center flex-wrap mb-3">
-                <h3 class="mb-2 mb-sm-0">📋 Registrations</h3>
-                <div class="d-flex gap-2 flex-wrap">
-                    <div class="search-box">
-                        <input type="text" class="form-control" id="searchInput" placeholder="Search...">
+            <!-- Dashboard Tab -->
+            <div id="dashboardTab" class="tab-content active">
+                <div class="row g-4 mb-4" id="statsRow">
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card d-flex justify-content-between align-items-center">
+                            <div><h3 class="mb-0" id="totalRegistrations">0</h3><span class="text-muted">Registrations</span></div>
+                            <div class="stat-icon"><i class="fas fa-user-plus"></i></div>
+                        </div>
                     </div>
-                    <button class="btn btn-outline-primary" id="refreshBtn" title="Refresh"><i class="fas fa-sync-alt"></i></button>
-                    <button class="btn btn-outline-success" id="exportBtn" title="Export to CSV"><i class="fas fa-download"></i></button>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card d-flex justify-content-between align-items-center">
+                            <div><h3 class="mb-0" id="totalNews">0</h3><span class="text-muted">News Articles</span></div>
+                            <div class="stat-icon"><i class="fas fa-newspaper"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card d-flex justify-content-between align-items-center">
+                            <div><h3 class="mb-0" id="totalGallery">0</h3><span class="text-muted">Gallery Items</span></div>
+                            <div class="stat-icon"><i class="fas fa-images"></i></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <div class="stat-card d-flex justify-content-between align-items-center">
+                            <div><h3 class="mb-0" id="totalTeam">0</h3><span class="text-muted">Team Members</span></div>
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-            <!-- Tabs -->
-            <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link active" id="pills-submissions-tab" data-bs-toggle="pill" data-bs-target="#pills-submissions" type="button" role="tab">Submissions <span class="badge bg-light text-dark ms-1" id="submissionsCount">0</span></button>
-                </li>
-                <li class="nav-item" role="presentation">
-                    <button class="nav-link" id="pills-done-tab" data-bs-toggle="pill" data-bs-target="#pills-done" type="button" role="tab">Done <span class="badge bg-light text-dark ms-1" id="doneCount">0</span></button>
-                </li>
-            </ul>
-
-            <!-- Tab content -->
-            <div class="tab-content" id="pills-tabContent">
-                <!-- Submissions tab (not done) -->
-                <div class="tab-pane fade show active" id="pills-submissions" role="tabpanel">
-                    <div class="list-group" id="submissionsList"></div>
-                </div>
-                <!-- Done tab -->
-                <div class="tab-pane fade" id="pills-done" role="tabpanel">
-                    <div class="list-group" id="doneList"></div>
-                </div>
-            </div>
-
-            <!-- Error and total -->
-            <div class="d-flex justify-content-between align-items-center mt-2">
-                <span class="small text-secondary" id="totalDisplay"></span>
-                <span class="small" id="errorMsg" style="color: #e74c3c;"></span>
-            </div>
-            <div id="errorDetails" class="error-detail mt-2" style="display: none; color: #e74c3c; font-size:0.9rem;"></div>
-        </div>
-    </div>
-
-    <!-- Detail Modal -->
-    <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="detailModalLabel">Registration Details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div id="modalContent"></div>
-                </div>
-                <div class="modal-footer" id="modalFooter">
-                    <!-- Buttons will be inserted dynamically -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Delete Confirmation Modal -->
-    <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Confirm Delete</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    Are you sure you want to delete this registration?
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="footer">
-        Diocese Kabgayi · Académie de Musique Sacrée · Children's Music School
-    </div>
-
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        (function() {
-            // ===== SUPABASE INIT =====
-            const supabaseUrl = 'https://amnkoumnvwyjzqcwxord.supabase.co';
-            const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
-            const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
-                auth: { persistSession: false }
-            });
-
-            // ===== PASSWORD PROTECTION =====
-            const overlay = document.getElementById('passwordOverlay');
-            const adminPanel = document.getElementById('adminPanel');
-            const passwordInput = document.getElementById('passwordInput');
-            const submitBtn = document.getElementById('submitPassword');
-            const passwordError = document.getElementById('passwordError');
-            const correctPassword = 'admin123';
-
-            submitBtn.addEventListener('click', checkPassword);
-            passwordInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') checkPassword(); });
-
-            function checkPassword() {
-                if (passwordInput.value === correctPassword) {
-                    overlay.style.display = 'none';
-                    adminPanel.style.display = 'block';
-                    loadRegistrations();
-                } else {
-                    passwordError.style.display = 'block';
-                }
-            }
-
-            // ===== STATE =====
-            let allRegistrations = [];
-            let currentItem = null; // for modal
-            let deleteId = null;
-
-            // DOM elements
-            const submissionsList = document.getElementById('submissionsList');
-            const doneList = document.getElementById('doneList');
-            const searchInput = document.getElementById('searchInput');
-            const refreshBtn = document.getElementById('refreshBtn');
-            const exportBtn = document.getElementById('exportBtn');
-            const errorMsg = document.getElementById('errorMsg');
-            const errorDetails = document.getElementById('errorDetails');
-            const submissionsCount = document.getElementById('submissionsCount');
-            const doneCount = document.getElementById('doneCount');
-            const totalDisplay = document.getElementById('totalDisplay');
-            const modalContent = document.getElementById('modalContent');
-            const modalFooter = document.getElementById('modalFooter');
-            const detailModal = new bootstrap.Modal(document.getElementById('detailModal'));
-            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
-
-            // ===== LOAD DATA =====
-            async function loadRegistrations() {
-                submissionsList.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary" role="status"></div> Loading...</div>';
-                doneList.innerHTML = '';
-                errorMsg.textContent = '';
-                errorDetails.style.display = 'none';
-                errorDetails.textContent = '';
-
-                try {
-                    const { data, error } = await supabase
-                        .from('registrations')
-                        .select('*')
-                        .order('created_at', { ascending: false });
-
-                    if (error) throw error;
-
-                    allRegistrations = data || [];
-                    // Ensure each has a 'done' field (default false if missing)
-                    allRegistrations = allRegistrations.map(item => ({
-                        ...item,
-                        done: item.done === undefined ? false : item.done
-                    }));
-                    filterAndRender();
-                } catch (err) {
-                    console.error('Supabase error:', err);
-                    submissionsList.innerHTML = '<div class="text-center py-4 text-danger">Error loading data</div>';
-                    errorMsg.textContent = 'Failed to load registrations';
-                    errorDetails.style.display = 'block';
-                    errorDetails.textContent = `Error details: ${err.message || JSON.stringify(err)}`;
-                    if (err.code === '42P01') {
-                        errorDetails.textContent += '\n\nThe table "registrations" does not exist. Please create it.';
-                    } else if (err.code === '42501') {
-                        errorDetails.textContent += '\n\nPermission denied. Enable anonymous SELECT.';
-                    }
-                }
-            }
-
-            // ===== FILTER AND RENDER =====
-            function filterAndRender() {
-                const searchTerm = searchInput.value.toLowerCase().trim();
-                const filtered = allRegistrations.filter(item => {
-                    return (
-                        (item.first_name?.toLowerCase() || '').includes(searchTerm) ||
-                        (item.last_name?.toLowerCase() || '').includes(searchTerm) ||
-                        (item.email?.toLowerCase() || '').includes(searchTerm) ||
-                        (item.contact?.toLowerCase() || '').includes(searchTerm)
-                    );
-                });
-
-                const notDone = filtered.filter(item => !item.done);
-                const done = filtered.filter(item => item.done);
-
-                submissionsCount.textContent = notDone.length;
-                doneCount.textContent = done.length;
-                totalDisplay.textContent = `Total: ${filtered.length} entries`;
-
-                renderList(notDone, submissionsList, false);
-                renderList(done, doneList, true);
-            }
-
-            function renderList(items, container, isDone) {
-                if (items.length === 0) {
-                    container.innerHTML = '<div class="text-center py-4 text-secondary">No registrations found</div>';
-                    return;
-                }
-
-                let html = '';
-                items.forEach(item => {
-                    const date = item.created_at ? new Date(item.created_at).toLocaleDateString() : '';
-                    const fullName = `${item.first_name || ''} ${item.last_name || ''}`.trim() || 'Unknown';
-                    html += `
-                        <div class="list-group-item" data-id="${item.id}">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <strong>${escapeHtml(fullName)}</strong><br>
-                                    <small class="text-secondary">${escapeHtml(item.email || '')} · ${date}</small>
-                                </div>
-                                <span class="badge ${isDone ? 'badge-done' : 'badge-submission'}">${isDone ? 'Done' : 'New'}</span>
+                <div class="row">
+                    <div class="col-md-7">
+                        <div class="table-container">
+                            <h5><i class="fas fa-chart-pie"></i> Recent Registrations</h5>
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead><tr><th>Name</th><th>Contact</th><th>Date</th><th>Status</th></thead>
+                                    <tbody id="recentRegistrations"></tbody>
+                                </table>
                             </div>
                         </div>
-                    `;
-                });
-                container.innerHTML = html;
-
-                // Add click listeners
-                container.querySelectorAll('.list-group-item').forEach(el => {
-                    el.addEventListener('click', () => {
-                        const id = el.dataset.id;
-                        const item = allRegistrations.find(r => r.id == id);
-                        if (item) showDetail(item);
-                    });
-                });
-            }
-
-            function escapeHtml(text) {
-                const div = document.createElement('div');
-                div.textContent = text;
-                return div.innerHTML;
-            }
-
-            // ===== SHOW DETAIL MODAL =====
-            function showDetail(item) {
-                currentItem = item;
-                const studyText = item.study ? 'Yes' : 'No';
-                const date = item.created_at ? new Date(item.created_at).toLocaleString() : '—';
-                const imageHtml = item.report_image_url 
-                    ? `<img src="${item.report_image_url}" class="modal-img img-fluid" alt="Report">` 
-                    : '<p class="text-secondary">No image</p>';
-
-                modalContent.innerHTML = `
-                    <div class="info-row"><span class="info-label">Name:</span><span class="info-value">${escapeHtml(item.first_name || '')} ${escapeHtml(item.last_name || '')}</span></div>
-                    <div class="info-row"><span class="info-label">Contact:</span><span class="info-value">${escapeHtml(item.contact || '')}</span></div>
-                    <div class="info-row"><span class="info-label">Email:</span><span class="info-value">${escapeHtml(item.email || '')}</span></div>
-                    <div class="info-row"><span class="info-label">Province:</span><span class="info-value">${escapeHtml(item.province || '')}</span></div>
-                    <div class="info-row"><span class="info-label">District:</span><span class="info-value">${escapeHtml(item.district || '')}</span></div>
-                    <div class="info-row"><span class="info-label">Sector:</span><span class="info-value">${escapeHtml(item.sector || '')}</span></div>
-                    <div class="info-row"><span class="info-label">Study:</span><span class="info-value">${studyText}</span></div>
-                    <div class="info-row"><span class="info-label">Submitted:</span><span class="info-value">${date}</span></div>
-                    <div class="info-row"><span class="info-label">Status:</span><span class="info-value">${item.done ? 'Done' : 'New'}</span></div>
-                    <hr>
-                    <div class="text-center">${imageHtml}</div>
-                `;
-
-                // Set footer buttons based on done status
-                if (item.done) {
-                    modalFooter.innerHTML = `
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-danger" id="modalDeleteBtn">Delete</button>
-                    `;
-                    document.getElementById('modalDeleteBtn').addEventListener('click', () => {
-                        deleteId = item.id;
-                        deleteModal.show();
-                    });
-                } else {
-                    modalFooter.innerHTML = `
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-success" id="modalDoneBtn">Mark as Done</button>
-                    `;
-                    document.getElementById('modalDoneBtn').addEventListener('click', () => {
-                        markAsDone(item.id);
-                    });
-                }
-
-                detailModal.show();
-            }
-
-            // ===== MARK AS DONE =====
-            async function markAsDone(id) {
-                try {
-                    const { error } = await supabase
-                        .from('registrations')
-                        .update({ done: true })
-                        .eq('id', id);
-                    if (error) throw error;
-                    // Update local state
-                    const index = allRegistrations.findIndex(r => r.id == id);
-                    if (index !== -1) allRegistrations[index].done = true;
-                    filterAndRender();
-                    detailModal.hide();
-                } catch (err) {
-                    console.error('Error marking as done:', err);
-                    alert('Failed to mark as done: ' + err.message);
-                }
-            }
-
-            // ===== DELETE =====
-            confirmDeleteBtn.addEventListener('click', async () => {
-                if (!deleteId) return;
-                confirmDeleteBtn.disabled = true;
-                try {
-                    const { error } = await supabase
-                        .from('registrations')
-                        .delete()
-                        .eq('id', deleteId);
-                    if (error) throw error;
-                    allRegistrations = allRegistrations.filter(r => r.id != deleteId);
-                    filterAndRender();
-                    detailModal.hide();
-                    deleteModal.hide();
-                } catch (err) {
-                    console.error(err);
-                    alert('Delete failed: ' + err.message);
-                } finally {
-                    confirmDeleteBtn.disabled = false;
-                }
-            });
-
-            // ===== SEARCH =====
-            searchInput.addEventListener('input', filterAndRender);
-
-            // ===== REFRESH =====
-            refreshBtn.addEventListener('click', loadRegistrations);
-
-            // ===== EXPORT CSV =====
-            exportBtn.addEventListener('click', () => {
-                if (allRegistrations.length === 0) {
-                    alert('No data to export');
-                    return;
-                }
-                const headers = ['ID','First Name','Last Name','Contact','Email','Province','District','Sector','Study','Report URL','Created At','Done'];
-                const rows = allRegistrations.map(item => [
-                    item.id,
-                    item.first_name,
-                    item.last_name,
-                    item.contact,
-                    item.email,
-                    item.province,
-                    item.district,
-                    item.sector,
-                    item.study ? 'Yes' : 'No',
-                    item.report_image_url || '',
-                    item.created_at,
-                    item.done ? 'Done' : 'New'
-                ]);
-                let csv = headers.join(',') + '\n' + rows.map(row => 
-                    row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')
-                ).join('\n');
-                const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'registrations.csv';
-                link.click();
-            });
-
-            // ===== LEFT BUTTON POPUP =====
-            const needBtn = document.getElementById('needWebsiteBtn');
-            const popup = document.getElementById('popupBox');
-            const popupContent = document.getElementById('popupContent');
-
-            function closePopup() { popup.classList.remove('show'); }
-            function openPopup() {
-                popupContent.innerHTML = `
-                    <div class="popup-question">Do you want a Portfolio, Survey, or Other website?</div>
-                    <div class="popup-buttons">
-                        <button class="popup-btn popup-btn-yes" id="popupYes">YES</button>
-                        <button class="popup-btn popup-btn-no" id="popupNo">NO</button>
                     </div>
-                `;
-                document.getElementById('popupYes').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    window.open('https://mkbertrand.vercel.app/#contact', '_blank');
-                    closePopup();
-                });
-                document.getElementById('popupNo').addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    popupContent.innerHTML = `<div class="popup-message">Text 0795 065 789 if you change your mind</div>`;
-                    setTimeout(closePopup, 3000);
-                });
-                popup.classList.add('show');
+                    <div class="col-md-5">
+                        <div class="table-container">
+                            <h5><i class="fas fa-calendar"></i> Quick Actions</h5>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-outline-primary" onclick="window.open('register.html', '_blank')"><i class="fas fa-external-link-alt"></i> View Registration Page</button>
+                                <button class="btn btn-outline-success" onclick="exportAllData()"><i class="fas fa-download"></i> Export All Data (CSV)</button>
+                                <button class="btn btn-outline-info" onclick="sendTestNotification()"><i class="fas fa-bell"></i> Test Notification</button>
+                                <button class="btn btn-outline-secondary" onclick="clearAllCache()"><i class="fas fa-trash-alt"></i> Clear Site Cache</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Registrations Tab -->
+            <div id="registrationsTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5><i class="fas fa-list"></i> All Registrations</h5>
+                        <div>
+                            <input type="text" id="searchReg" class="form-control form-control-sm" placeholder="Search..." style="width: 200px; display: inline-block;">
+                            <button class="btn btn-sm btn-success" onclick="exportRegistrations()"><i class="fas fa-download"></i> Export</button>
+                            <button class="btn btn-sm btn-primary" onclick="loadRegistrations()"><i class="fas fa-sync-alt"></i> Refresh</button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="registrationsTable">
+                            <thead><tr><th>ID</th><th>Name</th><th>Contact</th><th>Email</th><th>Province</th><th>Status</th><th>Actions</th></thead>
+                            <tbody id="registrationsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Announcements Tab -->
+            <div id="announcementsTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5><i class="fas fa-bullhorn"></i> Active Announcement</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#announcementModal"><i class="fas fa-edit"></i> Edit Announcement</button>
+                    </div>
+                    <div class="alert alert-info" id="currentAnnouncementDisplay">
+                        <i class="fas fa-bullhorn"></i> Loading...
+                    </div>
+                    <p class="text-muted small mt-2">This announcement appears on the top bar of both desktop and mobile versions.</p>
+                </div>
+            </div>
+
+            <!-- About Content Tab -->
+            <div id="aboutTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <h5><i class="fas fa-info-circle"></i> About Page Content</h5>
+                    <form id="aboutForm">
+                        <div class="mb-3"><label class="form-label">Page Title</label><input type="text" class="form-control" id="aboutTitle"></div>
+                        <div class="mb-3"><label class="form-label">Page Subtitle</label><input type="text" class="form-control" id="aboutSubtitle"></div>
+                        <div class="mb-3"><label class="form-label">History</label><textarea class="form-control" id="aboutHistory" rows="4"></textarea></div>
+                        <div class="mb-3"><label class="form-label">Mission</label><textarea class="form-control" id="aboutMission" rows="3"></textarea></div>
+                        <div class="mb-3"><label class="form-label">Vision</label><textarea class="form-control" id="aboutVision" rows="3"></textarea></div>
+                        <div class="mb-3"><label class="form-label">Core Values</label><textarea class="form-control" id="aboutValues" rows="3"></textarea></div>
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Changes</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Team Members Tab -->
+            <div id="teamTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5><i class="fas fa-user-friends"></i> Team Members</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#teamModal" onclick="openTeamModal()"><i class="fas fa-plus"></i> Add Member</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead><tr><th>Image</th><th>Name</th><th>Position</th><th>Bio</th><th>Order</th><th>Actions</th></thead>
+                            <tbody id="teamList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Tab -->
+            <div id="newsTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5><i class="fas fa-newspaper"></i> News Articles</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#newsModal" onclick="openNewsModal()"><i class="fas fa-plus"></i> Add Article</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead><tr><th>Image</th><th>Title</th><th>Category</th><th>Date</th><th>Actions</th></thead>
+                            <tbody id="newsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gallery Tab -->
+            <div id="galleryTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5><i class="fas fa-images"></i> Media Gallery</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#galleryModal" onclick="openGalleryModal()"><i class="fas fa-plus"></i> Add Media</button>
+                    </div>
+                    <div class="row" id="galleryList"></div>
+                </div>
+            </div>
+
+            <!-- Sheet Music Tab -->
+            <div id="sheetmusicTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5><i class="fas fa-music"></i> Sheet Music Library</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#sheetMusicModal" onclick="openSheetMusicModal()"><i class="fas fa-plus"></i> Add PDF</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead><tr><th>Title</th><th>Description</th><th>File URL</th><th>Actions</th></thead>
+                            <tbody id="sheetMusicList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Tab -->
+            <div id="statsTab" class="tab-content" style="display: none;">
+                <div class="table-container">
+                    <div class="d-flex justify-content-between mb-3">
+                        <h5><i class="fas fa-chart-line"></i> Site Statistics</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#statModal" onclick="openStatModal()"><i class="fas fa-plus"></i> Add Stat</button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead><tr><th>Number</th><th>Label</th><th>Actions</th></thead>
+                            <tbody id="statsList"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">Kabgayi Music Academy · Admin Dashboard · Secure Area</div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal fade" id="announcementModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Edit Announcement</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><textarea class="form-control" id="announcementText" rows="3" placeholder="Announcement text..."></textarea></div><div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-primary" id="saveAnnouncementBtn">Save</button></div></div></div></div>
+
+    <div class="modal fade" id="teamModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Team Member</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="teamId"><div class="mb-2"><label>Name</label><input class="form-control" id="teamName"></div><div class="mb-2"><label>Position</label><input class="form-control" id="teamPosition"></div><div class="mb-2"><label>Bio</label><textarea class="form-control" id="teamBio" rows="2"></textarea></div><div class="mb-2"><label>Image URL</label><input class="form-control" id="teamImage" placeholder="https://..."></div><div class="mb-2"><label>Display Order</label><input type="number" class="form-control" id="teamOrder" value="0"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteTeamBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveTeamBtn">Save</button></div></div></div></div>
+
+    <div class="modal fade" id="newsModal" tabindex="-1"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">News Article</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="newsId"><div class="mb-2"><label>Title</label><input class="form-control" id="newsTitle"></div><div class="mb-2"><label>Category</label><select class="form-control" id="newsCategory"><option>events</option><option>announcements</option><option>success</option></select></div><div class="mb-2"><label>Excerpt</label><input class="form-control" id="newsExcerpt"></div><div class="mb-2"><label>Full Content</label><textarea class="form-control" id="newsContent" rows="5"></textarea></div><div class="mb-2"><label>Image URL</label><input class="form-control" id="newsImage" placeholder="https://..."></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteNewsBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveNewsBtn">Save</button></div></div></div></div>
+
+    <div class="modal fade" id="galleryModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Gallery Item</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="galleryId"><div class="mb-2"><label>Title</label><input class="form-control" id="galleryTitle"></div><div class="mb-2"><label>Caption</label><input class="form-control" id="galleryCaption"></div><div class="mb-2"><label>Category</label><select class="form-control" id="galleryCategory"><option>students</option><option>events</option><option>concerts</option><option>classroom</option></select></div><div class="mb-2"><label>Image URL</label><input class="form-control" id="galleryUrl" placeholder="https://..."></div><div class="mb-2"><label>Type</label><select class="form-control" id="galleryType"><option>image</option><option>video</option></select></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteGalleryBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveGalleryBtn">Save</button></div></div></div></div>
+
+    <div class="modal fade" id="sheetMusicModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Sheet Music</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="sheetId"><div class="mb-2"><label>Title</label><input class="form-control" id="sheetTitle"></div><div class="mb-2"><label>Description</label><input class="form-control" id="sheetDesc"></div><div class="mb-2"><label>PDF URL</label><input class="form-control" id="sheetUrl" placeholder="https://..."></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteSheetBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveSheetBtn">Save</button></div></div></div></div>
+
+    <div class="modal fade" id="statModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><h5 class="modal-title">Site Stat</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><input type="hidden" id="statId"><div class="mb-2"><label>Number (e.g., 500+)</label><input class="form-control" id="statNumber"></div><div class="mb-2"><label>Label (e.g., Students Trained)</label><input class="form-control" id="statLabel"></div></div><div class="modal-footer"><button class="btn btn-danger" id="deleteStatBtn" style="display:none;">Delete</button><button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button><button class="btn btn-primary" id="saveStatBtn">Save</button></div></div></div></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Initialize Supabase - using a different variable name to avoid conflicts
+        const SUPABASE_URL = 'https://amnkoumnvwyjzqcwxord.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFtbmtvdW1udnd5anpxY3d4b3JkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIyNTI4ODUsImV4cCI6MjA4NzgyODg4NX0.oyY0OobB7ksAz-ectgkKgJC68DacWfK9w1CftJrEUps';
+        const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        let currentEditId = null;
+
+        // Login
+        document.getElementById('loginBtn').addEventListener('click', () => {
+            const pwd = document.getElementById('adminPassword').value;
+            if (pwd === 'admin123') {
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('dashboardContent').style.display = 'block';
+                loadAllData();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
             }
-            needBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (popup.classList.contains('show')) closePopup(); else openPopup();
+        });
+
+        // Load all data
+        async function loadAllData() {
+            await loadDashboardStats();
+            await loadRegistrations();
+            await loadAnnouncement();
+            await loadAboutContent();
+            await loadTeam();
+            await loadNews();
+            await loadGallery();
+            await loadSheetMusic();
+            await loadStats();
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const { data: regs } = await sb.from('registrations').select('id');
+                const { data: news } = await sb.from('news_articles').select('id');
+                const { data: gallery } = await sb.from('media_gallery').select('id');
+                const { data: team } = await sb.from('team_members').select('id');
+                document.getElementById('totalRegistrations').innerText = regs?.length || 0;
+                document.getElementById('totalNews').innerText = news?.length || 0;
+                document.getElementById('totalGallery').innerText = gallery?.length || 0;
+                document.getElementById('totalTeam').innerText = team?.length || 0;
+                
+                const { data: recent } = await sb.from('registrations').select('*').order('created_at', { ascending: false }).limit(5);
+                const tbody = document.getElementById('recentRegistrations');
+                if (recent && recent.length > 0) {
+                    tbody.innerHTML = recent.map(r => `<tr><td>${r.first_name || ''} ${r.last_name || ''}</td><td>${r.contact || ''}</td><td>${new Date(r.created_at).toLocaleDateString()}</td><td><span class="badge ${r.done ? 'bg-success' : 'bg-warning'}">${r.done ? 'Done' : 'New'}</span></td></tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center">No registrations yet</td></tr>';
+                }
+            } catch(e) { console.error('Dashboard stats error:', e); }
+        }
+
+        async function loadRegistrations() {
+            try {
+                const { data } = await sb.from('registrations').select('*').order('created_at', { ascending: false });
+                const tbody = document.getElementById('registrationsList');
+                if (data && data.length > 0) {
+                    tbody.innerHTML = data.map(r => `<tr>
+                        <td>${r.id}</td>
+                        <td>${r.first_name || ''} ${r.last_name || ''}</td>
+                        <td>${r.contact || ''}</td>
+                        <td>${r.email || ''}</td>
+                        <td>${r.province || ''}</td>
+                        <td><span class="badge ${r.done ? 'bg-success' : 'bg-warning'} badge-status">${r.done ? 'Completed' : 'Pending'}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-success" onclick="markDone(${r.id})"><i class="fas fa-check"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteRegistration(${r.id})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center">No registrations found</td></tr>';
+                }
+            } catch(e) { console.error(e); }
+        }
+
+        window.markDone = async (id) => { await sb.from('registrations').update({ done: true }).eq('id', id); loadRegistrations(); loadDashboardStats(); };
+        window.deleteRegistration = async (id) => { if(confirm('Delete this registration?')){ await sb.from('registrations').delete().eq('id', id); loadRegistrations(); loadDashboardStats(); } };
+
+        async function loadAnnouncement() {
+            try {
+                const { data } = await sb.from('site_settings').select('value').eq('key', 'announcement').single();
+                const text = data?.value || 'Welcome to Kabgayi Music Academy! Registration open until March 31, 2026.';
+                document.getElementById('currentAnnouncementDisplay').innerHTML = `<i class="fas fa-bullhorn"></i> ${text}`;
+                document.getElementById('announcementText').value = text;
+                localStorage.setItem('kabgayi_announcement', text);
+            } catch(e) { console.error(e); }
+        }
+        document.getElementById('saveAnnouncementBtn').addEventListener('click', async () => {
+            const text = document.getElementById('announcementText').value;
+            await sb.from('site_settings').upsert({ key: 'announcement', value: text });
+            loadAnnouncement();
+            bootstrap.Modal.getInstance(document.getElementById('announcementModal')).hide();
+        });
+
+        async function loadAboutContent() {
+            try {
+                const { data } = await sb.from('about_content').select('*').single();
+                if(data){
+                    document.getElementById('aboutTitle').value = data.page_title || '';
+                    document.getElementById('aboutSubtitle').value = data.page_subtitle || '';
+                    document.getElementById('aboutHistory').value = data.history || '';
+                    document.getElementById('aboutMission').value = data.mission || '';
+                    document.getElementById('aboutVision').value = data.vision || '';
+                    document.getElementById('aboutValues').value = data.core_values || '';
+                }
+            } catch(e) { console.error(e); }
+        }
+        document.getElementById('aboutForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const data = { 
+                page_title: document.getElementById('aboutTitle').value, 
+                page_subtitle: document.getElementById('aboutSubtitle').value, 
+                history: document.getElementById('aboutHistory').value, 
+                mission: document.getElementById('aboutMission').value, 
+                vision: document.getElementById('aboutVision').value, 
+                core_values: document.getElementById('aboutValues').value 
+            };
+            await sb.from('about_content').upsert(data);
+            alert('About content saved successfully!');
+        });
+
+        async function loadTeam(){ 
+            try {
+                const { data } = await sb.from('team_members').select('*').order('order');
+                if(data) document.getElementById('teamList').innerHTML = data.map(t => `<tr>
+                    <td><img src="${t.image_url || 'image/default-avatar.png'}" width="40" height="40" style="border-radius:50%; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'"></td>
+                    <td>${t.name}</td><td>${t.position}</td><td>${t.bio?.substring(0,50) || ''}...</td><td>${t.order || 0}</td>
+                    <td><button class="btn btn-sm btn-warning" onclick="editTeam(${t.id})"><i class="fas fa-edit"></i></button></td>
+                 `).join('');
+            } catch(e) { console.error(e); }
+        }
+        window.editTeam = async (id) => { 
+            const { data } = await sb.from('team_members').select('*').eq('id', id).single(); 
+            if(data){ 
+                document.getElementById('teamId').value = data.id; 
+                document.getElementById('teamName').value = data.name; 
+                document.getElementById('teamPosition').value = data.position; 
+                document.getElementById('teamBio').value = data.bio || ''; 
+                document.getElementById('teamImage').value = data.image_url || ''; 
+                document.getElementById('teamOrder').value = data.order || 0; 
+                document.getElementById('deleteTeamBtn').style.display = 'inline-block'; 
+                new bootstrap.Modal(document.getElementById('teamModal')).show(); 
+            } 
+        };
+        document.getElementById('saveTeamBtn').onclick = async () => { 
+            const id = document.getElementById('teamId').value; 
+            const data = {
+                name: document.getElementById('teamName').value,
+                position: document.getElementById('teamPosition').value,
+                bio: document.getElementById('teamBio').value,
+                image_url: document.getElementById('teamImage').value,
+                order: parseInt(document.getElementById('teamOrder').value) || 0
+            }; 
+            if(id) await sb.from('team_members').update(data).eq('id', id); 
+            else await sb.from('team_members').insert(data); 
+            loadTeam(); 
+            bootstrap.Modal.getInstance(document.getElementById('teamModal')).hide(); 
+        };
+        document.getElementById('deleteTeamBtn').onclick = async () => { 
+            const id = document.getElementById('teamId').value; 
+            if(confirm('Delete this team member?')){ 
+                await sb.from('team_members').delete().eq('id', id); 
+                loadTeam(); 
+                bootstrap.Modal.getInstance(document.getElementById('teamModal')).hide(); 
+            } 
+        };
+        function openTeamModal(){ 
+            document.getElementById('teamId').value = ''; 
+            document.getElementById('teamName').value = ''; 
+            document.getElementById('teamPosition').value = ''; 
+            document.getElementById('teamBio').value = ''; 
+            document.getElementById('teamImage').value = ''; 
+            document.getElementById('teamOrder').value = '0'; 
+            document.getElementById('deleteTeamBtn').style.display = 'none'; 
+        }
+
+        async function loadNews(){ 
+            try {
+                const { data } = await sb.from('news_articles').select('*').order('created_at', { ascending: false }); 
+                if(data) document.getElementById('newsList').innerHTML = data.map(n => `<tr>
+                    <td><img src="${n.image_url || 'image/placeholder.png'}" width="40" height="40" style="border-radius:8px; object-fit:cover;" onerror="this.src='https://via.placeholder.com/40'"></td>
+                    <td>${n.title}</td><td>${n.category}</td><td>${new Date(n.created_at).toLocaleDateString()}</td>
+                    <td><button class="btn btn-sm btn-warning" onclick="editNews(${n.id})"><i class="fas fa-edit"></i></button></td>
+                 `).join('');
+            } catch(e) { console.error(e); }
+        }
+        window.editNews = async (id) => { 
+            const { data } = await sb.from('news_articles').select('*').eq('id', id).single(); 
+            if(data){ 
+                document.getElementById('newsId').value = data.id; 
+                document.getElementById('newsTitle').value = data.title; 
+                document.getElementById('newsCategory').value = data.category; 
+                document.getElementById('newsExcerpt').value = data.excerpt || ''; 
+                document.getElementById('newsContent').value = data.content; 
+                document.getElementById('newsImage').value = data.image_url || ''; 
+                document.getElementById('deleteNewsBtn').style.display = 'inline-block'; 
+                new bootstrap.Modal(document.getElementById('newsModal')).show(); 
+            } 
+        };
+        document.getElementById('saveNewsBtn').onclick = async () => { 
+            const id = document.getElementById('newsId').value; 
+            const data = {
+                title: document.getElementById('newsTitle').value,
+                category: document.getElementById('newsCategory').value,
+                excerpt: document.getElementById('newsExcerpt').value,
+                content: document.getElementById('newsContent').value,
+                image_url: document.getElementById('newsImage').value
+            }; 
+            if(id) await sb.from('news_articles').update(data).eq('id', id); 
+            else await sb.from('news_articles').insert(data); 
+            loadNews(); 
+            bootstrap.Modal.getInstance(document.getElementById('newsModal')).hide(); 
+        };
+        document.getElementById('deleteNewsBtn').onclick = async () => { 
+            const id = document.getElementById('newsId').value; 
+            if(confirm('Delete this news article?')){ 
+                await sb.from('news_articles').delete().eq('id', id); 
+                loadNews(); 
+                bootstrap.Modal.getInstance(document.getElementById('newsModal')).hide(); 
+            } 
+        };
+        function openNewsModal(){ 
+            document.getElementById('newsId').value = ''; 
+            document.getElementById('newsTitle').value = ''; 
+            document.getElementById('newsCategory').value = 'events'; 
+            document.getElementById('newsExcerpt').value = ''; 
+            document.getElementById('newsContent').value = ''; 
+            document.getElementById('newsImage').value = ''; 
+            document.getElementById('deleteNewsBtn').style.display = 'none'; 
+        }
+
+        async function loadGallery(){ 
+            try {
+                const { data } = await sb.from('media_gallery').select('*').order('created_at', { ascending: false }); 
+                if(data) document.getElementById('galleryList').innerHTML = data.map(g => `
+                    <div class="col-md-3 col-sm-6 mb-3">
+                        <div class="card h-100">
+                            <img src="${g.image_url}" class="card-img-top gallery-card-img" style="object-fit:cover;" onerror="this.src='https://via.placeholder.com/300x150'">
+                            <div class="card-body p-2">
+                                <small class="fw-bold">${g.title || 'Untitled'}</small>
+                                <div class="mt-2">
+                                    <button class="btn btn-sm btn-warning" onclick="editGallery(${g.id})"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-danger" onclick="deleteGalleryItem(${g.id})"><i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch(e) { console.error(e); }
+        }
+        window.editGallery = async (id) => { 
+            const { data } = await sb.from('media_gallery').select('*').eq('id', id).single(); 
+            if(data){ 
+                document.getElementById('galleryId').value = data.id; 
+                document.getElementById('galleryTitle').value = data.title || ''; 
+                document.getElementById('galleryCaption').value = data.caption || ''; 
+                document.getElementById('galleryCategory').value = data.category || 'students'; 
+                document.getElementById('galleryUrl').value = data.image_url; 
+                document.getElementById('galleryType').value = data.type || 'image'; 
+                document.getElementById('deleteGalleryBtn').style.display = 'inline-block'; 
+                new bootstrap.Modal(document.getElementById('galleryModal')).show(); 
+            } 
+        };
+        window.deleteGalleryItem = async (id) => { if(confirm('Delete this gallery item?')){ await sb.from('media_gallery').delete().eq('id', id); loadGallery(); } };
+        document.getElementById('saveGalleryBtn').onclick = async () => { 
+            const id = document.getElementById('galleryId').value; 
+            const data = {
+                title: document.getElementById('galleryTitle').value,
+                caption: document.getElementById('galleryCaption').value,
+                category: document.getElementById('galleryCategory').value,
+                image_url: document.getElementById('galleryUrl').value,
+                type: document.getElementById('galleryType').value
+            }; 
+            if(id) await sb.from('media_gallery').update(data).eq('id', id); 
+            else await sb.from('media_gallery').insert(data); 
+            loadGallery(); 
+            bootstrap.Modal.getInstance(document.getElementById('galleryModal')).hide(); 
+        };
+        document.getElementById('deleteGalleryBtn').onclick = async () => { 
+            const id = document.getElementById('galleryId').value; 
+            if(confirm('Delete this gallery item?')){ 
+                await sb.from('media_gallery').delete().eq('id', id); 
+                loadGallery(); 
+                bootstrap.Modal.getInstance(document.getElementById('galleryModal')).hide(); 
+            } 
+        };
+        function openGalleryModal(){ 
+            document.getElementById('galleryId').value = ''; 
+            document.getElementById('galleryTitle').value = ''; 
+            document.getElementById('galleryCaption').value = ''; 
+            document.getElementById('galleryCategory').value = 'students'; 
+            document.getElementById('galleryUrl').value = ''; 
+            document.getElementById('galleryType').value = 'image'; 
+            document.getElementById('deleteGalleryBtn').style.display = 'none'; 
+        }
+
+        async function loadSheetMusic(){ 
+            try {
+                const { data } = await sb.from('sheet_music').select('*'); 
+                if(data) document.getElementById('sheetMusicList').innerHTML = data.map(s => `<tr>
+                    <td>${s.title}</td><td>${s.description || ''}</td>
+                    <td><a href="${s.file_url}" target="_blank" class="btn btn-sm btn-outline-info">View</a></td>
+                    <td><button class="btn btn-sm btn-warning" onclick="editSheet(${s.id})"><i class="fas fa-edit"></i></button></td>
+                 `).join('');
+            } catch(e) { console.error(e); }
+        }
+        window.editSheet = async (id) => { 
+            const { data } = await sb.from('sheet_music').select('*').eq('id', id).single(); 
+            if(data){ 
+                document.getElementById('sheetId').value = data.id; 
+                document.getElementById('sheetTitle').value = data.title; 
+                document.getElementById('sheetDesc').value = data.description || ''; 
+                document.getElementById('sheetUrl').value = data.file_url; 
+                document.getElementById('deleteSheetBtn').style.display = 'inline-block'; 
+                new bootstrap.Modal(document.getElementById('sheetMusicModal')).show(); 
+            } 
+        };
+        document.getElementById('saveSheetBtn').onclick = async () => { 
+            const id = document.getElementById('sheetId').value; 
+            const data = {
+                title: document.getElementById('sheetTitle').value,
+                description: document.getElementById('sheetDesc').value,
+                file_url: document.getElementById('sheetUrl').value
+            }; 
+            if(id) await sb.from('sheet_music').update(data).eq('id', id); 
+            else await sb.from('sheet_music').insert(data); 
+            loadSheetMusic(); 
+            bootstrap.Modal.getInstance(document.getElementById('sheetMusicModal')).hide(); 
+        };
+        document.getElementById('deleteSheetBtn').onclick = async () => { 
+            const id = document.getElementById('sheetId').value; 
+            if(confirm('Delete this sheet music?')){ 
+                await sb.from('sheet_music').delete().eq('id', id); 
+                loadSheetMusic(); 
+                bootstrap.Modal.getInstance(document.getElementById('sheetMusicModal')).hide(); 
+            } 
+        };
+        function openSheetMusicModal(){ 
+            document.getElementById('sheetId').value = ''; 
+            document.getElementById('sheetTitle').value = ''; 
+            document.getElementById('sheetDesc').value = ''; 
+            document.getElementById('sheetUrl').value = ''; 
+            document.getElementById('deleteSheetBtn').style.display = 'none'; 
+        }
+
+        async function loadStats(){ 
+            try {
+                const { data } = await sb.from('site_stats').select('*'); 
+                if(data) document.getElementById('statsList').innerHTML = data.map(s => `<tr>
+                    <td>${s.number}</td><td>${s.label}</td>
+                    <td><button class="btn btn-sm btn-warning" onclick="editStat(${s.id})"><i class="fas fa-edit"></i></button></td>
+                 `).join('');
+            } catch(e) { console.error(e); }
+        }
+        window.editStat = async (id) => { 
+            const { data } = await sb.from('site_stats').select('*').eq('id', id).single(); 
+            if(data){ 
+                document.getElementById('statId').value = data.id; 
+                document.getElementById('statNumber').value = data.number; 
+                document.getElementById('statLabel').value = data.label; 
+                document.getElementById('deleteStatBtn').style.display = 'inline-block'; 
+                new bootstrap.Modal(document.getElementById('statModal')).show(); 
+            } 
+        };
+        document.getElementById('saveStatBtn').onclick = async () => { 
+            const id = document.getElementById('statId').value; 
+            const data = {
+                number: document.getElementById('statNumber').value,
+                label: document.getElementById('statLabel').value
+            }; 
+            if(id) await sb.from('site_stats').update(data).eq('id', id); 
+            else await sb.from('site_stats').insert(data); 
+            loadStats(); 
+            bootstrap.Modal.getInstance(document.getElementById('statModal')).hide(); 
+        };
+        document.getElementById('deleteStatBtn').onclick = async () => { 
+            const id = document.getElementById('statId').value; 
+            if(confirm('Delete this stat?')){ 
+                await sb.from('site_stats').delete().eq('id', id); 
+                loadStats(); 
+                bootstrap.Modal.getInstance(document.getElementById('statModal')).hide(); 
+            } 
+        };
+        function openStatModal(){ 
+            document.getElementById('statId').value = ''; 
+            document.getElementById('statNumber').value = ''; 
+            document.getElementById('statLabel').value = ''; 
+            document.getElementById('deleteStatBtn').style.display = 'none'; 
+        }
+
+        // Navigation
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const tab = item.dataset.tab;
+                if(tab === 'logout'){ 
+                    document.getElementById('loginOverlay').style.display = 'flex'; 
+                    document.getElementById('dashboardContent').style.display = 'none'; 
+                    return; 
+                }
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                item.classList.add('active');
+                document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+                if(tab === 'dashboard') document.getElementById('dashboardTab').style.display = 'block';
+                else if(tab === 'registrations') document.getElementById('registrationsTab').style.display = 'block';
+                else if(tab === 'announcements') document.getElementById('announcementsTab').style.display = 'block';
+                else if(tab === 'about') document.getElementById('aboutTab').style.display = 'block';
+                else if(tab === 'team') document.getElementById('teamTab').style.display = 'block';
+                else if(tab === 'news') document.getElementById('newsTab').style.display = 'block';
+                else if(tab === 'gallery') document.getElementById('galleryTab').style.display = 'block';
+                else if(tab === 'sheetmusic') document.getElementById('sheetmusicTab').style.display = 'block';
+                else if(tab === 'stats') document.getElementById('statsTab').style.display = 'block';
+                document.getElementById('pageTitle').innerText = item.innerText.trim();
             });
-            document.addEventListener('click', function(e) {
-                if (!popup.contains(e.target) && !needBtn.contains(e.target)) closePopup();
+        });
+        document.getElementById('menuToggleBtn').addEventListener('click', () => document.getElementById('sidebar').classList.toggle('show'));
+        
+        window.exportAllData = async () => { 
+            const { data } = await sb.from('registrations').select('*'); 
+            if(data && data.length > 0){ 
+                let csv = 'ID,First Name,Last Name,Contact,Email,Province,District,Sector,Created At,Status\n' + 
+                    data.map(r => `${r.id},${r.first_name || ''},${r.last_name || ''},${r.contact || ''},${r.email || ''},${r.province || ''},${r.district || ''},${r.sector || ''},${r.created_at || ''},${r.done ? 'Completed' : 'Pending'}`).join('\n'); 
+                const blob = new Blob([csv], { type: 'text/csv' }); 
+                const a = document.createElement('a'); 
+                a.href = URL.createObjectURL(blob); 
+                a.download = `registrations_${new Date().toISOString().slice(0,10)}.csv`; 
+                a.click(); 
+                URL.revokeObjectURL(a.href);
+                alert('Export complete!');
+            } else {
+                alert('No data to export');
+            }
+        };
+        window.exportRegistrations = () => exportAllData();
+        window.sendTestNotification = () => { 
+            if('Notification' in window){ 
+                Notification.requestPermission().then(perm => { 
+                    if(perm === 'granted') new Notification('Kabgayi Music Academy', { body: 'Test notification from admin dashboard!', icon: 'image/logo.png' }); 
+                    else alert('Please allow notifications in your browser');
+                }); 
+            } else alert('Notifications not supported by your browser'); 
+        };
+        window.clearAllCache = () => {
+            localStorage.clear();
+            sessionStorage.clear();
+            alert('Cache cleared! Users will see updated content on next visit.');
+        };
+
+        // Search functionality
+        document.getElementById('searchReg')?.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            const rows = document.querySelectorAll('#registrationsList tr');
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
             });
-            popup.addEventListener('click', (e) => e.stopPropagation());
-        })();
+        });
     </script>
 </body>
 </html>
