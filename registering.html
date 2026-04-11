@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Kabgayi · Registration with Payment</title>
+    <title>Kabgayi · REAL PesaPal Payment</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -112,6 +112,10 @@
             
             const IMGBB_API_KEY = '99c6aa298645e8a4742979117fc73be6';
             const REGISTRATION_FEE = 30000;
+            
+            // REPLACE WITH YOUR REGENERATED CREDENTIALS!
+            const PESAPAL_CONSUMER_KEY = 'YOUR_NEW_CONSUMER_KEY';
+            const PESAPAL_CONSUMER_SECRET = 'YOUR_NEW_CONSUMER_SECRET';
             
             let selectedPaymentMethod = 'MTN_MOBILE_MONEY';
             let paymentCompleted = false;
@@ -309,7 +313,7 @@
                         });
                     });
                     const payBtn = document.getElementById('payNowBtn');
-                    if (payBtn && !paymentCompleted) payBtn.addEventListener('click', initiatePayment);
+                    if (payBtn && !paymentCompleted) payBtn.addEventListener('click', initiatePesaPalPayment);
                 }
             }
             
@@ -325,26 +329,87 @@
                 document.getElementById('fileInput').classList.remove('error');
             }
             
-            async function initiatePayment() {
+            // REAL PESAPAL PAYMENT INTEGRATION
+            async function initiatePesaPalPayment() {
                 const phoneNumber = document.getElementById('paymentPhone')?.value.trim();
                 if (!phoneNumber) { alert('Please enter your phone number'); return; }
                 if (!/^0[0-9]{9}$/.test(phoneNumber)) { alert('Please enter a valid phone number (10 digits starting with 0)'); return; }
                 
                 const payBtn = document.getElementById('payNowBtn');
                 const statusDiv = document.getElementById('paymentStatus');
-                const originalText = payBtn.innerHTML;
                 
-                payBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
+                payBtn.innerHTML = '<span class="loading-spinner"></span> Connecting to PesaPal...';
                 payBtn.disabled = true;
                 statusDiv.className = 'payment-status processing';
-                statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Creating payment order...';
+                statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Initializing payment...';
                 statusDiv.style.display = 'block';
                 
                 try {
                     paymentReference = `KAB-${Date.now()}-${Math.random().toString(36).substr(2, 8)}`.toUpperCase();
                     
-                    // Save registration data to Supabase with pending payment
-                    const registrationData = {
+                    // Step 1: Get PesaPal Access Token
+                    const authString = btoa(`${PESAPAL_CONSUMER_KEY}:${PESAPAL_CONSUMER_SECRET}`);
+                    const tokenResponse = await fetch('https://pay.pesapal.com/v3/api/Auth/RequestToken', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Basic ${authString}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            consumer_key: PESAPAL_CONSUMER_KEY,
+                            consumer_secret: PESAPAL_CONSUMER_SECRET
+                        })
+                    });
+                    
+                    if (!tokenResponse.ok) throw new Error('Failed to authenticate with PesaPal');
+                    const tokenData = await tokenResponse.json();
+                    const accessToken = tokenData.token;
+                    
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Creating payment order...';
+                    
+                    // Step 2: Create Order
+                    const orderData = {
+                        id: paymentReference,
+                        currency: "RWF",
+                        amount: REGISTRATION_FEE,
+                        description: "Kabgayi Music School Registration",
+                        callback_url: window.location.href,
+                        notification_id: "", // Leave empty for now
+                        billing_address: {
+                            email_address: formData.email,
+                            phone_number: phoneNumber,
+                            first_name: formData.firstName,
+                            last_name: formData.lastName,
+                            country_code: "RW"
+                        },
+                        line_items: [
+                            {
+                                name: "Music School Registration",
+                                quantity: 1,
+                                unit_price: REGISTRATION_FEE,
+                                total_amount: REGISTRATION_FEE
+                            }
+                        ]
+                    };
+                    
+                    const orderResponse = await fetch('https://pay.pesapal.com/v3/api/Transactions/SubmitOrderRequest', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`,
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(orderData)
+                    });
+                    
+                    if (!orderResponse.ok) throw new Error('Failed to create order');
+                    const orderResult = await orderResponse.json();
+                    
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Redirecting to PesaPal payment page...';
+                    
+                    // Save registration data to Supabase
+                    const { error: dbError } = await supabase.from('registrations').insert([{
                         first_name: formData.firstName,
                         last_name: formData.lastName,
                         contact: phoneNumber,
@@ -358,76 +423,77 @@
                         payment_amount: REGISTRATION_FEE,
                         payment_method: selectedPaymentMethod,
                         registration_date: new Date().toISOString()
-                    };
+                    }]);
                     
-                    console.log('Inserting registration:', registrationData);
+                    if (dbError) console.error('DB save error:', dbError);
                     
-                    const { data: tempReg, error: tempError } = await supabase
-                        .from('registrations')
-                        .insert([registrationData])
-                        .select();
-                    
-                    if (tempError) {
-                        console.error('Supabase insert error:', tempError);
-                        throw new Error(`Database error: ${tempError.message}`);
+                    // Redirect to PesaPal payment page
+                    if (orderResult.redirect_url) {
+                        window.location.href = orderResult.redirect_url;
+                    } else {
+                        throw new Error('No redirect URL received');
                     }
                     
-                    tempRegistrationId = tempReg[0].id;
-                    console.log('Registration created with ID:', tempRegistrationId);
+                } catch (error) {
+                    console.error('PesaPal error:', error);
+                    statusDiv.className = 'payment-status error';
+                    statusDiv.innerHTML = `<i class="fas fa-times-circle"></i> Payment error: ${error.message}. Please try again.`;
+                    payBtn.innerHTML = '<i class="fas fa-lock"></i> Pay 30,000 RWF';
+                    payBtn.disabled = false;
+                }
+            }
+            
+            // Check for payment callback on page load
+            function checkPaymentCallback() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const orderTrackingId = urlParams.get('OrderTrackingId');
+                const orderMerchantReference = urlParams.get('OrderMerchantReference');
+                const status = urlParams.get('Status');
+                
+                if (status === 'COMPLETED' && orderTrackingId) {
+                    // Payment completed - update database
+                    updatePaymentStatus(orderTrackingId, orderMerchantReference);
+                }
+            }
+            
+            async function updatePaymentStatus(orderTrackingId, orderMerchantReference) {
+                const statusDiv = document.getElementById('paymentStatus');
+                if (statusDiv) {
+                    statusDiv.className = 'payment-status processing';
+                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Verifying payment...';
+                    statusDiv.style.display = 'block';
+                }
+                
+                try {
+                    // Update registration with payment completion
+                    const { error } = await supabase
+                        .from('registrations')
+                        .update({ 
+                            payment_status: 'completed',
+                            payment_reference: orderTrackingId,
+                            payment_date: new Date().toISOString(),
+                            registration_complete: true
+                        })
+                        .eq('payment_reference', orderMerchantReference);
                     
-                    // Simulate payment processing (in production, integrate with PesaPal API)
-                    statusDiv.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Processing payment... Please check your phone for the payment prompt.';
-                    
-                    // Simulate payment completion after 5 seconds
-                    setTimeout(async () => {
-                        statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Payment successful! Completing registration...';
-                        
-                        // Upload image to ImgBB
-                        let imageUrl = '';
-                        if (formData.reportImage instanceof File) {
-                            const formDataImg = new FormData();
-                            formDataImg.append('image', formData.reportImage);
-                            const uploadResponse = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formDataImg });
-                            const uploadData = await uploadResponse.json();
-                            if (uploadData.success) imageUrl = uploadData.data.url;
-                        }
-                        
-                        // Update registration with payment completion
-                        const { error: updateError } = await supabase
-                            .from('registrations')
-                            .update({ 
-                                payment_status: 'completed', 
-                                payment_date: new Date().toISOString(),
-                                report_image_url: imageUrl,
-                                registration_complete: true
-                            })
-                            .eq('id', tempRegistrationId);
-                        
-                        if (updateError) throw updateError;
-                        
+                    if (!error) {
                         paymentCompleted = true;
-                        formData.paymentStatus = 'completed';
-                        formData.paymentReference = paymentReference;
-                        
-                        statusDiv.className = 'payment-status success';
-                        statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Payment successful! You can now submit your registration.';
-                        
-                        payBtn.innerHTML = '<i class="fas fa-check"></i> Payment Completed';
-                        payBtn.disabled = true;
+                        if (statusDiv) {
+                            statusDiv.className = 'payment-status success';
+                            statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Payment successful! You can now submit your registration.';
+                        }
+                        const payBtn = document.getElementById('payNowBtn');
+                        if (payBtn) {
+                            payBtn.innerHTML = '<i class="fas fa-check"></i> Payment Completed';
+                            payBtn.disabled = true;
+                        }
                         nextBtn.disabled = false;
                         
-                        // Save to localStorage for final submission
-                        localStorage.setItem('registrationComplete', 'true');
-                        localStorage.setItem('registrationId', tempRegistrationId);
-                        
-                    }, 5000);
-                    
+                        // Remove callback params from URL
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                    }
                 } catch (error) {
-                    console.error('Payment error:', error);
-                    statusDiv.className = 'payment-status error';
-                    statusDiv.innerHTML = `<i class="fas fa-times-circle"></i> Payment failed: ${error.message}. Please try again.`;
-                    payBtn.innerHTML = originalText;
-                    payBtn.disabled = false;
+                    console.error('Verification error:', error);
                 }
             }
             
@@ -479,30 +545,28 @@
                 nextBtn.innerHTML = '<span class="loading-spinner"></span> Submitting...';
                 
                 try {
-                    const registrationId = localStorage.getItem('registrationId');
-                    if (registrationId) {
-                        window.location.href = 'success.html';
-                    } else {
-                        // Fallback: create final registration
-                        let imageUrl = '';
-                        if (formData.reportImage instanceof File) {
-                            const formDataImg = new FormData();
-                            formDataImg.append('image', formData.reportImage);
-                            const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formDataImg });
-                            const data = await response.json();
-                            if (data.success) imageUrl = data.data.url;
-                        }
-                        
-                        const { error } = await supabase.from('registrations').insert([{
-                            first_name: formData.firstName, last_name: formData.lastName, contact: formData.contact,
-                            email: formData.email, province: formData.province, district: formData.district,
-                            sector: formData.sector, parish: formData.parish, report_image_url: imageUrl,
-                            payment_status: 'completed', payment_reference: paymentReference, registration_complete: true
-                        }]);
-                        
-                        if (error) throw error;
-                        window.location.href = 'success.html';
+                    // Upload image if not already uploaded
+                    let imageUrl = '';
+                    if (formData.reportImage instanceof File) {
+                        const formDataImg = new FormData();
+                        formDataImg.append('image', formData.reportImage);
+                        const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { 
+                            method: 'POST', 
+                            body: formDataImg 
+                        });
+                        const data = await response.json();
+                        if (data.success) imageUrl = data.data.url;
                     }
+                    
+                    // Update registration with image URL
+                    if (imageUrl) {
+                        await supabase
+                            .from('registrations')
+                            .update({ report_image_url: imageUrl })
+                            .eq('payment_reference', paymentReference);
+                    }
+                    
+                    window.location.href = 'success.html';
                 } catch (error) {
                     console.error('Final submission error:', error);
                     alert('Submission failed. Please try again.');
@@ -511,11 +575,13 @@
                 }
             }
             
+            // Initialize
             buildProgressBar();
             renderStep();
             updateButtons();
             nextBtn.addEventListener('click', onNext);
             backBtn.addEventListener('click', onBack);
+            checkPaymentCallback(); // Check if returning from PesaPal
         })();
     </script>
 </body>
